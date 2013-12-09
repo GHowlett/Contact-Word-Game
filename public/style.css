@@ -11,10 +11,61 @@ body {
 	font-size: 100%;
 }
 
+.title {
+	width: 80%;
+	display: block;
+	margin: 25px auto 0;
+	text-transform: uppercase;
+	font-size: 0.95em;
+	border-bottom: 1px solid #000;
+}
+
+.master-word-box {
+	display: block;
+	width: 80%;
+	margin: 50px auto 25px;
+	height: 45px;
+	border: 1px solid #000;
+}
+
+.master-word-box:before {
+	content: "Master Word";
+	font-size: 1em;
+	font-family: sans-serif;
+	position: absolute;
+	margin-top: -25px;
+}
+
+.clue-box {
+	display: block;
+	width: 80%;
+	margin: 50px auto 25px;
+	height: 45px;
+	border: 1px solid #000;
+}
+
+.clue-box:before {
+	content: "Clue";
+	font-size: 1em;
+	font-family: sans-serif;
+	position: absolute;
+	margin-top: -25px;
+}
+
+label {
+	width: 80%;
+	display: block;
+	padding: 1em;
+	padding-left: 0;
+	margin: 0 auto;
+}
+
 input {
 	width: 80%;
+	display: block;
 	border: 1px solid #000;
 	padding: 1em;
+	margin: 0 auto;
 }
 
 table {
