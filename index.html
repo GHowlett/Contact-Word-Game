@@ -2,6 +2,7 @@
 <meta charset="utf-8">
 <head>
 
+	<link rel="stylesheet" href="style.css">
   <script src="bower_components/jquery/jquery.js"></script>
   <script type="text/javascript" src="bower_components/underscore/underscore.js"></script>
 
@@ -15,18 +16,20 @@
 	<span class="clue-box"><span>
 
 	<table>
-		<tr>
-			<th>Users</th>
-			<td>Sample user</td>
-		</tr>
-		<tr>
-			<th>Status</th>
-			<td>Waiting...</td>
-		</tr>
-		<tr>
-			<th>Response</th>
-			<td>Wombat</td>
-		</tr>
+		<thead class="header">
+			<tr>
+				<th class="users">Users</th>
+				<th class="status">Status</th>
+				<th class="response">Response</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class="table-data">
+				<td class="users data">Sample user</td>
+				<td class="status data">Waiting...</td>
+				<td class="response data">Wombat</td>
+			</tr>
+		</tbody>
 	</table>
 
 	<label for="user-input">Label for user input field</label>
