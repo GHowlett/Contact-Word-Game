@@ -1,0 +1,17 @@
+{
+  "name": "Contact-Word-Game",
+  "version": "0.0.0",
+  "homepage": "https://github.com/GHowlett/Contact-Word-Game",
+  "authors": [
+    "jaycbaby"
+  ],
+  "description": "'A real-time multiplayer word game based on encoding secret messages'",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
