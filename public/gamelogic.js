@@ -85,7 +85,6 @@ window.onload = function() {
 		$(this).attr('id', 'chooseMasterWord');
 	});
 
-}
 
 // Disable input
 
