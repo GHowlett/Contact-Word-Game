@@ -21,7 +21,7 @@ clueGiver.isClueGiver = true;
 clueGiver.playerSecretWord = null;
 clueGiver.playerClue = null;
 
-function WordsAndClues() {
+function WordsAndClues(visibleToWordMaster, visibleToClueGiver, visibleToPlayer) {
 	this.visibleToWordMaster = visibleToWordMaster;
 	this.visibleToClueGiver = visibleToClueGiver;
 	this.visibleToPlayer = visibleToPlayer;
