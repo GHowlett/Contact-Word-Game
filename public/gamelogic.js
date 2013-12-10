@@ -3,18 +3,28 @@
 // when user enters game, input has label prompting using to
 // enter a username. They type in a username and then hit submit.
 
-var WordMaster = {
-	isWordMaster : true,
-	masterWord : null
-	// var splitWord = WordMaster.masterWord.split("")
+var Player = function() {
+	name : null,
+	status : null,
+	response : null,
+	isWordMaster : false,
+	isClueGiver : false,
+	playerGuess : null
 };
 
-var clueGiver {
-	isWordMaster : false,
-	isClueGiver : true,
-	playerSecretWord : null,
-	playerSecretClue : null
-}
+var wordMaster = new Player();
+wordMaster.isWordMaster = true;
+wordMaster.masterWord = null;
+// var splitWord = WordMaster.masterWord.split("")
+
+
+var clueGiver = new Player();
+clueGiver.isWordMaster = false;
+clueGiver.isClueGiver = true;
+clueGiver.playerSecretWord = null;
+clueGiver.playerSecretClue = null;
+
+
 
 window.onload = function() {
 
