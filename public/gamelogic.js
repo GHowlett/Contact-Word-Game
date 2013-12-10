@@ -11,15 +11,15 @@ var Player = function() {
 };
 
 var WordMaster = new Player();
-wordMaster.isWordMaster = true;
-wordMaster.masterWord = null;
+WordMaster.isWordMaster = true;
+WordMaster.masterWord = null;
 // var splitWord = WordMaster.masterWord.split("")
 
 var ClueGiver = new Player();
-clueGiver.isWordMaster = false;
-clueGiver.isClueGiver = true;
-clueGiver.playerSecretWord = null;
-clueGiver.playerClue = null;
+ClueGiver.isWordMaster = false;
+ClueGiver.isClueGiver = true;
+ClueGiver.playerSecretWord = null;
+ClueGiver.playerClue = null;
 
 function WordsAndClues(visibleToWordMaster, visibleToClueGiver, visibleToPlayer) {
 	this.visibleToWordMaster = visibleToWordMaster;
@@ -82,7 +82,7 @@ window.onload = function() {
 
 	//on form submit, store user input and create new player instance
 	$('#input').on('submit', function() {
-		$(this).attr('id', 'chooseMasterWord');
+		$(this).prev("#input").attr('id', 'chooseMasterWord');
 	});
 
 
