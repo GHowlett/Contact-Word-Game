@@ -62,3 +62,6 @@
 // If the master secret word is not guessed at the end of the round,
 // select next player in user column and begin again.
 
+window.onload = function() {
+	$('#name-input').focus();
+}

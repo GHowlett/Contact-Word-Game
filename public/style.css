@@ -64,8 +64,9 @@ input {
 	width: 80%;
 	display: block;
 	border: 1px solid #000;
-	padding: 1em;
+	padding: 0.5em;
 	margin: 0 auto;
+	font-size: 20px;
 }
 
 table {
