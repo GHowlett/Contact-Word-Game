@@ -25,20 +25,20 @@ function WordsAndClues(visibleToWordMaster, visibleToClueGiver, visibleToPlayer)
 	this.visibleToWordMaster = visibleToWordMaster;
 	this.visibleToClueGiver = visibleToClueGiver;
 	this.visibleToPlayer = visibleToPlayer;
-};
+}
 
 var MasterWord = new WordsAndClues(true, false, false);
 
 var PlayerSecretWord = new WordsAndClues(false, true, false);
 
-var PlayerClue = {new WordsAndClues(true, true, true);
+var PlayerClue = new WordsAndClues(true, true, true);
 
 
 // Input Context Functions
 
 function addPlayer (name) {
 	console.log(name);
-};
+}
 
 function chooseName (e) {
 	if (e.which === 13) {
@@ -47,23 +47,23 @@ function chooseName (e) {
 		var player = new Player();
 		event.preventDefault();
 	}
-};
+}
 
 function chooseMasterWord () {
 
-};
+}
 
 function choosePlayerSecretWord () {
 
-};
+}
 
 function choosePlayerSecretClue () {
 
-};
+}
 
 function guessPlayerSecretWord () {
 
-};
+}
 
 // Enable input
 
@@ -82,7 +82,7 @@ window.onload = function() {
 
 	//on form submit, store user input and create new player instance
 	$('#input').on('submit', function() {
-		$.(this).attr('id', 'chooseMasterWord');
+		$(this).attr('id', 'chooseMasterWord');
 	});
 });
 
