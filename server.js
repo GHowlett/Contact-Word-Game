@@ -10,9 +10,16 @@ server.use(express.static(__dirname + '/public'))
 var ioServer = http.createServer(server);
 var io = socketIO.listen(ioServer);
 
+var playerDB = []; // connected players
+
 io.sockets.on("connection", function(client) {
+    playerDB.forEach(function(name) {
+        client.emit('joined', name);
+    });
+
     client.on("named", function(name) {
         client.broadcast.emit('joined', name);
+        playerDB.push(name);
     });
 });
 
