@@ -1,7 +1,5 @@
-// Enable input
 
-// when user enters game, input has label prompting using to
-// enter a username. They type in a username and then hit submit.
+// Master Onjects
 
 var Player = function() {
 	name : null,
@@ -12,17 +10,64 @@ var Player = function() {
 	playerGuess : null
 };
 
-var wordMaster = new Player();
+var WordMaster = new Player();
 wordMaster.isWordMaster = true;
 wordMaster.masterWord = null;
 // var splitWord = WordMaster.masterWord.split("")
 
-
-var clueGiver = new Player();
+var ClueGiver = new Player();
 clueGiver.isWordMaster = false;
 clueGiver.isClueGiver = true;
 clueGiver.playerSecretWord = null;
-clueGiver.playerSecretClue = null;
+clueGiver.playerClue = null;
+
+function WordsAndClues() {
+	this.visibleToWordMaster = visibleToWordMaster;
+	this.visibleToClueGiver = visibleToClueGiver;
+	this.visibleToPlayer = visibleToPlayer;
+};
+
+var MasterWord = new WordsAndClues(true, false, false);
+
+var PlayerSecretWord = new WordsAndClues(false, true, false);
+
+var PlayerClue = {new WordsAndClues(true, true, true);
+
+
+// Input Context Functions
+
+function addPlayer (name) {
+	console.log(name);
+};
+
+function chooseName (e) {
+	if (e.which === 13) {
+		socket.emit('named', this.value);
+	}
+};
+
+function chooseMasterWord () {
+
+};
+
+function choosePlayerSecretWord () {
+
+};
+
+function choosePlayerSecretClue () {
+
+};
+
+function guessPlayerSecretWord () {
+
+};
+
+
+
+// Enable input
+
+// when user enters game, input has label prompting using to
+// enter a username. They type in a username and then hit submit.
 
 
 
@@ -34,15 +79,7 @@ window.onload = function() {
 	// TODO: check if name already taken on the client side
 	$('#name-input').focus().on('keydown', chooseName);
 
-	// TODO: implement this
-	function addPlayer (name) {
-		console.log(name);
-	}
 
-	function chooseName (e) {
-		if (e.which === 13) {
-			socket.emit('named', this.value);
-	}}
 
 
 // on submit populate user table element with username.
