@@ -41,12 +41,16 @@ function addPlayer (name) {
 }
 
 function chooseName (e) {
+
+	console.log("dasfdsf");
+	var player = new Player();
+
 	if (e.which === 13) {
 		socket.emit('named', this.value);
-		var userInput = $('#input').val() ;
-		var player = new Player();
-		event.preventDefault();
 	}
+
+			var userInput = $('#input').val() ;
+
 }
 
 function chooseMasterWord () {
@@ -77,12 +81,17 @@ window.onload = function() {
 	var socket = io.connect('http://localhost');
 	socket.on('joined', addPlayer);
 
+	$('form').removeClass().addClass('chooseName');
+
 	// TODO: check if name already taken on the client side
-	$('#input').focus().on('keydown', chooseName);
+	$('form').on('submit', chooseName);
 
 	//on form submit, store user input and create new player instance
-	$('#input').on('submit', function() {
-		$(this).prev("#input").attr('id', 'chooseMasterWord');
+	$('form').on('submit', function(event) {
+		event.preventDefault();
+		if ( $('form').hasClass('chooseName') ) {
+			$(this).removeClass().addClass('chooseMasterWord');
+		}
 	});
 
 
