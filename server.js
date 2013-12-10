@@ -8,7 +8,7 @@ server.use(express.static(__dirname + '/public'))
       .use(express.static(__dirname + '/bower_components'));
 
 var ioServer = http.createServer(server);
-var io = socketIO.listen(server);
+var io = socketIO.listen(ioServer);
 
 io.sockets.on("connection", function(client) {
     client.on("named", function(name) {
