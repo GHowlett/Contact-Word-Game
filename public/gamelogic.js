@@ -2,12 +2,12 @@
 // Master Onjects
 
 var Player = function() {
-	name : null,
-	status : null,
-	response : null,
-	isWordMaster : false,
-	isClueGiver : false,
-	playerGuess : null
+	this.name = null;
+	this.status = null;
+	this.response = null;
+	this.isWordMaster = false;
+	this.isClueGiver = false;
+	this.playerGuess = null;
 };
 
 var WordMaster = new Player();
@@ -44,7 +44,7 @@ function chooseName (e) {
 	if (e.which === 13) {
 		socket.emit('named', this.value);
 		var userInput = $('#input').val() ;
-		var player = new Player(); 
+		var player = new Player();
 		event.preventDefault();
 	}
 };
