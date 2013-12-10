@@ -3,7 +3,44 @@
 // when user enters game, input has label prompting using to
 // enter a username. They type in a username and then hit submit.
 
+var WordMaster = {
+	isWordMaster : true,
+	masterWord : null
+	// var splitWord = WordMaster.masterWord.split("")
+};
+
+var clueGiver {
+	isWordMaster : false,
+	isClueGiver : true,
+	playerSecretWord : null,
+	playerSecretClue : null
+}
+
+window.onload = function() {
+
+	var socket = io.connect('http://localhost');
+	socket.on('joined', addPlayer);
+
+	// TODO: check if name already taken on the client side
+	$('#name-input').focus().on('keydown', chooseName);
+
+	// TODO: implement this
+	function addPlayer (name) {
+		console.log(name);
+	}
+
+	function chooseName (e) {
+		if (e.which === 13) {
+			socket.emit('named', this.value);
+	}}
+
+
 // on submit populate user table element with username.
+
+$('form').on("submit", function() {
+	var nameInput = $('input').val();
+
+});
 
 // Disable input
 
@@ -62,20 +99,5 @@
 // If the master secret word is not guessed at the end of the round,
 // select next player in user column and begin again.
 
-window.onload = function() {
-	var socket = io.connect('http://localhost');
-	socket.on('joined', addPlayer);
 
-	// TODO: check if name already taken on the client side
-	$('#name-input').focus().on('keydown', chooseName);
-
-	// TODO: implement this
-	function addPlayer (name) {
-		console.log(name);
-	}
-
-	function chooseName (e) {
-		if (e.which === 13) {
-			socket.emit('named', this.value);
-	}}
-}
+};
