@@ -25,7 +25,7 @@ body {
 	width: 80%;
 	margin: 50px auto 25px;
 	height: 45px;
-	border: 1px solid #000;
+	border: 1px solid #ccc;
 }
 
 .master-word-box:before {
@@ -41,7 +41,7 @@ body {
 	width: 80%;
 	margin: 50px auto 25px;
 	height: 45px;
-	border: 1px solid #000;
+	border: 1px solid #ccc;
 }
 
 .clue-box:before {
