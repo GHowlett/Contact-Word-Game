@@ -42,11 +42,20 @@ function addPlayer (name) {
 
 function chooseName () {
 
-	var player = new Player();
-
-	//socket.emit('named', this.value);
-
 	var userInput = $('#input').val() ;
+
+	console.log("function called");
+
+	var player = new Player();
+	player.name = userInput;
+	player.status = "Waiting...";
+	console.log(player);
+
+	$('table tr:last').after('<tr><td>' + userInput + '</td></tr>' );
+
+	socket.emit('named', this.value);
+
+
 
 }
 
