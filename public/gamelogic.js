@@ -43,6 +43,9 @@ function addPlayer (name) {
 function chooseName (e) {
 	if (e.which === 13) {
 		socket.emit('named', this.value);
+		var userInput = $('#input').val() ;
+		var player = new Player(); 
+		event.preventDefault();
 	}
 };
 
@@ -62,8 +65,6 @@ function guessPlayerSecretWord () {
 
 };
 
-
-
 // Enable input
 
 // when user enters game, input has label prompting using to
@@ -77,16 +78,12 @@ window.onload = function() {
 	socket.on('joined', addPlayer);
 
 	// TODO: check if name already taken on the client side
-	$('#name-input').focus().on('keydown', chooseName);
+	$('#input').focus().on('keydown', chooseName);
 
-
-
-
-// on submit populate user table element with username.
-
-$('form').on("submit", function() {
-	var nameInput = $('input').val();
-
+	//on form submit, store user input and create new player instance
+	$('#input').on('submit', function() {
+		$.(this).attr('id', 'chooseMasterWord');
+	});
 });
 
 // Disable input
