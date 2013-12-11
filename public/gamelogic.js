@@ -44,6 +44,8 @@ function nameChosen (e) {
 
 function initialGameSetup() {
 	if (activePlayers.length === 4) {
+		wordMaster = null;
+		clueGiver = null;
 		setMaster(activePlayers[0]);
 		setGiver(activePlayers[1]);
 		$('#input').prop('placeholder', '');
