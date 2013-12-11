@@ -29,14 +29,8 @@ var secretWord = new WordsAndClues(false, true, false);
 
 var clue = new WordsAndClues(true, true, true);
 
-
-// Input Context Functions
-
-function addPlayer (player) {
-	$('table tr:last').after(
-		'<tr><td>' + player.name + '</td></tr>' );
-
-}
+//store list of active players
+var activePlayers = [];
 
 // creates and emits a player upon name decision
 function nameChosen (e) {
@@ -45,9 +39,28 @@ function nameChosen (e) {
 		console.log(player.name);
 		addPlayer(player);
 		socket.emit('named', player);
-		$('#input').prop('disabled', true).val('').prop('placeholder', '');
+		$('#input').prop('disabled', true).val('').prop('placeholder', 'Waiting for players');
 	}
 }
+
+
+function initialGameSetup() {
+	if (activePlayers.length === 4) {
+		activePlayers[0]= setMaster();
+		activePlayers[1]= setGiver();		
+		$('#input').prop('placeholder', '');
+	}
+}
+
+// Input Context Functions
+function addPlayer (player) {
+	$('table tr:last').after(
+		'<tr><td>' + player.name + '</td></tr>' );
+	activePlayers.push(player);
+	initialGameSetup();
+}
+
+
 
 function chooseMasterWord () {
 
@@ -82,24 +95,12 @@ window.onload = function() {
 	$('#input').on('keydown', nameChosen);
 
 
-	//store list of active players
-	var activePlayers = [];
 
-	//
 	// TODO: use the above stage as a template for the next stage
 	// TODO: if first to join, set self as wordMaster
-	//		 if second to join, set as clueGiver
-	//       if third+ to join, gray the input with a placeholder of 'waiting for players'
-	function initialGameSetup() = {
-		activePlayers[0]= setMaster();
-		activePlayers[1]= setGiver();
-		activePlayers[2]= 
-		activePlayers[3]= 
-		// Once 4 players have joined, then the game begins
-		if (activePlayers.length === 4) {
-			//prompt word master for master word
-		}
-	}
+	//if second to join, set as clueGiver
+	//if third+ to join, gray the input with a placeholder of 'waiting for players'
+	
 
 
 
