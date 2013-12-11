@@ -35,6 +35,7 @@ var clue = new WordsAndClues(true, true, true);
 function addPlayer (player) {
 	$('table tr:last').after(
 		'<tr><td>' + player.name + '</td></tr>' );
+
 }
 
 // creates and emits a player upon name decision
@@ -80,12 +81,28 @@ window.onload = function() {
 	$('#input').attr('placeholder', 'Choose a Nickname');
 	$('#input').on('keydown', nameChosen);
 
+
+	//store list of active players
+	var activePlayers = [];
+
+	//
 	// TODO: use the above stage as a template for the next stage
 	// TODO: if first to join, set self as wordMaster
 	//		 if second to join, set as clueGiver
 	//       if third+ to join, gray the input with a placeholder of 'waiting for players'
+	function initialGameSetup() = {
+		activePlayers[0]= setMaster();
+		activePlayers[1]= setGiver();
+		activePlayers[2]= 
+		activePlayers[3]= 
+		// Once 4 players have joined, then the game begins
+		if (activePlayers.length === 4) {
+			//prompt word master for master word
+		}
+	}
 
-// Once 4 players have joined, then the game begins:
+
+
 
 // Set the input placeholder of players to 'waiting for wordmaster'
 // Enable input for word master
