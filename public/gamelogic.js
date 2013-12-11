@@ -78,12 +78,14 @@ window.onload = function() {
 	$('#input').attr('placeholder', 'Choose a Nickname');
 	$('#input').on('keydown', nameChosen);
 
-// Disable input
+	// TODO: use the above stage as a template for the next stage
+	// TODO: if first to join, set self as wordMaster
+	//		 if second to join, set as clueGiver
+	//       if third+ to join, gray the input with a placeholder of 'waiting for players'
 
 // Once 4 players have joined, then the game begins:
 
-// choose random word master
-
+// Set the input placeholder of players to 'waiting for wordmaster'
 // Enable input for word master
 
 // word master's input is labeled with "Choose master word",
