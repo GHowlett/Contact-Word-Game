@@ -35,25 +35,24 @@ var activePlayers = [];
 // creates and emits a player upon name decision
 function nameChosen (e) {
 	if (e.which === 13) {
-		var player = new Player(this.value);
-		console.log(player.name);
-		addPlayer(player);
-		socket.emit('named', player);
+		localPlayer = new Player(this.value);
+		addPlayer(localPlayer);
+		socket.emit('named', localPlayer);
 		$('#input').prop('disabled', true).val('').prop('placeholder', 'Waiting for players');
 	}
 }
 
-
 function initialGameSetup() {
 	if (activePlayers.length === 4) {
-		activePlayers[0]= setMaster();
-		activePlayers[1]= setGiver();		
+		setMaster(activePlayers[0]);
+		setGiver(activePlayers[1]);
 		$('#input').prop('placeholder', '');
 	}
 }
 
 // Input Context Functions
 function addPlayer (player) {
+	player = new Player(player.name,player.guess);
 	$('table tr:last').after(
 		'<tr><td>' + player.name + '</td></tr>' );
 	activePlayers.push(player);
@@ -100,7 +99,7 @@ window.onload = function() {
 	// TODO: if first to join, set self as wordMaster
 	//if second to join, set as clueGiver
 	//if third+ to join, gray the input with a placeholder of 'waiting for players'
-	
+
 
 
 
