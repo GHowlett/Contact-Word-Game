@@ -3,7 +3,7 @@ function Player(name, guess) {
 	this.guess = guess || "";
 }
 
-// sets new global master and and resets old one to a regular player 
+// sets new global master and and resets old one to a regular player
 function setMaster (player) {
 	if (wordMaster) delete wordMaster.secret;
 	wordMaster = player;
@@ -41,7 +41,10 @@ function addPlayer (player) {
 function nameChosen (e) {
 	if (e.which === 13) {
 		var player = new Player(this.value);
-		socket.emit('named', player); 
+		console.log(player.name);
+		addPlayer(player);
+		socket.emit('named', player);
+		$('#input').prop('disabled', true).val('');
 	}
 }
 
