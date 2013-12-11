@@ -66,11 +66,10 @@ function guesssecretWord () {
 // when user enters game, input has label prompting using to
 // enter a username. They type in a username and then hit submit.
 
-
+var socket = io.connect('http://localhost');
 
 window.onload = function() {
 
-	var socket = io.connect('http://localhost');
 	socket.on('joined', addPlayer);
 
 	// Naming Stage
