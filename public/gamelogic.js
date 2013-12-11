@@ -59,7 +59,17 @@ function addPlayer (player) {
 	initialGameSetup();
 }
 
-
+// creates and emits a player upon name decision
+// TODO: check if name already taken on the client side
+function nameChosen (e) {
+	if (e.which === 13) {
+		var player = new Player(this.value);
+		console.log(player.name);
+		addPlayer(player);
+		socket.emit('named', player);
+		$('#input').prop('disabled', true).val('');
+	}
+}
 
 function chooseMasterWord () {
 
@@ -77,10 +87,13 @@ function guesssecretWord () {
 
 }
 
-// Enable input
+function getInput(placeholder, callback) {
+	// remove previous click handler
+	$('#input').off('keydown').focus(); 
+	$('#input').attr('placeholder', placeholder);
+	var step1 = $('#input').on('keydown', callback);
+}
 
-// when user enters game, input has label prompting using to
-// enter a username. They type in a username and then hit submit.
 
 var socket = io.connect('http://localhost');
 
@@ -89,9 +102,7 @@ window.onload = function() {
 	socket.on('joined', addPlayer);
 
 	// Naming Stage
-	// TODO: check if name already taken on the client side
-	$('#input').attr('placeholder', 'Choose a Nickname');
-	$('#input').on('keydown', nameChosen);
+	getInput('Choose a Nickname', nameChosen);
 
 
 
