@@ -32,18 +32,17 @@ var clue = new WordsAndClues(true, true, true);
 
 // Input Context Functions
 
-function addPlayer (name) {
-	console.log(name);
+function addPlayer (player) {
+	$('table tr:last').after(
+		'<tr><td>' + player.name + '</td></tr>' );
 }
 
-function chooseName () {
-
-	var player = new Player();
-
-	//socket.emit('named', this.value);
-
-	var userInput = $('#input').val() ;
-
+// creates and emits a player upon name decision
+function nameChosen (e) {
+	if (e.which === 13) {
+		var player = new Player(this.value);
+		socket.emit('named', player); 
+	}
 }
 
 function chooseMasterWord () {
@@ -74,22 +73,10 @@ window.onload = function() {
 	var socket = io.connect('http://localhost');
 	socket.on('joined', addPlayer);
 
-	$('form').removeClass().addClass('chooseName');
-
+	// Naming Stage
 	// TODO: check if name already taken on the client side
-	//$('form').on('submit', chooseName);
-
-	//on form submit, store user input and create new player instance
-	$('form').on('submit', function(event) {
-		event.preventDefault();
-		chooseName();
-		console.log($('form input').val());
-		$('form input').val('');
-		if ( $('form').hasClass('chooseName') ) {
-			$(this).removeClass().addClass('chooseMasterWord');
-		}
-	});
-
+	$('#input').attr('placeholder', 'Choose a Nickname');
+	$('#input').on('keydown', nameChosen);
 
 // Disable input
 
