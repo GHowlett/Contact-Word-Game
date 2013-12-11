@@ -44,7 +44,7 @@ function nameChosen (e) {
 		console.log(player.name);
 		addPlayer(player);
 		socket.emit('named', player);
-		$('#input').prop('disabled', true).val('');
+		$('#input').prop('disabled', true).val('').prop('placeholder', '');
 	}
 }
 
