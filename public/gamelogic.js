@@ -1,15 +1,22 @@
+//global objects
+var MasterWord = new WordsAndClues(true, false, false);
+var secretWord = new WordsAndClues(false, true, false);
+var clue = new WordsAndClues(true, true, true);
+var activePlayers = [];
+
+// defines player object
 function Player(name, guess) {
 	this.name = name || "";
 	this.guess = guess || "";
 }
 
-// sets new global master and and resets old one to a regular player
+// sets new wordMaster. if applicable, reset previous wordMaster to regular player.
 function setMaster (player) {
 	if (wordMaster) delete wordMaster.secret;
 	wordMaster = player;
 }
 
-// sets new global clueGiver and resets old one to regular player
+// sets new clueGiver. if applicable, reset previous clueGiver to regular player.
 function setGiver (player) {
 	if (clueGiver) {
 		delete clueGiver.secret;
@@ -17,20 +24,12 @@ function setGiver (player) {
 	clueGiver = player;
 }
 
+// defines visibility of words and clues
 function WordsAndClues(visibleToWordMaster, visibleToClueGiver, visibleToPlayer) {
 	this.visibleToWordMaster = visibleToWordMaster;
 	this.visibleToClueGiver = visibleToClueGiver;
 	this.visibleToPlayer = visibleToPlayer;
 }
-
-var MasterWord = new WordsAndClues(true, false, false);
-
-var secretWord = new WordsAndClues(false, true, false);
-
-var clue = new WordsAndClues(true, true, true);
-
-//store list of active players
-var activePlayers = [];
 
 // creates and emits a player upon name decision
 function nameChosen (e) {
@@ -42,23 +41,27 @@ function nameChosen (e) {
 	}
 }
 
-function initialGameSetup() {
+function waitingForPlayers() { //TODO: pass in callback
 	if (activePlayers.length === 4) {
 		wordMaster = null;
 		clueGiver = null;
+		
+		//choose word master and clue giver
 		setMaster(activePlayers[0]);
 		setGiver(activePlayers[1]);
+		
+		//resetting placeholder text. TODO: create if statement to activate wordmaster's input, and grey out everyone else's.
 		$('#input').prop('placeholder', '');
 	}
 }
 
-// Input Context Functions
+// Game state: adding players, appending to end of table row, push players into active players array, 
 function addPlayer (player) {
 	player = new Player(player.name,player.guess);
-	$('table tr:last').after(
-		'<tr><td>' + player.name + '</td></tr>' );
+	$('table tr:last')
+		.after('<tr> <td>' + player.name + '</td> <td>' + 'status placeholder' + '</td>  <td>' + 'response placeholder' + '</td> </tr>' );
 	activePlayers.push(player);
-	initialGameSetup();
+	waitingForPlayers();
 }
 
 // creates and emits a player upon name decision
@@ -96,28 +99,27 @@ function getInput(placeholder, callback) {
 	var step1 = $('#input').on('keydown', callback);
 }
 
-
 var socket = io.connect('http://localhost');
 
-window.onload = function() {
 
+
+window.onload = function() {
 	socket.on('joined', addPlayer);
+
+	//call waitingforplayers and pass in "add players" as callback
+
+
+	// Adding players
+
 
 	// Naming Stage
 	getInput('Choose a Nickname', nameChosen);
 
 
 
-	// TODO: use the above stage as a template for the next stage
-	// TODO: if first to join, set self as wordMaster
-	//if second to join, set as clueGiver
-	//if third+ to join, gray the input with a placeholder of 'waiting for players'
-
-
-
-
 
 // Set the input placeholder of players to 'waiting for wordmaster'
+
 // Enable input for word master
 
 // word master's input is labeled with "Choose master word",
