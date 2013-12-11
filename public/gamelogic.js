@@ -1,25 +1,21 @@
+function Player(name, guess) {
+	this.name = name || "";
+	this.guess = guess || "";
+}
 
-// Master Onjects
+// sets new global master and and resets old one to a regular player 
+function setMaster (player) {
+	if (wordMaster) delete wordMaster.secret;
+	wordMaster = player;
+}
 
-var Player = function() {
-	this.name = null;
-	this.status = null;
-	this.response = null;
-	this.isWordMaster = false;
-	this.isClueGiver = false;
-	this.playerGuess = null;
-};
-
-var WordMaster = new Player();
-WordMaster.isWordMaster = true;
-WordMaster.masterWord = null;
-// var splitWord = WordMaster.masterWord.split("")
-
-var ClueGiver = new Player();
-ClueGiver.isWordMaster = false;
-ClueGiver.isClueGiver = true;
-ClueGiver.playerSecretWord = null;
-ClueGiver.playerClue = null;
+// sets new global clueGiver and resets old one to regular player
+function setGiver (player) {
+	if (clueGiver) {
+		delete clueGiver.secret;
+		delete clueGiver.clue; }
+	clueGiver = player;
+}
 
 function WordsAndClues(visibleToWordMaster, visibleToClueGiver, visibleToPlayer) {
 	this.visibleToWordMaster = visibleToWordMaster;
@@ -29,9 +25,9 @@ function WordsAndClues(visibleToWordMaster, visibleToClueGiver, visibleToPlayer)
 
 var MasterWord = new WordsAndClues(true, false, false);
 
-var PlayerSecretWord = new WordsAndClues(false, true, false);
+var secretWord = new WordsAndClues(false, true, false);
 
-var PlayerClue = new WordsAndClues(true, true, true);
+var clue = new WordsAndClues(true, true, true);
 
 
 // Input Context Functions
@@ -55,15 +51,13 @@ function chooseName () {
 
 	socket.emit('named', this.value);
 
-
-
 }
 
 function chooseMasterWord () {
 
 }
 
-function choosePlayerSecretWord () {
+function choosesecretWord () {
 
 }
 
@@ -71,7 +65,7 @@ function choosePlayerSecretClue () {
 
 }
 
-function guessPlayerSecretWord () {
+function guesssecretWord () {
 
 }
 
