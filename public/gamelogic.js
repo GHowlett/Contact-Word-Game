@@ -64,27 +64,40 @@ function waitForPlayers (callback) {
 }
 
 function chooseMasterWord (callback) {
-	setMaster(activePlayers[0]);
 	if (localPlayer = wordMaster) {
-		// if first to join, set self as wordMaster
-		// enable input and replace placeholder text with status
+		// for wordmaster, enable input and replace placeholder text with status
 		$('#input')
 			.attr('disabled', false)
 			.attr('placeholder','Type in your secret word');
 		//... storing player 1's input as masterword
 		$('#input').val= MasterWord;
-	}
+		// on submit- disabling wordMaster's input
+		$('#input').on('keydown', function(e) {
+			if (e.which === 13) {
+				$("#input").attr('disabled', false)
+				.attr('placeholder','Your secret word is' + MasterWord);
+			}
+		)
+	};
 	else {
-		// replace placeholder text with status
+		// for everyone else, keep input disabled and replace placeholder text with status
 		$('#input').attr('placeholder','Waiting for MasterWord');
 	}
-	// set player 2 as clueGiver
-	setGiver(activePlayers[1]);
+	//splitting masterword into an array of strings
+	var splitWord = MasterWord.split('');
+
+	//append first letter of masterword to master-word-box
+	$('.master-word-box').append(splitWord[0]);
+
 	console.log('choosing masterword');
 }
 
 function choosePlayerSecretClue (callback) {
-
+	if (localPlayer = clueGiver) {
+		$('#input')
+			.attr('disabled', false)
+			.attr('placeholder','Type in your secret word');
+	}
 }
 
 function guesssecretWord (callback) {
@@ -107,7 +120,7 @@ function getInput (placeholder) {
 	$('#input') // remove previous click handler
 		.off('keydown').focus()
 	  	.attr('placeholder', placeholder)
-	  	.on('keydown', function(e) {
+	  	('keydown', function(e).on {
 	 		if (e.which === 13)
 	 			deferred.resolveWith(this, [this.value]);
 	}); return deferred.promise()
@@ -129,11 +142,11 @@ window.onload = function() {
 		// Game Loop
 		// TODO: accomplish infinite loop with cyclical 
 		// 		 callback wiring if this doesn't work 
-		while (true){ series( 
-			waitForPlayers, 
-			chooseMasterWord
-			// TODO: add the rest of the stages
-		)()}
+		// while (true){ series( 
+		// 	waitForPlayers, 
+		// 	chooseMasterWord
+		// 	// TODO: add the rest of the stages
+		// )()}
 	});
 
 
