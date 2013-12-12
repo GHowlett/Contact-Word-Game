@@ -41,15 +41,6 @@ function nameChosen (e) {
 	}
 }
 
-function waitForPlayers(callback) {
-	if (activePlayers.length === 4) {
-		wordMaster = null;
-		clueGiver = null;
-	}
-	// TODO: gray out input box with placeholder 
-	//		 of 'waiting for players'
-}
-
 // Game state: adding players, appending to end of table row, push players into active players array, 
 function addPlayer (player) {
 	player = new Player(player.name,player.guess);
@@ -58,6 +49,9 @@ function addPlayer (player) {
 	activePlayers.push(player);
 	waitingForPlayers();
 }
+
+
+///////////////////   Stages    ///////////////////////////
 
 // creates and emits a player upon name decision
 // TODO: check if name already taken on the client side
@@ -72,7 +66,16 @@ function nameChosen (e) {
 	}
 }
 
-function chooseMasterSecret () {
+function waitForPlayers(callback) {
+	if (activePlayers.length === 4) {
+		wordMaster = null;
+		clueGiver = null;
+	}
+	// TODO: gray out input box with placeholder 
+	//		 of 'waiting for players'
+}
+
+function chooseMasterSecret (callback) {
 	setMaster(activePlayers[0]);
 	setGiver(activePlayers[1]);
 
@@ -84,13 +87,15 @@ function chooseMasterSecret () {
 	//		 if wordMaster request a secret word
 }
 
-function choosePlayerSecretClue () {
+function choosePlayerSecretClue (callback) {
 
 }
 
-function guesssecretWord () {
+function guesssecretWord (callback) {
 
 }
+
+/////////////////////////////////////////////////////////
 
 function greyInput(placeholder) {
 	
