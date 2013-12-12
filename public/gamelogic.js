@@ -55,15 +55,13 @@ function addPlayer (player) {
 
 // creates and emits a player upon name decision
 // TODO: check if name already taken on the client side
-function nameChosen (e) {
-	if (e.which === 13) {
-		var player = new Player(this.value);
-		console.log(player.name);
-		addPlayer(player);
-		socket.emit('named', player);
-		// TODO: move this line to somewhere more appropriate
-		$('#input').prop('disabled', true).val('');
-	}
+function nameChosen (name) {
+	var player = new Player(name);
+	console.log(player.name);
+	addPlayer(player);
+	socket.emit('named', player);
+	// TODO: move this line to somewhere more appropriate
+	$('#input').prop('disabled', true).val('');
 }
 
 function waitForPlayers(callback) {
@@ -102,10 +100,12 @@ function greyInput(placeholder) {
 }
 
 function getInput(placeholder, callback) {
-	// remove previous click handler
-	$('#input').off('keydown').focus(); 
-	$('#input').attr('placeholder', placeholder);
-	var step1 = $('#input').on('keydown', callback);
+	$('#input') // remove previous click handler
+		.off('keydown').focus()
+	  	.attr('placeholder', placeholder)
+	  	.on('keydown', function(e) {
+	 		if (e.which === 13) callback.call(this, this.value);
+	 });
 }
 
 var socket = io.connect('http://localhost');
@@ -115,15 +115,9 @@ var socket = io.connect('http://localhost');
 window.onload = function() {
 	socket.on('joined', addPlayer);
 
-	//call waitingforplayers and pass in "add players" as callback
-
-
-	// Adding players
-
-
-	// Naming Stage
 	getInput('Choose a Nickname', nameChosen);
 
+	//call waitingforplayers and pass in "add players" as callback
 
 
 
