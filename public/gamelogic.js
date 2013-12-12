@@ -4,7 +4,7 @@ var socket = io.connect('http://localhost');
 var MasterWord = new WordsAndClues(true, false, false);
 var secretWord = new WordsAndClues(false, true, false);
 var clue = new WordsAndClues(true, true, true);
-var activePlayers = [];
+var activePlayers = {length:0};
 
 // defines visibility of words and clues
 function WordsAndClues (visibleToWordMaster, visibleToClueGiver, visibleToPlayer) {
@@ -28,7 +28,8 @@ function Player (name, guess) {
 	else {
 		this.name = name || "";
 		this.guess = guess || ""; }
-	activePlayers.push(this);
+	activePlayers[name] = this;
+	activePlayers.length++;
 }
 
 // sets new wordMaster. if applicable, reset previous wordMaster to regular player.
@@ -64,25 +65,25 @@ function waitForPlayers (callback) {
 }
 
 function chooseMasterWord (callback) {
-	if (localPlayer = wordMaster) {
+	if (localPlayer === wordMaster) {
 		// for wordmaster, enable input and replace placeholder text with status
 		$('#input')
 			.attr('disabled', false)
 			.attr('placeholder','Type in your secret word');
-		//... storing player 1's input as masterword
-		$('#input').val= MasterWord;
+		MasterWord = $('#input').val();
 		// on submit- disabling wordMaster's input
 		$('#input').on('keydown', function(e) {
 			if (e.which === 13) {
 				$("#input").attr('disabled', false)
 				.attr('placeholder','Your secret word is' + MasterWord);
 			}
-		)
-	};
+		});
+	}	
 	else {
 		// for everyone else, keep input disabled and replace placeholder text with status
 		$('#input').attr('placeholder','Waiting for MasterWord');
-	}
+		}
+
 	//splitting masterword into an array of strings
 	var splitWord = MasterWord.split('');
 
@@ -120,7 +121,7 @@ function getInput (placeholder) {
 	$('#input') // remove previous click handler
 		.off('keydown').focus()
 	  	.attr('placeholder', placeholder)
-	  	('keydown', function(e).on {
+	  	.on('keydown', function(e) {
 	 		if (e.which === 13)
 	 			deferred.resolveWith(this, [this.value]);
 	}); return deferred.promise()
