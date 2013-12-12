@@ -52,8 +52,27 @@ function setGiver (player) {
 function chooseName (callback) {
 	getInput('Choose a Nickname')
 	.then(function(name) {
-		renderPlayer(localPlayer = new Player(name));
-		socket.emit('named', localPlayer);})
+		if(!activePlayers.length) {
+			renderPlayer(localPlayer = new Player(name));
+			socket.emit('named', localPlayer);
+		} else {
+			$.each(activePlayers, function(key, value) {
+				if(name = value.name) {
+					$("#input")
+						.css("background", "#FF8566")
+						.val('')
+						.prop('placeholder', 'Name already taken, please choose another');
+				} else {
+					getInput('Choose a Nickname')
+						.then(function(name) {
+							renderPlayer(localPlayer = new Player(name));
+							socket.emit('named', localPlayer);
+						})
+						.then(callback);
+				}
+			});
+		}
+	})
 	.then(callback);
 }
 
@@ -64,23 +83,45 @@ function waitForPlayers (callback) {
 	} else callback();
 }
 
-function chooseMasterSecret (callback) {
+function chooseMasterWord (callback) {
+	if (localPlayer === wordMaster) {
+		// for wordmaster, enable input and replace placeholder text with status
+		$('#input')
+			.attr('disabled', false)
+			.attr('placeholder','Type in your secret word');
+		MasterWord = $('#input').val();
+		// on submit- disabling wordMaster's input
+		$('#input').on('keydown', function(e) {
+			if (e.which === 13) {
+				$("#input").attr('disabled', false)
+				.attr('placeholder','Your secret word is' + MasterWord);
+			}
+		});
+	}	
+	else {
+		// for everyone else, keep input disabled and replace placeholder text with status
+		$('#input').attr('placeholder','Waiting for MasterWord');
+		}
 
-	console.log('choosing secret');
-	// TODO: if first to join, set self as wordMaster
-	//		 if second to join, set as clueGiver
+	//splitting masterword into an array of strings
+	var splitWord = MasterWord.split('');
 
-	//		 if second+ to join, gray the input with a
-	//		     placeholder of 'waiting for wordMaster'
-	//		 if wordMaster request a secret word
+	//append first letter of masterword to master-word-box
+	$('.master-word-box').append(splitWord[0]);
+
+	console.log('choosing masterword');
 }
 
 function choosePlayerSecretClue (callback) {
-
+	if (localPlayer = clueGiver) {
+		$('#input')
+			.attr('disabled', false)
+			.attr('placeholder','Type in your secret word');
+	}
 }
 
 function guesssecretWord (callback) {
-
+	
 }
 
 /////////////////////////////////////////////////////////
@@ -126,23 +167,27 @@ window.onload = function() {
 
 	chooseName(function(){
 		// Game Loop
-		// TODO: accomplish infinite loop with cyclical
-		// 		 callback wiring if this doesn't work
-		while (true){ series(
-			waitForPlayers,
-			chooseMasterSecret
-
-			// TODO: add the rest of the stages
-		)()}
+		// TODO: accomplish infinite loop with cyclical 
+		// 		 callback wiring if this doesn't work 
+		// while (true){ series( 
+		// 	waitForPlayers, 
+		// 	chooseMasterWord
+		// 	// TODO: add the rest of the stages
+		// )()}
 	});
 
 
-// Set the input placeholder of players to 'waiting for wordmaster'
 
-// Enable input for word master
+//Remaining TODOs------------------
 
-// word master's input is labeled with "Choose master word",
-// when user enters in master word it is populated into the master
+// Set the input placeholder of players to 'waiting for wordmaster'. DONE
+
+// Enable input for word master. DONE
+
+// word master's input is labeled with "Choose master word". DONE
+
+// when user enters in master word it is populated into the master. In PROGRESS.
+
 // word box, but this is hidden from everyone except the word master.
 
 // Disable input for wordmaster
@@ -151,7 +196,7 @@ window.onload = function() {
 
 // Select first person in the user column, prompt him or her to enter
 // a word -- the input field has a label choose secret word. The chosen
-// user's status is populated with the secret word they chose.
+// user's status is populated with the secret word they chose. IN PROGRESS
 
 // Then the chosen player types in a clue. The input has a label called:
 // choose clue for secret word. On submit the clue box is populated with
