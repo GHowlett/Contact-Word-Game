@@ -1,11 +1,27 @@
 //global objects
+// TODO: see if connect('/') works
+var socket = io.connect('http://localhost');
 var MasterWord = new WordsAndClues(true, false, false);
 var secretWord = new WordsAndClues(false, true, false);
 var clue = new WordsAndClues(true, true, true);
 var activePlayers = [];
 
-// defines player object
-function Player(name, guess) {
+// defines visibility of words and clues
+function WordsAndClues (visibleToWordMaster, visibleToClueGiver, visibleToPlayer) {
+	this.visibleToWordMaster = visibleToWordMaster;
+	this.visibleToClueGiver = visibleToClueGiver;
+	this.visibleToPlayer = visibleToPlayer;
+}
+
+// creates, renders, and adds player to active players array.
+function addPlayer (player) {
+	player = new Player(player.name,player.guess);
+	$('table tr:last')
+		.after('<tr> <td>' + player.name + '</td> <td>' + 'status placeholder' + '</td>  <td>' + 'response placeholder' + '</td> </tr>' );
+	activePlayers.push(player);
+}
+
+function Player (name, guess) {
 	this.name = name || "";
 	this.guess = guess || "";
 }
@@ -24,22 +40,6 @@ function setGiver (player) {
 	clueGiver = player;
 }
 
-// defines visibility of words and clues
-function WordsAndClues(visibleToWordMaster, visibleToClueGiver, visibleToPlayer) {
-	this.visibleToWordMaster = visibleToWordMaster;
-	this.visibleToClueGiver = visibleToClueGiver;
-	this.visibleToPlayer = visibleToPlayer;
-}
-
-// Game state: adding players, appending to end of table row, push players into active players array, 
-function addPlayer (player) {
-	player = new Player(player.name,player.guess);
-	$('table tr:last')
-		.after('<tr> <td>' + player.name + '</td> <td>' + 'status placeholder' + '</td>  <td>' + 'response placeholder' + '</td> </tr>' );
-	activePlayers.push(player);
-}
-
-
 ///////////////////   Stages    ///////////////////////////
 
 // TODO: call callback arg once nameChosen returns
@@ -54,7 +54,7 @@ function nameChosen (name) {
 	socket.emit('named', localPlayer);
 }
 
-function waitForPlayers(callback) {
+function waitForPlayers (callback) {
 	if (activePlayers.length <= 4) {
 		greyInput('waiting for players');
 		setTimeout(waitForPlayers, 100, callback);
@@ -83,11 +83,12 @@ function guesssecretWord (callback) {
 
 /////////////////////////////////////////////////////////
 
-function greyInput(placeholder) {
-	
+// greys out the input box with a placeholder msg
+function greyInput (placeholder) {
+	// TODO: implement this
 }
 
-function getInput(placeholder, callback) {
+function getInput (placeholder, callback) {
 	$('#input') // remove previous click handler
 		.off('keydown').focus()
 	  	.attr('placeholder', placeholder)
@@ -96,9 +97,7 @@ function getInput(placeholder, callback) {
 	 });
 }
 
-var socket = io.connect('http://localhost');
-
-function series () {
+function series () { // runs function as a waterfall
     var context = this;
     return [].reduceRight.call(arguments, function(next,current) {
 		return current.bind(context, next);
@@ -114,12 +113,9 @@ window.onload = function() {
 		while (true){ series( 
 			waitForPlayers, 
 			chooseMasterSecret
-			// TODO: add the reset of the stages
+			// TODO: add the rest of the stages
 		)()}
 	});
-
-	//call waitingforplayers and pass in "add players" as callback
-
 
 
 // Set the input placeholder of players to 'waiting for wordmaster'
