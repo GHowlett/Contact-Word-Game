@@ -21,10 +21,13 @@ function renderPlayer (player) {
 			'response placeholder' + '</td> </tr>' );
 }
 
+// TODO: find a more semantic convention for type overloading
 function Player (name, guess) {
-	this.name = name || "";
-	this.guess = guess || "";
-
+	if (typeof name === "object")
+		for (prop in name) this[prop] = name[prop];
+	else {
+		this.name = name || "";
+		this.guess = guess || ""; }
 	activePlayers.push(this);
 }
 
@@ -111,8 +114,8 @@ function series () { // runs function as a waterfall
 }
 
 window.onload = function() {
-	socket.on('joined', function(remotePlayer){
-		renderPlayer(new Player(remotePlayer.name, remotePlayer.guess));
+	socket.on('joined', function(playerData){
+		renderPlayer(new Player(playerData));
 	});
 
 	chooseName(function(){
