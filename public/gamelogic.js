@@ -52,7 +52,7 @@ function setGiver (player) {
 function chooseName (callback) {
 	getInput('Choose a Nickname')
 	.then(function(name){
-		addPlayer(localPlayer = new Player(name));
+		renderPlayer(localPlayer = new Player(name));
 		socket.emit('named', localPlayer);
 		greyInput() })
 	.then(callback);
