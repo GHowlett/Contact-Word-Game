@@ -67,6 +67,7 @@ function nameChosen (e) {
 		console.log(player.name);
 		addPlayer(player);
 		socket.emit('named', player);
+		// TODO: move this line to somewhere more appropriate
 		$('#input').prop('disabled', true).val('');
 	}
 }
