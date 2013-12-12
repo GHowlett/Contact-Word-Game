@@ -47,15 +47,11 @@ function chooseName (callback) {
 	getInput('Choose a Nickname', nameChosen);
 }
 
-// creates and emits a player upon name decision
+// creates and emits the local player upon name decision
 // TODO: check if name already taken on the client side
 function nameChosen (name) {
-	var player = new Player(name);
-	console.log(player.name);
-	addPlayer(player);
-	socket.emit('named', player);
-	// TODO: move this line to somewhere more appropriate
-	$('#input').prop('disabled', true).val('');
+	addPlayer(localPlayer = new Player(name));
+	socket.emit('named', localPlayer);
 }
 
 function waitForPlayers(callback) {
