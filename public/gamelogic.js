@@ -59,12 +59,10 @@ function nameChosen (name) {
 }
 
 function waitForPlayers(callback) {
-	if (activePlayers.length === 4) {
-		wordMaster = null;
-		clueGiver = null;
-	}
-	// TODO: gray out input box with placeholder 
-	//		 of 'waiting for players'
+	if (activePlayers.length <= 4) {
+		greyInput('waiting for players');
+		setTimeout(waitForPlayers, 100, callback);
+	} else callback();
 }
 
 function chooseMasterSecret (callback) {
