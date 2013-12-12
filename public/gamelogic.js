@@ -16,8 +16,8 @@ function WordsAndClues (visibleToWordMaster, visibleToClueGiver, visibleToPlayer
 // creates, renders, and adds player to active players array.
 function renderPlayer (player) {
 	$('table tr:last')
-		.after('<tr> <td>' + player.name + '</td> <td>' + 
-			'status placeholder' + '</td>  <td>' + 
+		.after('<tr> <td>' + player.name + '</td> <td>' +
+			'status placeholder' + '</td>  <td>' +
 			'response placeholder' + '</td> </tr>' );
 }
 
@@ -52,9 +52,9 @@ function setGiver (player) {
 function chooseName (callback) {
 	getInput('Choose a Nickname')
 	.then(function(name){
-		console.log(name + ' is the local player');
-		renderPlayer( localPlayer = new Player(name) );
-		socket.emit('named', localPlayer); })
+		addPlayer(localPlayer = new Player(name));
+		socket.emit('named', localPlayer);
+		greyInput() })
 	.then(callback);
 }
 
@@ -66,25 +66,23 @@ function waitForPlayers (callback) {
 }
 
 function chooseMasterWord (callback) {
-	// if first to join, set self as wordMaster
 	if (activePlayers[0]) {
+		// if first to join, set self as wordMaster
 		setMaster();
-		//setting wordMaster input as masterword
-		MasterWord = $('#input').val
-	};
+		// replace placeholder text with status
+		$('#input').attr('placeholder','Type in your secret word');
+		//... storing player 1's input as masterword
+		$('#input').val= MasterWord;
+	}
 	else {
+		// disables input field
 		greyInput();
-		$('#input').Attr('placeholder'), 'Waiting for MasterWord')
-	};
-	// if second to join, set as clueGiver
+		// replace placeholder text with status
+		$('#input').attr('placeholder','Waiting for MasterWord');
+	}
+	// set player 2 as clueGiver
 	setGiver(activePlayers[1]);
-	
-
-	console.log('choosing secret');
-	
-	//		 if second+ to join, gray the input with a 
-	//		     placeholder of 'waiting for wordMaster'
-	//		 if wordMaster request a secret word
+	console.log('choosing masterword');
 }
 
 function choosePlayerSecretClue (callback) {
@@ -92,15 +90,17 @@ function choosePlayerSecretClue (callback) {
 }
 
 function guesssecretWord (callback) {
-
+	
 }
 
 /////////////////////////////////////////////////////////
 
 // greys out the input box with a placeholder msg
 function greyInput (placeholder) {
-	// TODO: implement this
-	console.log(placeholder);
+	$("#input")
+		.val('')
+		.prop('disabled', true)
+		.prop('placeholder', placeholder);
 }
 
 // returns a promise that binds function contexts to #input
@@ -110,7 +110,7 @@ function getInput (placeholder) {
 		.off('keydown').focus()
 	  	.attr('placeholder', placeholder)
 	  	.on('keydown', function(e) {
-	 		if (e.which === 13) 
+	 		if (e.which === 13)
 	 			deferred.resolveWith(this, [this.value]);
 	}); return deferred.promise()
 }
@@ -134,18 +134,22 @@ window.onload = function() {
 		while (true){ series( 
 			waitForPlayers, 
 			chooseMasterWord
-
 			// TODO: add the rest of the stages
 		)()}
 	});
 
 
-// Set the input placeholder of players to 'waiting for wordmaster'
 
-// Enable input for word master
+//Remaining TODOs------------------
 
-// word master's input is labeled with "Choose master word",
-// when user enters in master word it is populated into the master
+// Set the input placeholder of players to 'waiting for wordmaster'. DONE
+
+// Enable input for word master. DONE
+
+// word master's input is labeled with "Choose master word". DONE
+
+// when user enters in master word it is populated into the master. In PROGRESS.
+
 // word box, but this is hidden from everyone except the word master.
 
 // Disable input for wordmaster
@@ -154,7 +158,7 @@ window.onload = function() {
 
 // Select first person in the user column, prompt him or her to enter
 // a word -- the input field has a label choose secret word. The chosen
-// user's status is populated with the secret word they chose.
+// user's status is populated with the secret word they chose. IN PROGRESS
 
 // Then the chosen player types in a clue. The input has a label called:
 // choose clue for secret word. On submit the clue box is populated with
