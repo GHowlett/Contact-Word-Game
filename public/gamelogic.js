@@ -57,7 +57,7 @@ function nameChosen (name) {
 }
 
 function waitForPlayers (callback) {
-	if (activePlayers.length <= 4) {
+	if (activePlayers.length < 4) {
 		greyInput('waiting for players');
 		setTimeout(waitForPlayers, 100, callback);
 	} else callback();
