@@ -4,7 +4,7 @@ var socket = io.connect('http://localhost');
 var MasterWord = new WordsAndClues(true, false, false);
 var secretWord = new WordsAndClues(false, true, false);
 var clue = new WordsAndClues(true, true, true);
-var activePlayers = [];
+var activePlayers = {length:0};
 
 // defines visibility of words and clues
 function WordsAndClues (visibleToWordMaster, visibleToClueGiver, visibleToPlayer) {
@@ -28,7 +28,8 @@ function Player (name, guess) {
 	else {
 		this.name = name || "";
 		this.guess = guess || ""; }
-	activePlayers.push(this);
+	activePlayers[name] = this;
+	activePlayers.length++;
 }
 
 // sets new wordMaster. if applicable, reset previous wordMaster to regular player.
@@ -66,8 +67,6 @@ function waitForPlayers (callback) {
 }
 
 function chooseMasterSecret (callback) {
-	setMaster(activePlayers[0]);
-	setGiver(activePlayers[1]);
 
 	console.log('choosing secret');
 	// TODO: if first to join, set self as wordMaster
