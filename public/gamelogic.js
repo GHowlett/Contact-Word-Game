@@ -119,7 +119,7 @@ window.onload = function() {
 		// TODO: accomplish infinite loop with cyclical 
 		// 		 callback wiring if this doesn't work 
 		while (true){ series( 
-			waitingforplayers, 
+			waitForPlayers, 
 			chooseMasterSecret
 			// TODO: add the reset of the stages
 		)()}
