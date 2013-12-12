@@ -10,17 +10,24 @@ server.use(express.static(__dirname + '/public'))
 var ioServer = http.createServer(server);
 var io = socketIO.listen(ioServer);
 
-var playerDB = []; // connected players
+var playerDB = {}; // connected players
 
 io.sockets.on("connection", function(client) {
-    playerDB.forEach(function(name) {
-        client.emit('joined', name);
+    console.log(client.id);
+
+    for (player in playerDB)
+        client.emit('joined', playerDB[player]);
+
+    client.on("named", function(player) {
+        client.broadcast.emit('joined', player);
+        playerDB[client.id] = player;
     });
 
-    client.on("named", function(name) {
-        client.broadcast.emit('joined', name);
-        playerDB.push(name);
-    });
+    client.on("disconnect", function() {
+        // you can only leave if you've joined / have a name
+        if (!playerDB[client.id]) return;
+        client.broadcast.emit('left', playerDB[client.id].name);
+    })
 });
 
 var port = process.env.PORT || 3000;
