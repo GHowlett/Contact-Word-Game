@@ -44,7 +44,9 @@ function setGiver (player) {
 
 // TODO: call callback arg once nameChosen returns
 function chooseName (callback) {
-	getInput('Choose a Nickname', nameChosen);
+	getInput('Choose a Nickname')
+	.then(nameChosen)
+	.then(callback);
 }
 
 // creates and emits the local player upon name decision
@@ -88,13 +90,16 @@ function greyInput (placeholder) {
 	// TODO: implement this
 }
 
-function getInput (placeholder, callback) {
+// returns a promise that binds function contexts to #input
+function getInput (placeholder) {
+	var deferred = new $.Deferred();
 	$('#input') // remove previous click handler
 		.off('keydown').focus()
 	  	.attr('placeholder', placeholder)
 	  	.on('keydown', function(e) {
-	 		if (e.which === 13) callback.call(this, this.value);
-	 });
+	 		if (e.which === 13) 
+	 			deferred.resolveWith(this, [this.value]);
+	}); return deferred.promise()
 }
 
 function series () { // runs function as a waterfall
