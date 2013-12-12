@@ -112,12 +112,24 @@ function chooseMasterWord (callback) {
 	console.log('choosing masterword');
 }
 
-function choosePlayerSecretClue (callback) {
-	if (localPlayer = clueGiver) {
-		$('#input')
-			.attr('disabled', false)
-			.attr('placeholder','Type in your secret word');
+function choosePlayerSecretWord (callback) {
+	if (localPlayer === clueGiver) {
+		$('#input').attr('disabled', false)
+		
+		//changing placeholder text
+		getInput('Type in a secret word')
+		.then(function(secretWord) {
+		}
+		.then(callback);
+
+		//switch input context from secret word to secret clue
+		getInput("Now type a clue.")
+		.then(function(clue){
+		}
+		.then(callback);
 	}
+	// appending string into clue box- visible to everyone.
+	$('.clue-box').append(clue);
 }
 
 function guesssecretWord (callback) {
