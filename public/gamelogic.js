@@ -42,18 +42,14 @@ function setGiver (player) {
 
 ///////////////////   Stages    ///////////////////////////
 
-// TODO: call callback arg once nameChosen returns
-function chooseName (callback) {
-	getInput('Choose a Nickname')
-	.then(nameChosen)
-	.then(callback);
-}
-
 // creates and emits the local player upon name decision
 // TODO: check if name already taken on the client side
-function nameChosen (name) {
-	addPlayer(localPlayer = new Player(name));
-	socket.emit('named', localPlayer);
+function chooseName (callback) {
+	getInput('Choose a Nickname')
+	.then(function(name){
+		addPlayer(localPlayer = new Player(name));
+		socket.emit('named', localPlayer); })
+	.then(callback);
 }
 
 function waitForPlayers (callback) {
