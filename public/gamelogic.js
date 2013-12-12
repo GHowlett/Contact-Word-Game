@@ -52,8 +52,27 @@ function setGiver (player) {
 function chooseName (callback) {
 	getInput('Choose a Nickname')
 	.then(function(name) {
-		renderPlayer(localPlayer = new Player(name));
-		socket.emit('named', localPlayer);})
+		if(!activePlayers.length) {
+			renderPlayer(localPlayer = new Player(name));
+			socket.emit('named', localPlayer);
+		} else {
+			$.each(activePlayers, function(key, value) {
+				if(name = value.name) {
+					$("#input")
+						.css("background", "#FF8566")
+						.val('')
+						.prop('placeholder', 'Name already taken, please choose another');
+				} else {
+					getInput('Choose a Nickname')
+						.then(function(name) {
+							renderPlayer(localPlayer = new Player(name));
+							socket.emit('named', localPlayer);
+						})
+						.then(callback);
+				}
+			});
+		}
+	})
 	.then(callback);
 }
 
@@ -121,12 +140,12 @@ window.onload = function() {
 		// Game Loop
 		// TODO: accomplish infinite loop with cyclical
 		// 		 callback wiring if this doesn't work
-		while (true){ series(
-			waitForPlayers,
-			chooseMasterSecret
+		// while (true){ series(
+		// 	waitForPlayers,
+		// 	chooseMasterSecret
 
-			// TODO: add the rest of the stages
-		)()}
+		// 	// TODO: add the rest of the stages
+		// )()}
 	});
 
 
