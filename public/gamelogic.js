@@ -37,7 +37,6 @@ function addPlayer (player) {
 	$('table tr:last')
 		.after('<tr> <td>' + player.name + '</td> <td>' + 'status placeholder' + '</td>  <td>' + 'response placeholder' + '</td> </tr>' );
 	activePlayers.push(player);
-	waitingForPlayers();
 }
 
 
