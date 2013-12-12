@@ -29,7 +29,7 @@ function Player (name, guess) {
 // sets new wordMaster. if applicable, reset previous wordMaster to regular player.
 function setMaster (player) {
 	if (wordMaster) delete wordMaster.secret;
-	wordMaster = player;
+	return wordMaster = player;
 }
 
 // sets new clueGiver. if applicable, reset previous clueGiver to regular player.
@@ -37,7 +37,7 @@ function setGiver (player) {
 	if (clueGiver) {
 		delete clueGiver.secret;
 		delete clueGiver.clue; }
-	clueGiver = player;
+	return clueGiver = player;
 }
 
 ///////////////////   Stages    ///////////////////////////
