@@ -48,7 +48,8 @@ function chooseName (callback) {
 	getInput('Choose a Nickname')
 	.then(function(name){
 		addPlayer(localPlayer = new Player(name));
-		socket.emit('named', localPlayer); })
+		socket.emit('named', localPlayer);
+		greyInput() })
 	.then(callback);
 }
 
@@ -66,7 +67,7 @@ function chooseMasterSecret (callback) {
 	// TODO: if first to join, set self as wordMaster
 	//		 if second to join, set as clueGiver
 
-	//		 if second+ to join, gray the input with a 
+	//		 if second+ to join, gray the input with a
 	//		     placeholder of 'waiting for wordMaster'
 	//		 if wordMaster request a secret word
 }
@@ -83,7 +84,10 @@ function guesssecretWord (callback) {
 
 // greys out the input box with a placeholder msg
 function greyInput (placeholder) {
-	// TODO: implement this
+	$("#input")
+		.val('')
+		.prop('disabled', true)
+		.prop('placeholder', placeholder);
 }
 
 // returns a promise that binds function contexts to #input
@@ -93,7 +97,7 @@ function getInput (placeholder) {
 		.off('keydown').focus()
 	  	.attr('placeholder', placeholder)
 	  	.on('keydown', function(e) {
-	 		if (e.which === 13) 
+	 		if (e.which === 13)
 	 			deferred.resolveWith(this, [this.value]);
 	}); return deferred.promise()
 }
@@ -109,10 +113,10 @@ window.onload = function() {
 	socket.on('joined', addPlayer);
 	chooseName(function(){
 		// Game Loop
-		// TODO: accomplish infinite loop with cyclical 
-		// 		 callback wiring if this doesn't work 
-		while (true){ series( 
-			waitForPlayers, 
+		// TODO: accomplish infinite loop with cyclical
+		// 		 callback wiring if this doesn't work
+		while (true){ series(
+			waitForPlayers,
 			chooseMasterSecret
 			// TODO: add the rest of the stages
 		)()}
