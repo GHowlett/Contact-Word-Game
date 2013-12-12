@@ -31,16 +31,6 @@ function WordsAndClues(visibleToWordMaster, visibleToClueGiver, visibleToPlayer)
 	this.visibleToPlayer = visibleToPlayer;
 }
 
-// creates and emits a player upon name decision
-function nameChosen (e) {
-	if (e.which === 13) {
-		localPlayer = new Player(this.value);
-		addPlayer(localPlayer);
-		socket.emit('named', localPlayer);
-		$('#input').prop('disabled', true).val('').prop('placeholder', 'Waiting for players');
-	}
-}
-
 // Game state: adding players, appending to end of table row, push players into active players array, 
 function addPlayer (player) {
 	player = new Player(player.name,player.guess);
