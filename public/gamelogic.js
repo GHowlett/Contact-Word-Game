@@ -117,6 +117,13 @@ window.onload = function() {
 		renderPlayer(new Player(playerData));
 	});
 
+	socket.on('left', function(name){
+		delete activePlayers[name];
+		activePlayers.length--;
+		console.log(name);
+		// TODO: remove player from the DOM
+	})
+
 	chooseName(function(){
 		// Game Loop
 		// TODO: accomplish infinite loop with cyclical
