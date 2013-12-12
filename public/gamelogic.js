@@ -66,17 +66,17 @@ function waitForPlayers (callback) {
 }
 
 function chooseMasterWord (callback) {
-	if (activePlayers[0]) {
+	setMaster(activePlayers[0]);
+	if (localPlayer = wordMaster) {
 		// if first to join, set self as wordMaster
-		setMaster();
-		// replace placeholder text with status
-		$('#input').attr('placeholder','Type in your secret word');
+		// enable input and replace placeholder text with status
+		$('#input')
+			.attr('disabled', false)
+			.attr('placeholder','Type in your secret word');
 		//... storing player 1's input as masterword
 		$('#input').val= MasterWord;
 	}
 	else {
-		// disables input field
-		greyInput();
 		// replace placeholder text with status
 		$('#input').attr('placeholder','Waiting for MasterWord');
 	}
