@@ -49,13 +49,11 @@ function setGiver (player) {
 ///////////////////   Stages    ///////////////////////////
 
 // creates, renders, and emits the local player upon name decision
-// TODO: check if name already taken on the client side
 function chooseName (callback) {
 	getInput('Choose a Nickname')
-	.then(function(name){
+	.then(function(name) {
 		renderPlayer(localPlayer = new Player(name));
-		socket.emit('named', localPlayer);
-		greyInput() })
+		socket.emit('named', localPlayer);})
 	.then(callback);
 }
 
