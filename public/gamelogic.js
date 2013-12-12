@@ -65,14 +65,23 @@ function waitForPlayers (callback) {
 	} else callback();
 }
 
-function chooseMasterSecret (callback) {
-	setMaster(activePlayers[0]);
+function chooseMasterWord (callback) {
+	// if first to join, set self as wordMaster
+	if (activePlayers[0]) {
+		setMaster();
+		//setting wordMaster input as masterword
+		MasterWord = $('#input').val
+	};
+	else {
+		greyInput();
+		$('#input').Attr('placeholder'), 'Waiting for MasterWord')
+	};
+	// if second to join, set as clueGiver
 	setGiver(activePlayers[1]);
+	
 
 	console.log('choosing secret');
-	// TODO: if first to join, set self as wordMaster
-	//		 if second to join, set as clueGiver
-
+	
 	//		 if second+ to join, gray the input with a 
 	//		     placeholder of 'waiting for wordMaster'
 	//		 if wordMaster request a secret word
@@ -124,7 +133,7 @@ window.onload = function() {
 		// 		 callback wiring if this doesn't work 
 		while (true){ series( 
 			waitForPlayers, 
-			chooseMasterSecret
+			chooseMasterWord
 
 			// TODO: add the rest of the stages
 		)()}
