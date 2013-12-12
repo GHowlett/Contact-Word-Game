@@ -43,6 +43,11 @@ function addPlayer (player) {
 
 ///////////////////   Stages    ///////////////////////////
 
+// TODO: call callback arg once nameChosen returns
+function chooseName (callback) {
+	getInput('Choose a Nickname', nameChosen);
+}
+
 // creates and emits a player upon name decision
 // TODO: check if name already taken on the client side
 function nameChosen (name) {
@@ -105,7 +110,7 @@ var socket = io.connect('http://localhost');
 window.onload = function() {
 	socket.on('joined', addPlayer);
 
-	getInput('Choose a Nickname', nameChosen);
+	chooseName();
 
 	//call waitingforplayers and pass in "add players" as callback
 
