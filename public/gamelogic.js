@@ -105,12 +105,25 @@ function getInput(placeholder, callback) {
 
 var socket = io.connect('http://localhost');
 
-
+function series () {
+    var context = this;
+    return [].reduceRight.call(arguments, function(next,current) {
+		return current.bind(context, next);
+	});
+}
 
 window.onload = function() {
 	socket.on('joined', addPlayer);
-
-	chooseName();
+	chooseName(function(){
+		// Game Loop
+		// TODO: accomplish infinite loop with cyclical 
+		// 		 callback wiring if this doesn't work 
+		while (true){ series( 
+			waitForPlayers, 
+			chooseMasterSecret
+			// TODO: add the reset of the stages
+		)()}
+	});
 
 	//call waitingforplayers and pass in "add players" as callback
 
