@@ -14,16 +14,18 @@ function WordsAndClues (visibleToWordMaster, visibleToClueGiver, visibleToPlayer
 }
 
 // creates, renders, and adds player to active players array.
-function addPlayer (player) {
-	player = new Player(player.name,player.guess);
+function renderPlayer (player) {
 	$('table tr:last')
-		.after('<tr> <td>' + player.name + '</td> <td>' + 'status placeholder' + '</td>  <td>' + 'response placeholder' + '</td> </tr>' );
-	activePlayers.push(player);
+		.after('<tr> <td>' + player.name + '</td> <td>' + 
+			'status placeholder' + '</td>  <td>' + 
+			'response placeholder' + '</td> </tr>' );
 }
 
 function Player (name, guess) {
 	this.name = name || "";
 	this.guess = guess || "";
+
+	activePlayers.push(this);
 }
 
 // sets new wordMaster. if applicable, reset previous wordMaster to regular player.
@@ -42,12 +44,13 @@ function setGiver (player) {
 
 ///////////////////   Stages    ///////////////////////////
 
-// creates and emits the local player upon name decision
+// creates, renders, and emits the local player upon name decision
 // TODO: check if name already taken on the client side
 function chooseName (callback) {
 	getInput('Choose a Nickname')
 	.then(function(name){
-		addPlayer(localPlayer = new Player(name));
+		console.log(name + ' is the local player');
+		renderPlayer( localPlayer = new Player(name) );
 		socket.emit('named', localPlayer); })
 	.then(callback);
 }
@@ -55,7 +58,7 @@ function chooseName (callback) {
 function waitForPlayers (callback) {
 	if (activePlayers.length < 4) {
 		greyInput('waiting for players');
-		setTimeout(waitForPlayers, 100, callback);
+		setTimeout(waitForPlayers, 2000, callback);
 	} else callback();
 }
 
@@ -63,6 +66,7 @@ function chooseMasterSecret (callback) {
 	setMaster(activePlayers[0]);
 	setGiver(activePlayers[1]);
 
+	console.log('choosing secret');
 	// TODO: if first to join, set self as wordMaster
 	//		 if second to join, set as clueGiver
 
@@ -84,6 +88,7 @@ function guesssecretWord (callback) {
 // greys out the input box with a placeholder msg
 function greyInput (placeholder) {
 	// TODO: implement this
+	console.log(placeholder);
 }
 
 // returns a promise that binds function contexts to #input
@@ -106,7 +111,10 @@ function series () { // runs function as a waterfall
 }
 
 window.onload = function() {
-	socket.on('joined', addPlayer);
+	socket.on('joined', function(remotePlayer){
+		renderPlayer(new Player(remotePlayer.name, remotePlayer.guess));
+	});
+
 	chooseName(function(){
 		// Game Loop
 		// TODO: accomplish infinite loop with cyclical 
@@ -114,6 +122,7 @@ window.onload = function() {
 		while (true){ series( 
 			waitForPlayers, 
 			chooseMasterSecret
+
 			// TODO: add the rest of the stages
 		)()}
 	});
