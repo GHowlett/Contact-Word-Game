@@ -14,16 +14,21 @@ function WordsAndClues (visibleToWordMaster, visibleToClueGiver, visibleToPlayer
 }
 
 // creates, renders, and adds player to active players array.
-function addPlayer (player) {
-	player = new Player(player.name,player.guess);
+function renderPlayer (player) {
 	$('table tr:last')
-		.after('<tr> <td>' + player.name + '</td> <td>' + 'status placeholder' + '</td>  <td>' + 'response placeholder' + '</td> </tr>' );
-	activePlayers.push(player);
+		.after('<tr> <td>' + player.name + '</td> <td>' +
+			'status placeholder' + '</td>  <td>' +
+			'response placeholder' + '</td> </tr>' );
 }
 
+// TODO: find a more semantic convention for type overloading
 function Player (name, guess) {
-	this.name = name || "";
-	this.guess = guess || "";
+	if (typeof name === "object")
+		for (prop in name) this[prop] = name[prop];
+	else {
+		this.name = name || "";
+		this.guess = guess || ""; }
+	activePlayers.push(this);
 }
 
 // sets new wordMaster. if applicable, reset previous wordMaster to regular player.
@@ -42,21 +47,21 @@ function setGiver (player) {
 
 ///////////////////   Stages    ///////////////////////////
 
-// creates and emits the local player upon name decision
+// creates, renders, and emits the local player upon name decision
 // TODO: check if name already taken on the client side
 function chooseName (callback) {
 	getInput('Choose a Nickname')
 	.then(function(name){
 		addPlayer(localPlayer = new Player(name));
 		socket.emit('named', localPlayer);
-		greyInput() })
+		greyInput() });
 	.then(callback);
 }
 
 function waitForPlayers (callback) {
 	if (activePlayers.length < 4) {
 		greyInput('waiting for players');
-		setTimeout(waitForPlayers, 100, callback);
+		setTimeout(waitForPlayers, 2000, callback);
 	} else callback();
 }
 
@@ -64,6 +69,7 @@ function chooseMasterSecret (callback) {
 	setMaster(activePlayers[0]);
 	setGiver(activePlayers[1]);
 
+	console.log('choosing secret');
 	// TODO: if first to join, set self as wordMaster
 	//		 if second to join, set as clueGiver
 
@@ -110,7 +116,10 @@ function series () { // runs function as a waterfall
 }
 
 window.onload = function() {
-	socket.on('joined', addPlayer);
+	socket.on('joined', function(playerData){
+		renderPlayer(new Player(playerData));
+	});
+
 	chooseName(function(){
 		// Game Loop
 		// TODO: accomplish infinite loop with cyclical
@@ -118,6 +127,7 @@ window.onload = function() {
 		while (true){ series(
 			waitForPlayers,
 			chooseMasterSecret
+
 			// TODO: add the rest of the stages
 		)()}
 	});
