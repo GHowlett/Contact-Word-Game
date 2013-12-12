@@ -41,18 +41,13 @@ function nameChosen (e) {
 	}
 }
 
-function waitingForPlayers() { //TODO: pass in callback
+function waitForPlayers(callback) {
 	if (activePlayers.length === 4) {
 		wordMaster = null;
 		clueGiver = null;
-		
-		//choose word master and clue giver
-		setMaster(activePlayers[0]);
-		setGiver(activePlayers[1]);
-		
-		//resetting placeholder text. TODO: create if statement to activate wordmaster's input, and grey out everyone else's.
-		$('#input').prop('placeholder', '');
 	}
+	// TODO: gray out input box with placeholder 
+	//		 of 'waiting for players'
 }
 
 // Game state: adding players, appending to end of table row, push players into active players array, 
@@ -76,12 +71,16 @@ function nameChosen (e) {
 	}
 }
 
-function chooseMasterWord () {
+function chooseMasterSecret () {
+	setMaster(activePlayers[0]);
+	setGiver(activePlayers[1]);
 
-}
+	// TODO: if first to join, set self as wordMaster
+	//		 if second to join, set as clueGiver
 
-function choosesecretWord () {
-
+	//		 if second+ to join, gray the input with a 
+	//		     placeholder of 'waiting for wordMaster'
+	//		 if wordMaster request a secret word
 }
 
 function choosePlayerSecretClue () {
