@@ -92,6 +92,10 @@ function guesssecretWord () {
 
 }
 
+function greyInput(placeholder) {
+	
+}
+
 function getInput(placeholder, callback) {
 	// remove previous click handler
 	$('#input').off('keydown').focus(); 
