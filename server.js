@@ -2,6 +2,7 @@ var path = require("path"),
     express = require("express"),
     socketIO = require("socket.io"),
     http = require("http"),
+    _ = require("underscore"),
     server = express();
 
 server.use(express.static(__dirname + '/public'))
