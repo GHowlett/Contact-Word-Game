@@ -57,8 +57,23 @@ function setGiver (player) {
 
 ///////////////////   Stages    ///////////////////////////
 
+// executes another round of the game
+var playRound = series(
+	waitForPlayers,
+	chooseMasterWord
+	// TODO: add the rest of the stages
+);
+
+// runs function as a waterfall
+function series () { 
+    var context = this;
+    return [].reduceRight.call(arguments, function(next,current) {
+		return current.bind(context, next);
+	});
+}
+
 // creates, renders, and emits the local player upon name decision
-function chooseName (callback) {
+function chooseName () {
 	getInput('Choose a Nickname')
 	.then(function(name) {
 		if(!activePlayers.length) {
@@ -77,14 +92,13 @@ function chooseName (callback) {
 							renderPlayer(localPlayer = new Player(name));
 							socket.emit('named', localPlayer);
 						})
-						.then(callback);
 				}
 			});
 		}
 	})
-	.then(callback);
 }
 
+// TODO: get rid of this
 function waitForPlayers (callback) {
 	if (activePlayers.length < 4) {
 		greyInput('waiting for players');
@@ -181,17 +195,19 @@ function getInput (placeholder) {
 	}); return deferred.promise()
 }
 
-function series () { // runs function as a waterfall
-    var context = this;
-    return [].reduceRight.call(arguments, function(next,current) {
-		return current.bind(context, next);
-	});
-}
-
 window.onload = function() {
+	// TODO: make sure all emitions are being captured
+	// 		 even though we don't listen until now
 	socket.on('joined', function(playerData){
 		renderPlayer(new Player(playerData));
 	});
+	
+	// Game Loop (runs if name has been chosen)
+	socket.on('newRound', function(pair){
+		setMaster(activePlayers[pair.master]);
+		setGiver(activePlayers[pair.giver]);
+		if (localPlayer) playRound();
+	})
 
 	socket.on('left', function(name){
 		removePlayer(activePlayers[name]);
@@ -200,16 +216,7 @@ window.onload = function() {
 		console.log(name);
 	})
 
-	chooseName(function(){
-		// Game Loop
-		// TODO: accomplish infinite loop with cyclical
-		// 		 callback wiring if this doesn't work
-		while (true){ series(
-			waitForPlayers,
-			chooseMasterWord
-			// TODO: add the rest of the stages
-		)()}
-	});
+	chooseName();
 
 
 
