@@ -124,7 +124,6 @@ function chooseMasterWord (callback) {
 
 function choosePlayerSecretWord (callback) {
 	if (localPlayer === clueGiver) {
-<<<<<<< HEAD
 		$('#input').attr('disabled', false);
 		
 		//switch input conext to secretword
@@ -136,21 +135,6 @@ function choosePlayerSecretWord (callback) {
 		getInput("Now type a clue.")
 			.then(function(clue){})
 			.then(callback);
-=======
-		$('#input').attr('disabled', false)
-
-		//changing placeholder text
-		getInput('Type in a secret word')
-		.then(function(secretWord) {
-		})
-		.then(callback);
-
-		//switch input context from secret word to secret clue
-		getInput("Now type a clue.")
-		.then(function(clue){
-		})
-		.then(callback);
->>>>>>> 108cb7d61ae37490f349e6898f76172c0b234a25
 	}
 	// appending string into clue box- visible to everyone.
 	$('.clue-box').append(clue);
