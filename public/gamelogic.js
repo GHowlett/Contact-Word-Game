@@ -88,21 +88,21 @@ function chooseMasterWord (callback) {
 		.then(function(secret) {
 			if (localPlayer === wordMaster) {
 			// for wordmaster, enable input and replace placeholder text with status
-			$('#input')
-				.attr('disabled', false)
-				.attr('placeholder','Type in your secret word');
-			// on submit- disabling wordMaster's input
-			$('#input').on('keydown', function(e) {
-				if (e.which === 13) {
-					$("#input")
-						.attr('disabled', true)
-						.attr('placeholder','Your secret word is' + secret);
-				}
-			});
-		} else {
-		// for everyone else, keep input disabled and replace placeholder text with status
-			$('#input').attr('placeholder','Waiting for MasterWord');
-		}
+				$('#input')
+					.attr('disabled', false)
+					.attr('placeholder','Type in your secret word');
+				// on submit- disabling wordMaster's input
+				$('#input').on('keydown', function(e) {
+					if (e.which === 13) {
+						$("#input")
+							.attr('disabled', true)
+							.attr('placeholder','Your secret word is' + secret);
+					}
+				});
+			} else {
+			// for everyone else, keep input disabled and replace placeholder text with status
+				$('#input').attr('placeholder','Waiting for MasterWord');
+			}
 
 		//splitting masterword into an array of strings
 		var splitWord = MasterWord.split('');
@@ -115,33 +115,40 @@ function chooseMasterWord (callback) {
 
 function choosePlayerSecretWord (callback) {
 	if (localPlayer === clueGiver) {
-
-	}
-}
-
-function choosePlayerSecretWord (callback) {
-	if (localPlayer === clueGiver) {
-		$('#input').attr('disabled', false)
+		$('#input').attr('disabled', false);
 		
-		//changing placeholder text
+		//switch input conext to secretword
 		getInput('Type in a secret word')
-		.then(function(secretWord) {
-		}
-		.then(callback);
+			.then(function(secretWord) {})
+			.then(callback);
 
 		//switch input context from secret word to secret clue
 		getInput("Now type a clue.")
-		.then(function(clue){
-		}
-		.then(callback);
+			.then(function(clue){})
+			.then(callback);
 	}
 	// appending string into clue box- visible to everyone.
 	$('.clue-box').append(clue);
+	//TODO: allow cluegiver to edit secret clue as many times as he/she wants
 }
 
 function guesssecretWord (callback) {
-
+	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
+		//players are now able to type guesses
+		$('#input').attr('disabled', false);
+		getInput('What is ' + clueGiver + " 's word?")
+			.then(function(guess){
+				socket.emit('guessed', guess);
+			})
+			.then(callback);
+	}
 }
+
+	//TODO: implement wordMaster guesses. can guess as many times as he/she wants.
+	//TODO: each player can input a guess once. 
+	//TODO: set up success condition to reveal next letter of masterword if strings from player guesses match. 
+
+
 
 /////////////////////////////////////////////////////////
 
