@@ -57,7 +57,7 @@ function chooseName (callback) {
 			socket.emit('named', localPlayer);
 		} else {
 			$.each(activePlayers, function(key, value) {
-				if(name = value.name) {
+				if(name === value.name) {
 					$("#input")
 						.css("background", "#FF8566")
 						.val('')
@@ -84,32 +84,39 @@ function waitForPlayers (callback) {
 }
 
 function chooseMasterWord (callback) {
-	if (localPlayer === wordMaster) {
-		// for wordmaster, enable input and replace placeholder text with status
-		$('#input')
-			.attr('disabled', false)
-			.attr('placeholder','Type in your secret word');
-		MasterWord = $('#input').val();
-		// on submit- disabling wordMaster's input
-		$('#input').on('keydown', function(e) {
-			if (e.which === 13) {
-				$("#input").attr('disabled', false)
-				.attr('placeholder','Your secret word is' + MasterWord);
-			}
-		});
-	}	
-	else {
+	getInput('Type in your secret word')
+		.then(function(secret) {
+			if (localPlayer === wordMaster) {
+			// for wordmaster, enable input and replace placeholder text with status
+			$('#input')
+				.attr('disabled', false)
+				.attr('placeholder','Type in your secret word');
+			// on submit- disabling wordMaster's input
+			$('#input').on('keydown', function(e) {
+				if (e.which === 13) {
+					$("#input")
+						.attr('disabled', true)
+						.attr('placeholder','Your secret word is' + secret);
+				}
+			});
+		} else {
 		// for everyone else, keep input disabled and replace placeholder text with status
-		$('#input').attr('placeholder','Waiting for MasterWord');
+			$('#input').attr('placeholder','Waiting for MasterWord');
 		}
 
-	//splitting masterword into an array of strings
-	var splitWord = MasterWord.split('');
+		//splitting masterword into an array of strings
+		var splitWord = MasterWord.split('');
 
-	//append first letter of masterword to master-word-box
-	$('.master-word-box').append(splitWord[0]);
+		//append first letter of masterword to master-word-box
+		$('.master-word-box').append(splitWord[0]);
+	})
+	.then(callback);
+}
 
-	console.log('choosing masterword');
+function choosePlayerSecretWord (callback) {
+	if (localPlayer === clueGiver) {
+
+	}
 }
 
 function choosePlayerSecretClue (callback) {
@@ -121,7 +128,7 @@ function choosePlayerSecretClue (callback) {
 }
 
 function guesssecretWord (callback) {
-	
+
 }
 
 /////////////////////////////////////////////////////////
@@ -167,13 +174,13 @@ window.onload = function() {
 
 	chooseName(function(){
 		// Game Loop
-		// TODO: accomplish infinite loop with cyclical 
-		// 		 callback wiring if this doesn't work 
-		// while (true){ series( 
-		// 	waitForPlayers, 
-		// 	chooseMasterWord
-		// 	// TODO: add the rest of the stages
-		// )()}
+		// TODO: accomplish infinite loop with cyclical
+		// 		 callback wiring if this doesn't work
+		while (true){ series(
+			waitForPlayers,
+			chooseMasterWord
+			// TODO: add the rest of the stages
+		)()}
 	});
 
 
