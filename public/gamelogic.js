@@ -16,9 +16,7 @@ function WordsAndClues (visibleToWordMaster, visibleToClueGiver, visibleToPlayer
 // creates, renders, and adds player to active players array.
 function renderPlayer (player) {
 	$('table tr:last')
-		.after('<tr> <td>' + player.name + '</td> <td>' +
-			'status placeholder' + '</td>  <td>' +
-			'response placeholder' + '</td> </tr>' );
+		.after('<tr> <td>' + player.name + '</td> <td>' + 'response placeholder' + '</td> </tr>' );
 }
 
 function removePlayer (player) {
@@ -67,7 +65,7 @@ var playRound = series(
 );
 
 // runs function as a waterfall
-function series () { 
+function series () {
     var context = this;
     return [].reduceRight.call(arguments, function(next,current) {
 		return current.bind(context, next);
@@ -117,12 +115,11 @@ function chooseMasterWord (callback) {
 					.attr('disabled', false)
 					.attr('placeholder','Type in your secret word');
 				// on submit- disabling wordMaster's input
-				$('#input').on('keydown', function(e) {
-					if (e.which === 13) {
+				$('#gameForm').submit(function(e) {
+					e.preventDefault();
 						$("#input")
 							.attr('disabled', true)
 							.attr('placeholder','Your secret word is' + secret);
-					}
 				});
 			} else {
 			// for everyone else, keep input disabled and replace placeholder text with status
@@ -141,7 +138,7 @@ function chooseMasterWord (callback) {
 function chooseGiverWord (callback) {
 	if (localPlayer === clueGiver) {
 		$('#input').attr('disabled', false);
-		
+
 		//switch input conext to secretword
 		getInput('Type in a secret word')
 			.then(function(secretWord) {})
@@ -170,8 +167,8 @@ function guessWord (callback) {
 }
 
 	//TODO: implement wordMaster guesses. can guess as many times as he/she wants.
-	//TODO: each player can input a guess once. 
-	//TODO: set up success condition to reveal next letter of masterword if strings from player guesses match. 
+	//TODO: each player can input a guess once.
+	//TODO: set up success condition to reveal next letter of masterword if strings from player guesses match.
 
 
 
@@ -188,12 +185,12 @@ function greyInput (placeholder) {
 // returns a promise that binds function contexts to #input
 function getInput (placeholder) {
 	var deferred = new $.Deferred();
-	$('#input') // remove previous click handler
-		.off('keydown').focus()
-	  	.attr('placeholder', placeholder)
-	  	.on('keydown', function(e) {
-	 		if (e.which === 13)
-	 			deferred.resolveWith(this, [this.value]);
+	var input = $("#input");
+	$(input).attr('placeholder', placeholder);
+	$('#gameForm').submit(function(e) {
+	// remove previous click handler
+	 	e.preventDefault();
+	 	deferred.resolveWith(input, [input.val()]);
 	}); return deferred.promise()
 }
 
@@ -203,7 +200,7 @@ window.onload = function() {
 	socket.on('joined', function(playerData){
 		renderPlayer(new Player(playerData));
 	});
-	
+
 	// Game Loop (runs if name has been chosen)
 	socket.on('newRound', function(pair){
 		setMaster(activePlayers[pair.master]);
@@ -219,6 +216,7 @@ window.onload = function() {
 	})
 
 	chooseName();
+
 
 
 

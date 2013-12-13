@@ -10,27 +10,37 @@
 </head>
 <body>
 
-	<h2 class="title">Contact</h2>
+<!-- 	<h2 class="title">Contact</h2> -->
+
+	<header>
+		<span class="game-status">Status</span>
+	</header>
 
 	<span class="master-word-box"></span>
 
-	<span class="clue-box"></span>
+	<div class="gameArea">
+		<span class="clue-box"></span>
 
-	<table>
-		<thead class="header">
-			<tr>
-				<th class="users">Users</th>
-				<th class="status">Status</th>
-				<th class="response">Response</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr class="table-data">
-			</tr>
-		</tbody>
-	</table>
+		<table>
+			<thead class="header">
+				<tr>
+					<th class="users">Users</th>
+					<!-- <th class="status">Status</th> -->
+					<th class="response">Response</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="table-data">
+				</tr>
+			</tbody>
+		</table>
+	</div>
 
-	<input id="input" name="input" type="text"></input>
+	<form id="gameForm">
+ 		<input id="input" name="input" type="text">
+ 		<input id="submit" name="submit" type="submit">
+ </form>
+
 
 </body>
 </html>
