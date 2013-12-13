@@ -60,7 +60,9 @@ function setGiver (player) {
 // executes another round of the game
 var playRound = series(
 	waitForPlayers,
-	chooseMasterWord
+	chooseMasterWord,
+	chooseGiverWord,
+	guessWord
 	// TODO: add the rest of the stages
 );
 
@@ -136,7 +138,7 @@ function chooseMasterWord (callback) {
 	.then(callback);
 }
 
-function choosePlayerSecretWord (callback) {
+function chooseGiverWord (callback) {
 	if (localPlayer === clueGiver) {
 		$('#input').attr('disabled', false);
 		
@@ -155,7 +157,7 @@ function choosePlayerSecretWord (callback) {
 	//TODO: allow cluegiver to edit secret clue as many times as he/she wants
 }
 
-function guesssecretWord (callback) {
+function guessWord (callback) {
 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
 		//players are now able to type guesses
 		$('#input').attr('disabled', false);
