@@ -16,10 +16,10 @@ var playerCount = 0;
 var isPlaying = false;
 
 function startNewRound() {
-    var players = Object.keys(playerDB);
-    var pair = {
-        master: players[0], // TODO: pick random master
-        giver: players[1]   /* TODO: pick random giver */}
+    var pair = _.sample(playerDB, 2);
+    pair = {
+        master: pair[0].name,
+        giver: pair[1].name }
     io.sockets.emit('newRound', pair);
     isPlaying = true;
 }
