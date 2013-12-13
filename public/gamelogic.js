@@ -191,11 +191,11 @@ window.onload = function() {
 		// Game Loop
 		// TODO: accomplish infinite loop with cyclical
 		// 		 callback wiring if this doesn't work
-		// while (true){ series(
-		// 	waitForPlayers,
-		// 	chooseMasterWord
-		// 	// TODO: add the rest of the stages
-		// )()}
+		while (true){ series(
+			waitForPlayers,
+			chooseMasterWord
+			// TODO: add the rest of the stages
+		)()}
 	});
 
 
