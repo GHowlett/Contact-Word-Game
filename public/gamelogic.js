@@ -28,7 +28,7 @@ function Player (name, guess) {
 	else {
 		this.name = name || "";
 		this.guess = guess || ""; }
-	activePlayers[name] = this;
+	activePlayers[this.name] = this;
 	activePlayers.length++;
 }
 
