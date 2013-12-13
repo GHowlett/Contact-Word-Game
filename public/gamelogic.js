@@ -21,6 +21,15 @@ function renderPlayer (player) {
 			'response placeholder' + '</td> </tr>' );
 }
 
+function removePlayer (player) {
+	$('tr:contains(' + player + ')')
+		.remove() // remove player name
+		.next()
+		.remove() // remove player status
+		.next()
+		.remove() // remove player response
+}
+
 // TODO: find a more semantic convention for type overloading
 function Player (name, guess) {
 	if (typeof name === "object")
@@ -115,24 +124,18 @@ function chooseMasterWord (callback) {
 
 function choosePlayerSecretWord (callback) {
 	if (localPlayer === clueGiver) {
-
-	}
-}
-
-function choosePlayerSecretWord (callback) {
-	if (localPlayer === clueGiver) {
 		$('#input').attr('disabled', false)
-		
+
 		//changing placeholder text
 		getInput('Type in a secret word')
 		.then(function(secretWord) {
-		}
+		})
 		.then(callback);
 
 		//switch input context from secret word to secret clue
 		getInput("Now type a clue.")
 		.then(function(clue){
-		}
+		})
 		.then(callback);
 	}
 	// appending string into clue box- visible to everyone.
@@ -178,21 +181,21 @@ window.onload = function() {
 	});
 
 	socket.on('left', function(name){
+		removePlayer(activePlayers[name]);
 		delete activePlayers[name];
 		activePlayers.length--;
 		console.log(name);
-		// TODO: remove player from the DOM
 	})
 
 	chooseName(function(){
 		// Game Loop
 		// TODO: accomplish infinite loop with cyclical
 		// 		 callback wiring if this doesn't work
-		while (true){ series(
-			waitForPlayers,
-			chooseMasterWord
-			// TODO: add the rest of the stages
-		)()}
+		// while (true){ series(
+		// 	waitForPlayers,
+		// 	chooseMasterWord
+		// 	// TODO: add the rest of the stages
+		// )()}
 	});
 
 
