@@ -15,8 +15,11 @@ function WordsAndClues (visibleToWordMaster, visibleToClueGiver, visibleToPlayer
 
 // creates, renders, and adds player to active players array.
 function renderPlayer (player) {
-	$('table tr:last')
-		.after('<tr> <td>' + player.name + '</td> <td>' + 'response placeholder' + '</td> </tr>' );
+	$('tbody').append(
+		'<tr>' +
+			'<td>' + player.name + '</td>' +
+			'<td>' + 'response placeholder' + '</td>' +
+		'</tr>' );
 }
 
 function removePlayer (name) {
