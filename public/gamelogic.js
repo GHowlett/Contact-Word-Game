@@ -77,6 +77,8 @@ function series () {
 
 // creates, renders, and emits the local player upon name decision
 function chooseName () {
+	console.log('choosing name');
+
 	getInput('Choose a Nickname')
 	.then(function(name) {
 		if(!activePlayers.length) {
@@ -102,6 +104,8 @@ function chooseName () {
 }
 
 function chooseMasterWord (callback) {
+	console.log('choosing master word');
+
 	getInput('Type in your secret word')
 		.then(function(secret) {
 			if (localPlayer === wordMaster) {
@@ -131,6 +135,8 @@ function chooseMasterWord (callback) {
 }
 
 function chooseGiverWord (callback) {
+	console.log('choosing giver word');
+
 	if (localPlayer === clueGiver) {
 		$('#input').attr('disabled', false);
 
@@ -150,6 +156,8 @@ function chooseGiverWord (callback) {
 }
 
 function guessWord (callback) {
+	console.log('guessing word');
+
 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
 		//players are now able to type guesses
 		$('#input').attr('disabled', false);
@@ -164,7 +172,6 @@ function guessWord (callback) {
 	//TODO: implement wordMaster guesses. can guess as many times as he/she wants.
 	//TODO: each player can input a guess once.
 	//TODO: set up success condition to reveal next letter of masterword if strings from player guesses match.
-
 
 
 /////////////////////////////////////////////////////////
