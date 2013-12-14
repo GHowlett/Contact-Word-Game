@@ -158,7 +158,6 @@ function choosePlayerSecretWord (callback) {
 	// appending string into clue box- visible to everyone.
 	$('.clue-box').append('#1: ' + clue);
 	//TODO: allow cluegiver to append up to 3 clues
-	//TODO: set text limit to X amount of characters
 }
 
 function guesssecretWord (callback) {
