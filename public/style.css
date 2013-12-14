@@ -9,6 +9,8 @@
 body {
 	font-family: sans-serif;
 	font-size: 100%;
+	z-index: 0;
+	position: relative;
 }
 
 header {
@@ -145,4 +147,24 @@ input[type=submit] {
 input[type=submit]:hover {
 	background: #1FAAC2;
 	cursor: pointer;
+}
+
+.modal {
+	z-index: 2;
+	position: fixed;
+
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+}
+
+.modal-inner {
+	width: 400px;
+	margin: 30px auto;
+	position: relative;
+	z-index: 3;
+		background: #fff;
+	box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.1);
+	padding: 1em;
 }

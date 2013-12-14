@@ -70,6 +70,10 @@ function preventDuplicateNames(playerName) {
 	return true;
 }
 
+function modal() {
+	$('body').append("<div class='modal'><div class='modal-inner'><p>Hello world</p></div></div>");
+}
+
 ///////////////////   Stages    ///////////////////////////
 
 // executes another round of the game
