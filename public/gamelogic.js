@@ -116,7 +116,7 @@ function chooseName () {
 
 function chooseMasterWord (callback) {
 	console.log("choosing master word");
-	
+
 	if (localPlayer === wordMaster) {
 		
 		// for wordmaster, enable input
@@ -261,13 +261,17 @@ window.onload = function() {
 	});
 
 	socket.on('pause', function(reason){
-		console.log('paused');
-		// TODO: popup modal
+		if (localPlayer) {
+			console.log('paused');
+			// TODO: bring up a popup modal
+		}
 	});
 
 	socket.on('resume', function(){
-		console.log('resumed');
-		// TODO: remove modal
+		if (localPlayer) {
+			console.log('resumed');
+			// TODO: remove modal if it's up
+		}
 	});
 
 	// Game Loop (runs if name has been chosen)
