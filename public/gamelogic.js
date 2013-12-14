@@ -64,8 +64,8 @@ function setGiver (player) {
 // executes another round of the game
 var playRound = series(
 	chooseMasterWord,
-	chooseGiverWord,
-	guessWord
+	choosePlayerSecretWord,
+	guesssecretWord
 	// TODO: add the rest of the stages
 );
 
@@ -98,9 +98,6 @@ function chooseName () {
 function isDuplicateName(playerName) {
 	for (name in activePlayers)
 		if (playerName === name) return false;
-}
-
-function returnTrue() {
 	return true;
 }
 
@@ -230,7 +227,7 @@ function greyInput (placeholder) {
 function getInput (placeholder, validate) {
 	var deferred = new $.Deferred();
 	var input = $("#input").attr('placeholder', placeholder);
-
+	
 	// clear out old handlers
 	$('#gameForm').off('submit');
 	$('#gameForm').submit(function(e) {
