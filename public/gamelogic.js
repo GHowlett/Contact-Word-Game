@@ -106,7 +106,7 @@ function chooseName () {
 	getInput('Choose a Nickname', preventDuplicateNames)
 	.then(function(name) {
 		renderPlayer(localPlayer = new Player(name));
-		socket.emit('named', localPlayer);
+		socket.emit('joined', localPlayer);
 		$("td:empty").parent().remove();
 	}, function() {
 		console.log("failed, calling function again")

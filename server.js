@@ -30,7 +30,7 @@ io.sockets.on("connection", function(client) {
     for (player in playerDB)
         client.emit('joined', playerDB[player]);
 
-    client.on("named", function(player) {
+    client.on("joined", function(player) {
         client.broadcast.emit('joined', player);
         playerDB[client.id] = player;
 
