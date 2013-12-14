@@ -82,31 +82,22 @@ function series () {
 function chooseName () {
 	console.log('choosing name');
 
-	getInput('Choose a Nickname', preventDuplicateNames)
-	.then(function(name) {
+	getInput('Choose a Nickname', isDuplicateName)
+	.done(function(name) {
 		renderPlayer(localPlayer = new Player(name));
 		socket.emit('joined', localPlayer);
-		$("td:empty").parent().remove();
-	}, function() {
-		console.log("failed, calling function again")
-		chooseName();
+		$("td:empty").parent().remove(); })
+	.fail(function() {
+		this.css('background', '#FFDDDD') // TODO: change this back after timeout
+			.val('')
+			.prop('placeholder', 'Name already taken, please choose another');
+		setTimeout(chooseName, 4000); // show error message for 2 seconds
 	})
 }
 
-function preventDuplicateNames(playerName) {
-	if(!activePlayers.length) {
-		return true;
-	}
-	for (name in activePlayers) {
-		if(playerName === name) {
-			$('#input')
-				.css('background', '#FF8566')
-				.val('')
-				.prop('placeholder', 'Name already taken, please choose another');
-			console.log("same name!");
-			return false;
-		}
-	}
+function isDuplicateName(playerName) {
+	for (name in activePlayers)
+		if(playerName === name) return false;
 	return true;
 }
 
