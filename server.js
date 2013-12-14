@@ -13,6 +13,7 @@ var io = socketIO.listen(ioServer);
 
 var playerDB = {};
 var playerCount = 0; // TODO: get rid of this
+var minPlayers = 3;
 var hasStarted = false;
 
 function startNewRound() {
@@ -29,10 +30,10 @@ function onJoined(player) {
     playerDB[this.id] = player;
 
     playerCount += 1;
-    if (playerCount == 3) {
+    if (playerCount == minPlayers) {
         this.broadcast.emit('resume');
         if (!hasStarted) startNewRound(); }
-    if (playerCount < 3)
+    if (playerCount < minPlayers)
         this.emit('pause', 'Waiting for Players');
 }
 
@@ -42,7 +43,7 @@ function onDisconnect() {
     this.broadcast.emit('left', playerDB[this.id].name);
     delete playerDB[this.id];
 
-    if (--playerCount == 2) 
+    if (--playerCount +1 == minPlayers) 
         this.broadcast.emit('pause', 'Waiting for Players');
 }
 
