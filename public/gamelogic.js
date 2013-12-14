@@ -180,13 +180,16 @@ function greyInput (placeholder) {
 // returns a promise that binds function contexts to #input
 function getInput (placeholder) {
 	var deferred = new $.Deferred();
-	var input = $("#input");
-	$(input).attr('placeholder', placeholder);
+	var input = $("#input").attr('placeholder', placeholder);
+
+	// clear out old handlers
+	$('#gameForm').off('submit');
 	$('#gameForm').submit(function(e) {
-	// remove previous click handler
 	 	e.preventDefault();
 	 	deferred.resolveWith(input, [input.val()]);
-	}); return deferred.promise()
+	}); 
+
+	return deferred.promise()
 }
 
 window.onload = function() {
