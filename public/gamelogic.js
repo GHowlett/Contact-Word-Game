@@ -163,8 +163,10 @@ function choosePlayerSecretWord (callback) {
 
 function guesssecretWord (callback) {
 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
-		//players are now able to type guesses
+		//enable input for players
 		$('#input').attr('disabled', false);
+		
+
 		getInput('What is ' + clueGiver + " 's word?")
 			.then(function(guess){
 				socket.emit('playerGuessed', guess);
@@ -173,11 +175,11 @@ function guesssecretWord (callback) {
 		//lock input on submit
 		$('#input').attr('disabled', true);
 	}
+
 	if (localPlayer === wordMaster) {
-		//TODO: implement wordMaster guesses. can guess as many times as he/she wants.
-		getInput(  )
-			.then(function(guess){
-				socket.emit('wmGuessed', guess);
+		getInput("Guess the clue and break the contact!")
+			.then(function(WMguess){
+				socket.emit('wmGuessed', WMguess);
 			})
 			.then(callback);
 	}
