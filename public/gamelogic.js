@@ -59,6 +59,27 @@ function setGiver (player) {
 	return clueGiver = player;
 }
 
+function preventDuplicateNames(playerName) {
+	if(!activePlayers.length) {
+		return true;
+	}
+	for (name in activePlayers) {
+		if(playerName === name) {
+			$('#input')
+				.css('background', '#FF8566')
+				.val('')
+				.prop('placeholder', 'Name already taken, please choose another');
+			console.log("same name!");
+			return false;
+		}
+	}
+	return true;
+}
+
+function modal() {
+	$('body').append("<div class='modal'><div class='modal-inner'><p>Hello world</p></div></div>");
+}
+
 ///////////////////   Stages    ///////////////////////////
 
 // executes another round of the game
@@ -82,28 +103,16 @@ function series () {
 function chooseName () {
 	console.log('choosing name');
 
-	getInput('Choose a Nickname')
+	getInput('Choose a Nickname', preventDuplicateNames)
 	.then(function(name) {
-		if(!activePlayers.length) {
-			renderPlayer(localPlayer = new Player(name));
-			socket.emit('named', localPlayer);
-		} else {
-			$.each(activePlayers, function(key, value) {
-				if(name === value.name) {
-					$("#input")
-						.css("background", "#FF8566")
-						.val('')
-						.prop('placeholder', 'Name already taken, please choose another');
-				} else {
-					getInput('Choose a Nickname')
-						.then(function(name) {
-							renderPlayer(localPlayer = new Player(name));
-							socket.emit('named', localPlayer);
-						})
-				}
-			});
-		}
+		renderPlayer(localPlayer = new Player(name));
+		socket.emit('named', localPlayer);
+		$("td:empty").parent().remove();
+	}, function() {
+		console.log("failed, calling function again")
+		chooseName(callback);
 	})
+	.then(callback);
 }
 
 function chooseMasterWord (callback) {
@@ -188,7 +197,7 @@ function greyInput (placeholder) {
 }
 
 // returns a promise that binds function contexts to #input
-function getInput (placeholder) {
+function getInput (placeholder, validate) {
 	var deferred = new $.Deferred();
 	var input = $("#input").attr('placeholder', placeholder);
 
@@ -196,8 +205,10 @@ function getInput (placeholder) {
 	$('#gameForm').off('submit');
 	$('#gameForm').submit(function(e) {
 	 	e.preventDefault();
-	 	deferred.resolveWith(input, [input.val()]);
-	}); 
+	 	validate(input.val())
+	 		? deferred.resolveWith(input, [input.val()])
+	 		: deferred.rejectWith(input, [input.val()]);
+ 	}); 
 
 	return deferred.promise()
 }
