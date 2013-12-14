@@ -53,6 +53,23 @@ function setGiver (player) {
 	return clueGiver = player;
 }
 
+function preventDuplicateNames(playerName) {
+	if(!activePlayers.length) {
+		return true;
+	}
+	for (name in activePlayers) {
+		if(playerName === name) {
+			$('#input')
+				.css('background', '#FF8566')
+				.val('')
+				.prop('placeholder', 'Name already taken, please choose another');
+			console.log("same name!");
+			return false;
+		}
+	}
+	return true;
+}
+
 ///////////////////   Stages    ///////////////////////////
 
 // executes another round of the game
@@ -73,29 +90,17 @@ function series () {
 }
 
 // creates, renders, and emits the local player upon name decision
-function chooseName () {
-	getInput('Choose a Nickname')
+function chooseName (callback) {
+	getInput('Choose a Nickname', preventDuplicateNames)
 	.then(function(name) {
-		if(!activePlayers.length) {
-			renderPlayer(localPlayer = new Player(name));
-			socket.emit('named', localPlayer);
-		} else {
-			$.each(activePlayers, function(key, value) {
-				if(name === value.name) {
-					$("#input")
-						.css("background", "#FF8566")
-						.val('')
-						.prop('placeholder', 'Name already taken, please choose another');
-				} else {
-					getInput('Choose a Nickname')
-						.then(function(name) {
-							renderPlayer(localPlayer = new Player(name));
-							socket.emit('named', localPlayer);
-						})
-				}
-			});
-		}
+		renderPlayer(localPlayer = new Player(name));
+		socket.emit('named', localPlayer);
+		$("td:empty").parent().remove();
+	}, function() {
+		console.log("failed, calling function again")
+		chooseName(callback);
 	})
+	.then(callback);
 }
 
 // TODO: get rid of this
@@ -183,15 +188,18 @@ function greyInput (placeholder) {
 }
 
 // returns a promise that binds function contexts to #input
-function getInput (placeholder) {
+function getInput (placeholder, validate) {
 	var deferred = new $.Deferred();
 	var input = $("#input");
 	$(input).attr('placeholder', placeholder);
 	$('#gameForm').submit(function(e) {
 	// remove previous click handler
 	 	e.preventDefault();
-	 	deferred.resolveWith(input, [input.val()]);
-	}); return deferred.promise()
+	 	var foo = validate(input.val());
+	 	foo
+	 		? deferred.resolveWith(input, [input.val()])
+	 		: deferred.rejectWith(input, [input.val()]);
+ 	}); return deferred.promise()
 }
 
 window.onload = function() {
