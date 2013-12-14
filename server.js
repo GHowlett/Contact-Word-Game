@@ -24,33 +24,34 @@ function startNewRound() {
     io.sockets.emit('newRound', pair);
 }
 
-io.sockets.on("connection", function(client) {
-    console.log(client.id);
+function onJoined(player) {
+    this.broadcast.emit('joined', player);
+    playerDB[this.id] = player;
 
+    playerCount += 1;
+    if (playerCount == 3) {
+        this.broadcast.emit('resume');
+        if (!hasStarted) startNewRound(); }
+    if (playerCount < 3)
+        this.emit('pause', 'Waiting for Players');
+}
+
+function onDisconnect() {
+    // you can only leave if you've joined / have a name
+    if (!playerDB[this.id]) return;
+    this.broadcast.emit('left', playerDB[this.id].name);
+    delete playerDB[this.id];
+
+    if (--playerCount < 3) 
+        this.broadcast.emit('pause', 'Waiting for Players');
+}
+
+io.sockets.on("connection", function(client) {
     for (player in playerDB)
         client.emit('joined', playerDB[player]);
 
-    client.on("joined", function(player) {
-        client.broadcast.emit('joined', player);
-        playerDB[client.id] = player;
-
-        playerCount += 1;
-        if (playerCount == 3) {
-            client.broadcast.emit('resume');
-            if (!hasStarted) startNewRound(); }
-        if (playerCount < 3)
-            client.emit('pause', 'Waiting for Players');
-    });
-
-    client.on("disconnect", function() {
-        // you can only leave if you've joined / have a name
-        if (!playerDB[client.id]) return;
-        client.broadcast.emit('left', playerDB[client.id].name);
-        delete playerDB[client.id];
-
-        if (--playerCount < 3) 
-            client.broadcast.emit('pause', 'Waiting for Players');
-    });
+    client.on("joined", onJoined);
+    client.on("disconnect", onDisconnect);
 });
 
 var port = process.env.PORT || 3000;
