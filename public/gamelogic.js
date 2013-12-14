@@ -110,9 +110,8 @@ function chooseName () {
 		$("td:empty").parent().remove();
 	}, function() {
 		console.log("failed, calling function again")
-		chooseName(callback);
+		chooseName();
 	})
-	.then(callback);
 }
 
 function chooseMasterWord (callback) {
