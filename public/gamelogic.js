@@ -1,9 +1,9 @@
 //global objects
 // TODO: see if connect('/') works
 var socket = io.connect('http://localhost');
-var MasterWord = new WordsAndClues(true, false, false);
-var secretWord = new WordsAndClues(false, true, false);
-var clue = new WordsAndClues(true, true, true);
+var masterWordVisibility = new WordsAndClues(true, false, false);
+var secretWordVisibility = new WordsAndClues(false, true, false);
+var clueVisibility = new WordsAndClues(true, true, true);
 var activePlayers = {length:0};
 
 // defines visibility of words and clues
@@ -79,9 +79,7 @@ function modal() {
 // executes another round of the game
 var playRound = series(
 	waitForPlayers,
-	chooseMasterWord,
-	chooseGiverWord,
-	guessWord
+	chooseMasterWord
 	// TODO: add the rest of the stages
 );
 
@@ -101,7 +99,7 @@ function chooseName (callback) {
 		socket.emit('named', localPlayer);
 		$("td:empty").parent().remove();
 	}, function() {
-		console.log("failed, calling function again")
+		console.log("failed, calling function again");
 		chooseName(callback);
 	})
 	.then(callback);
@@ -116,39 +114,38 @@ function waitForPlayers (callback) {
 }
 
 function chooseMasterWord (callback) {
-	getInput('Type in your secret word')
-		.then(function(secret) {
-			if (localPlayer === wordMaster) {
-			// for wordmaster, enable input and replace placeholder text with status
-				$('#input')
-					.attr('disabled', false)
-					.attr('placeholder','Type in your secret word');
-				// on submit- disabling wordMaster's input
-				$('#gameForm').submit(function(e) {
-					e.preventDefault();
-						$("#input")
-							.attr('disabled', true)
-							.attr('placeholder','Your secret word is' + secret);
-				});
-			} else {
-			// for everyone else, keep input disabled and replace placeholder text with status
-				$('#input').attr('placeholder','Waiting for MasterWord');
-			}
+	if (localPlayer === wordMaster) {
+		
+		// for wordmaster, enable input
+		$('#input').attr('disabled', false);
+		
+		//capturing user input 
+		getInput('Type in your secret word')
+		.then(function(wmWord) {
+			socket.emit('wordSelected', wmWord);
+			//disabling input
+			$("#input").attr('disabled', true);
+		
+			//splitting masterword into an array of strings
+			masterWord = wmWord.split('');
+			console.log('success!' + masterword);
+			
+			//append first letter of masterword to master-word-box
+			//BROKEN: does not append to master word box, but creates a new user instead.
+			$('.master-word-box').append(masterWord[0]);
+		})
+		.then(callback);
+	} else {
+		// for everyone else, keep input disabled and replace placeholder text with status
+		$('#input').attr('placeholder','Waiting for MasterWord');
+		}
+	}
 
-		//splitting masterword into an array of strings
-		var splitWord = MasterWord.split('');
-
-		//append first letter of masterword to master-word-box
-		$('.master-word-box').append(splitWord[0]);
-	})
-	.then(callback);
-}
-
-function chooseGiverWord (callback) {
+function choosePlayerSecretWord (callback) {
 	if (localPlayer === clueGiver) {
 		$('#input').attr('disabled', false);
 
-		//switch input conext to secretword
+		//switch input context to secretword
 		getInput('Type in a secret word')
 			.then(function(secretWord) {})
 			.then(callback);
@@ -159,27 +156,63 @@ function chooseGiverWord (callback) {
 			.then(callback);
 	}
 	// appending string into clue box- visible to everyone.
-	$('.clue-box').append(clue);
-	//TODO: allow cluegiver to edit secret clue as many times as he/she wants
+	$('.clue-box').append('#1: ' + clue);
+	//TODO: allow cluegiver to append up to 3 clues
+	//TODO: set text limit to X amount of characters
 }
 
-function guessWord (callback) {
+function guesssecretWord (callback) {
 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
 		//players are now able to type guesses
 		$('#input').attr('disabled', false);
 		getInput('What is ' + clueGiver + " 's word?")
 			.then(function(guess){
-				socket.emit('guessed', guess);
+				socket.emit('playerGuessed', guess);
+			})
+			.then(callback);
+		//lock input on submit
+		$('#input').attr('disabled', true);
+	}
+	if (localPlayer === wordMaster) {
+		//TODO: implement wordMaster guesses. can guess as many times as he/she wants.
+		getInput(  )
+			.then(function(guess){
+				socket.emit('wmGuessed', guess);
 			})
 			.then(callback);
 	}
 }
 
-	//TODO: implement wordMaster guesses. can guess as many times as he/she wants.
-	//TODO: each player can input a guess once.
-	//TODO: set up success condition to reveal next letter of masterword if strings from player guesses match.
+function nextMasterWordLetter (callback) {
+    for (var i=0; i < masterWord.length; i++) {
+        if (masterWord[i] >= masterWordIndex[i]) {
+        	//append letter to master word box 
+        	$('.master-word-box').append(masterWord[i]);
+        	//increment index
+        	masterWordIndex.push[i];
+        }
+    }    
+}
 
+// function checkAnswers (callback) { 
+// 	//TODO: set up success condition to reveal next letter of masterword 
+// 		//if playerGuesses === secretWord, reveal next letter in masterWord and force next round.
+	
+// 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
+// 		getInput('') //in-progress
+// 			.then(function(success) {
+// 		//reveal the next letter of m
+// 	}	else	{
+// 			//move cluegiver to the next player in array
+// 			//start the gameflow overloading
+// 		}	
+// 	}
+	
+// 	//TODO: if wordMaster guess === secretWord, force next round
+// 	if 
 
+// 	//
+// }
 
 /////////////////////////////////////////////////////////
 
@@ -228,7 +261,6 @@ window.onload = function() {
 	})
 
 	chooseName();
-
 
 
 
