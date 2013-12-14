@@ -13,25 +13,14 @@ var io = socketIO.listen(ioServer);
 
 var playerDB = {};
 var playerCount = 0; // TODO: get rid of this
-var isPaused = false;
+var hasStarted = false;
 
 function startNewRound() {
-    if (isPaused) resume();
     var sample = _.sample(playerDB, 2);
     var pair = {
         master: sample[0].name,
         giver: sample[1].name }
     io.sockets.emit('newRound', pair);
-}
-
-function resume() {
-    io.sockets.emit('resume');
-    isPaused = false;
-}
-
-function pause(msg) {
-    io.sockets.emit('pause', msg);
-    isPaused = true;
 }
 
 io.sockets.on("connection", function(client) {
@@ -44,8 +33,10 @@ io.sockets.on("connection", function(client) {
         client.broadcast.emit('joined', player);
         playerDB[client.id] = player;
 
-        if (++playerCount == 3) 
-            isPaused? resume() : startNewRound();
+        playerCount += 1;
+        if (playerCount == 3) {
+            client.broadcast.emit('resume');
+            if (!hasStarted) startNewRound(); }
         if (playerCount < 3) 
             client.emit('pause', 'Waiting for Players');
     });
@@ -56,7 +47,8 @@ io.sockets.on("connection", function(client) {
         client.broadcast.emit('left', playerDB[client.id].name);
         delete playerDB[client.id];
 
-        if (--playerCount < 3) pause('Waiting for Players');
+        if (--playerCount < 3) 
+            client.broadcast.emit('pause', 'Waiting for Players');
     });
 });
 
