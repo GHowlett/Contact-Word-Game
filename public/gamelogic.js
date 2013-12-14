@@ -64,8 +64,8 @@ function setGiver (player) {
 // executes another round of the game
 var playRound = series(
 	chooseMasterWord,
-	choosePlayerSecretWord,
-	guesssecretWord
+	chooseGiverWord,
+	guessWord
 	// TODO: add the rest of the stages
 );
 
@@ -230,7 +230,7 @@ function greyInput (placeholder) {
 function getInput (placeholder, validate) {
 	var deferred = new $.Deferred();
 	var input = $("#input").attr('placeholder', placeholder);
-	
+
 	// clear out old handlers
 	$('#gameForm').off('submit');
 	$('#gameForm').submit(function(e) {
