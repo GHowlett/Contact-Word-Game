@@ -85,14 +85,14 @@ function modal() {
 // executes another round of the game
 var playRound = series(
 	chooseMasterWord,
-	chooseGiverWord,
-	guessWord
+	choosePlayerSecretWord,
+	guesssecretWord
 	// TODO: add the rest of the stages
 );
 
 // runs function as a waterfall
 // TODO: maybe replace this with promises
-function series () { 
+function series () {
     var context = this;
     return [].reduceRight.call(arguments, function(next,current) {
 		return current.bind(context, next);
@@ -114,28 +114,33 @@ function chooseName () {
 	})
 }
 
+function returnTrue() {
+	return true;
+}
+
 function chooseMasterWord (callback) {
 	if (localPlayer === wordMaster) {
-		
+
 		// for wordmaster, enable input
 		$('#input').attr('disabled', false);
-		
-		//capturing user input 
-		getInput('Type in your secret word')
+
+		//capturing user input
+		getInput('Type in your secret word', returnTrue)
 		.then(function(wmWord) {
+			console.log(wmWord);
 			socket.emit('wordSelected', wmWord);
 			//disabling input
 			$("#input").attr('disabled', true);
-		
+
 			//splitting masterword into an array of strings
 			masterWord = wmWord.split('');
-			console.log('success!' + masterword);
-			
+			console.log('success!' + masterWord);
+
 			//append first letter of masterword to master-word-box
 			//BROKEN: does not append to master word box, but creates a new user instead.
 			$('.master-word-box').append(masterWord[0]);
 
-			//storing index of masterWord array in associative index	
+			//storing index of masterWord array in associative index
 			masterWordIndex = 0;
 			masterWordIndex++;
 		})
@@ -152,12 +157,12 @@ function choosePlayerSecretWord (callback) {
 		$('#input').attr('disabled', false);
 
 		//switch input context to secretword
-		getInput('Type in a secret word')
+		getInput('Type in a secret word', returnTrue)
 			.then(function(secretWord) {})
 			.then(callback);
 
 		//switch input context from secret word to secret clue
-		getInput("Now type a clue.")
+		getInput("Now type a clue.", returnTrue)
 			.then(function(clue){})
 			.then(callback);
 	}
@@ -170,7 +175,7 @@ function guesssecretWord (callback) {
 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
 		//enable input for players
 		$('#input').attr('disabled', false);
-		
+
 
 		getInput('What is ' + clueGiver + " 's word?")
 			.then(function(guess){
@@ -200,9 +205,9 @@ function nextMasterWordLetter (callback) {
 }
 
 // function checkAnswers (callback) { [IN PROGRESS]
-// 	//TODO: set up success condition to reveal next letter of masterword 
+// 	//TODO: set up success condition to reveal next letter of masterword
 // 		//if playerGuesses === secretWord, reveal next letter in masterWord and force next round.
-	
+
 // 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
 // 		getInput('') //in-progress
 // 			.then(function(success) {
@@ -210,11 +215,11 @@ function nextMasterWordLetter (callback) {
 // 	}	else	{
 // 			//move cluegiver to the next player in array
 // 			//start the gameflow overloading
-// 		}	
+// 		}
 // 	}
-	
+
 // 	//TODO: if wordMaster guess === secretWord, force next round
-// 	if 
+// 	if
 
 // 	//
 // }
@@ -237,10 +242,11 @@ function getInput (placeholder, validate) {
 	$(input).attr('placeholder', placeholder);
 	$('#gameForm').submit(function(e) {
 	 	e.preventDefault();
+	 	console.log(validate);
 	 	validate(input.val())
 	 		? deferred.resolveWith(input, [input.val()])
 	 		: deferred.rejectWith(input, [input.val()]);
- 	}); 
+ 	});
 
 	return deferred.promise()
 }
