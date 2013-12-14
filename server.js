@@ -16,6 +16,7 @@ var playerCount = 0; // TODO: get rid of this
 var hasStarted = false;
 
 function startNewRound() {
+    hasStarted = true;
     var sample = _.sample(playerDB, 2);
     var pair = {
         master: sample[0].name,
@@ -37,7 +38,7 @@ io.sockets.on("connection", function(client) {
         if (playerCount == 3) {
             client.broadcast.emit('resume');
             if (!hasStarted) startNewRound(); }
-        if (playerCount < 3) 
+        if (playerCount < 3)
             client.emit('pause', 'Waiting for Players');
     });
 
