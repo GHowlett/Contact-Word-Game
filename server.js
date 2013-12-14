@@ -42,7 +42,7 @@ function onDisconnect() {
     this.broadcast.emit('left', playerDB[this.id].name);
     delete playerDB[this.id];
 
-    if (--playerCount < 3) 
+    if (--playerCount == 2) 
         this.broadcast.emit('pause', 'Waiting for Players');
 }
 
