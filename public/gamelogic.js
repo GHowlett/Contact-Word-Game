@@ -119,6 +119,8 @@ function returnTrue() {
 }
 
 function chooseMasterWord (callback) {
+	console.log("choosing master word");
+
 	if (localPlayer === wordMaster) {
 
 		// for wordmaster, enable input
@@ -151,7 +153,7 @@ function chooseMasterWord (callback) {
 		}
 	}
 
-function choosePlayerSecretWord (callback) {
+function chooseGiverWord (callback) {
 
 	if (localPlayer === clueGiver) {
 		$('#input').attr('disabled', false);
@@ -171,7 +173,7 @@ function choosePlayerSecretWord (callback) {
 	//TODO: allow cluegiver to append up to 3 clues
 }
 
-function guesssecretWord (callback) {
+function guessWord (callback) {
 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
 		//enable input for players
 		$('#input').attr('disabled', false);
@@ -237,9 +239,10 @@ function greyInput (placeholder) {
 // returns a promise that binds function contexts to #input
 function getInput (placeholder, validate) {
 	var deferred = new $.Deferred();
-	var input = $("#input");
-	console.log(input);
-	$(input).attr('placeholder', placeholder);
+	var input = $("#input").attr('placeholder', placeholder);
+	
+	// clear out old handlers
+	$('#gameForm').off('submit');
 	$('#gameForm').submit(function(e) {
 	 	e.preventDefault();
 	 	console.log(validate);
@@ -264,13 +267,17 @@ window.onload = function() {
 	});
 
 	socket.on('pause', function(reason){
-		console.log('paused');
-		// TODO: popup modal
+		if (localPlayer) {
+			console.log('paused');
+			// TODO: bring up a popup modal
+		}
 	});
 
 	socket.on('resume', function(){
-		console.log('resumed');
-		// TODO: remove modal
+		if (localPlayer) {
+			console.log('resumed');
+			// TODO: remove modal if it's up
+		}
 	});
 
 	// Game Loop (runs if name has been chosen)
