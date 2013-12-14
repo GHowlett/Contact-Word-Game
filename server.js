@@ -12,16 +12,26 @@ var ioServer = http.createServer(server);
 var io = socketIO.listen(ioServer);
 
 var playerDB = {};
-var playerCount = 0;
-var isPlaying = false;
+var playerCount = 0; // TODO: get rid of this
+var isPaused = false;
 
 function startNewRound() {
-    var pair = _.sample(playerDB, 2);
-    pair = {
-        master: pair[0].name,
-        giver: pair[1].name }
+    if (isPaused) resume();
+    var sample = _.sample(playerDB, 2);
+    var pair = {
+        master: sample[0].name,
+        giver: sample[1].name }
     io.sockets.emit('newRound', pair);
-    isPlaying = true;
+}
+
+function resume() {
+    io.sockets.emit('resume');
+    isPaused = false;
+}
+
+function pause(msg) {
+    io.sockets.emit('pause', msg);
+    isPaused = true;
 }
 
 io.sockets.on("connection", function(client) {
@@ -33,8 +43,11 @@ io.sockets.on("connection", function(client) {
     client.on("named", function(player) {
         client.broadcast.emit('joined', player);
         playerDB[client.id] = player;
-        if ((++playerCount >2) && (!isPlaying)) 
-            startNewRound();
+
+        if (++playerCount == 3) 
+            isPaused? resume() : startNewRound();
+        if (playerCount < 3) 
+            client.emit('pause', 'Waiting for Players');
     });
 
     client.on("disconnect", function() {
@@ -42,9 +55,8 @@ io.sockets.on("connection", function(client) {
         if (!playerDB[client.id]) return;
         client.broadcast.emit('left', playerDB[client.id].name);
         delete playerDB[client.id];
-        playerCount -= 1;
-        // TODO: handle too many users disconnecting during a game
-        //       by setting isPlaying to false and sending a msg
+
+        if (--playerCount < 3) pause('Waiting for Players');
     });
 });
 

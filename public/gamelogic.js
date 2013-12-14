@@ -19,8 +19,11 @@ function renderPlayer (player) {
 		.after('<tr> <td>' + player.name + '</td> <td>' + 'response placeholder' + '</td> </tr>' );
 }
 
-function removePlayer (player) {
-	$('tr:contains(' + player + ')')
+function removePlayer (name) {
+	delete activePlayers[name];
+	activePlayers.length--;
+
+	$('tr:contains(' + name + ')')
 		.remove() // remove player name
 		.next()
 		.remove() // remove player status
@@ -57,7 +60,6 @@ function setGiver (player) {
 
 // executes another round of the game
 var playRound = series(
-	waitForPlayers,
 	chooseMasterWord,
 	chooseGiverWord,
 	guessWord
@@ -65,7 +67,8 @@ var playRound = series(
 );
 
 // runs function as a waterfall
-function series () {
+// TODO: maybe replace this with promises
+function series () { 
     var context = this;
     return [].reduceRight.call(arguments, function(next,current) {
 		return current.bind(context, next);
@@ -96,14 +99,6 @@ function chooseName () {
 			});
 		}
 	})
-}
-
-// TODO: get rid of this
-function waitForPlayers (callback) {
-	if (activePlayers.length < 4) {
-		greyInput('waiting for players');
-		setTimeout(waitForPlayers, 2000, callback);
-	} else callback();
 }
 
 function chooseMasterWord (callback) {
@@ -201,19 +196,27 @@ window.onload = function() {
 		renderPlayer(new Player(playerData));
 	});
 
+	socket.on('left', function(name){
+		console.log(name + ' left');
+		removePlayer(name);
+	});
+
+	socket.on('pause', function(reason){
+		console.log('paused');
+		// TODO: popup modal
+	});
+
+	socket.on('resume', function(){
+		console.log('resumed');
+		// TODO: remove modal
+	});
+
 	// Game Loop (runs if name has been chosen)
 	socket.on('newRound', function(pair){
 		setMaster(activePlayers[pair.master]);
 		setGiver(activePlayers[pair.giver]);
 		if (localPlayer) playRound();
-	})
-
-	socket.on('left', function(name){
-		removePlayer(activePlayers[name]);
-		delete activePlayers[name];
-		activePlayers.length--;
-		console.log(name);
-	})
+	});
 
 	chooseName();
 
