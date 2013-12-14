@@ -25,7 +25,7 @@ function removePlayer (player) {
 		.next()
 		.remove() // remove player status
 		.next()
-		.remove() // remove player response
+		.remove(); // remove player response
 }
 
 // TODO: find a more semantic convention for type overloading
@@ -133,6 +133,10 @@ function chooseMasterWord (callback) {
 			//append first letter of masterword to master-word-box
 			//BROKEN: does not append to master word box, but creates a new user instead.
 			$('.master-word-box').append(masterWord[0]);
+
+			//storing index of masterWord array in associative index	
+			masterWordIndex = 0;
+			masterWordIndex++;
 		})
 		.then(callback);
 	} else {
@@ -185,14 +189,12 @@ function guesssecretWord (callback) {
 }
 
 function nextMasterWordLetter (callback) {
-    for (var i=0; i < masterWord.length; i++) {
-        if (masterWord[i] >= masterWordIndex[i]) {
-        	//append letter to master word box 
-        	$('.master-word-box').append(masterWord[i]);
-        	//increment index
-        	masterWordIndex.push[i];
-        }
-    }    
+	for (var i= 0; masterWord[i] >= masterWordIndex; i++) {
+		//append letter to master word box
+		$('.master-word-box').append(masterWord[i]);
+		//increment associative index by 1
+		masterWordIndex++;
+    }
 }
 
 // function checkAnswers (callback) { 
@@ -229,6 +231,7 @@ function greyInput (placeholder) {
 function getInput (placeholder, validate) {
 	var deferred = new $.Deferred();
 	var input = $("#input");
+	console.log(input);
 	$(input).attr('placeholder', placeholder);
 	$('#gameForm').submit(function(e) {
 	// remove previous click handler
