@@ -15,12 +15,18 @@ function WordsAndClues (visibleToWordMaster, visibleToClueGiver, visibleToPlayer
 
 // creates, renders, and adds player to active players array.
 function renderPlayer (player) {
-	$('table tr:last')
-		.after('<tr> <td>' + player.name + '</td> <td>' + 'response placeholder' + '</td> </tr>' );
+	$('tbody').append(
+		'<tr>' +
+			'<td>' + player.name + '</td>' +
+			'<td>' + 'response placeholder' + '</td>' +
+		'</tr>' );
 }
 
-function removePlayer (player) {
-	$('tr:contains(' + player + ')')
+function removePlayer (name) {
+	delete activePlayers[name];
+	activePlayers.length--;
+
+	$('tr:contains(' + name + ')')
 		.remove() // remove player name
 		.next()
 		.remove() // remove player status
@@ -78,13 +84,20 @@ function modal() {
 
 // executes another round of the game
 var playRound = series(
+<<<<<<< HEAD
 	waitForPlayers,
 	chooseMasterWord
+=======
+	chooseMasterWord,
+	chooseGiverWord,
+	guessWord
+>>>>>>> bd98d3a1f326290195b4a6892357dd6ad807e766
 	// TODO: add the rest of the stages
 );
 
 // runs function as a waterfall
-function series () {
+// TODO: maybe replace this with promises
+function series () { 
     var context = this;
     return [].reduceRight.call(arguments, function(next,current) {
 		return current.bind(context, next);
@@ -92,7 +105,9 @@ function series () {
 }
 
 // creates, renders, and emits the local player upon name decision
-function chooseName (callback) {
+function chooseName () {
+	console.log('choosing name');
+
 	getInput('Choose a Nickname', preventDuplicateNames)
 	.then(function(name) {
 		renderPlayer(localPlayer = new Player(name));
@@ -105,15 +120,8 @@ function chooseName (callback) {
 	.then(callback);
 }
 
-// TODO: get rid of this
-function waitForPlayers (callback) {
-	if (activePlayers.length < 4) {
-		greyInput('waiting for players');
-		setTimeout(waitForPlayers, 2000, callback);
-	} else callback();
-}
-
 function chooseMasterWord (callback) {
+<<<<<<< HEAD
 	if (localPlayer === wordMaster) {
 		
 		// for wordmaster, enable input
@@ -146,6 +154,7 @@ function chooseMasterWord (callback) {
 	}
 
 function choosePlayerSecretWord (callback) {
+
 	if (localPlayer === clueGiver) {
 		$('#input').attr('disabled', false);
 
@@ -197,7 +206,7 @@ function nextMasterWordLetter (callback) {
     }
 }
 
-// function checkAnswers (callback) { 
+// function checkAnswers (callback) { [IN PROGRESS]
 // 	//TODO: set up success condition to reveal next letter of masterword 
 // 		//if playerGuesses === secretWord, reveal next letter in masterWord and force next round.
 	
@@ -234,13 +243,13 @@ function getInput (placeholder, validate) {
 	console.log(input);
 	$(input).attr('placeholder', placeholder);
 	$('#gameForm').submit(function(e) {
-	// remove previous click handler
 	 	e.preventDefault();
-	 	var foo = validate(input.val());
-	 	foo
+	 	validate(input.val())
 	 		? deferred.resolveWith(input, [input.val()])
 	 		: deferred.rejectWith(input, [input.val()]);
- 	}); return deferred.promise()
+ 	}); 
+
+	return deferred.promise()
 }
 
 window.onload = function() {
@@ -250,19 +259,27 @@ window.onload = function() {
 		renderPlayer(new Player(playerData));
 	});
 
+	socket.on('left', function(name){
+		console.log(name + ' left');
+		removePlayer(name);
+	});
+
+	socket.on('pause', function(reason){
+		console.log('paused');
+		// TODO: popup modal
+	});
+
+	socket.on('resume', function(){
+		console.log('resumed');
+		// TODO: remove modal
+	});
+
 	// Game Loop (runs if name has been chosen)
 	socket.on('newRound', function(pair){
 		setMaster(activePlayers[pair.master]);
 		setGiver(activePlayers[pair.giver]);
 		if (localPlayer) playRound();
-	})
-
-	socket.on('left', function(name){
-		removePlayer(activePlayers[name]);
-		delete activePlayers[name];
-		activePlayers.length--;
-		console.log(name);
-	})
+	});
 
 	chooseName();
 
