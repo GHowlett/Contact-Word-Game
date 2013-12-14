@@ -115,6 +115,8 @@ function chooseName () {
 }
 
 function chooseMasterWord (callback) {
+	console.log("choosing master word");
+	
 	if (localPlayer === wordMaster) {
 		
 		// for wordmaster, enable input
@@ -146,7 +148,7 @@ function chooseMasterWord (callback) {
 		}
 	}
 
-function choosePlayerSecretWord (callback) {
+function chooseGiverWord (callback) {
 
 	if (localPlayer === clueGiver) {
 		$('#input').attr('disabled', false);
@@ -166,7 +168,7 @@ function choosePlayerSecretWord (callback) {
 	//TODO: allow cluegiver to append up to 3 clues
 }
 
-function guesssecretWord (callback) {
+function guessWord (callback) {
 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
 		//enable input for players
 		$('#input').attr('disabled', false);
@@ -232,9 +234,10 @@ function greyInput (placeholder) {
 // returns a promise that binds function contexts to #input
 function getInput (placeholder, validate) {
 	var deferred = new $.Deferred();
-	var input = $("#input");
-	console.log(input);
-	$(input).attr('placeholder', placeholder);
+	var input = $("#input").attr('placeholder', placeholder);
+	
+	// clear out old handlers
+	$('#gameForm').off('submit');
 	$('#gameForm').submit(function(e) {
 	 	e.preventDefault();
 	 	validate(input.val())
