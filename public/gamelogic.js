@@ -59,27 +59,6 @@ function setGiver (player) {
 	return clueGiver = player;
 }
 
-function preventDuplicateNames(playerName) {
-	if(!activePlayers.length) {
-		return true;
-	}
-	for (name in activePlayers) {
-		if(playerName === name) {
-			$('#input')
-				.css('background', '#FF8566')
-				.val('')
-				.prop('placeholder', 'Name already taken, please choose another');
-			console.log("same name!");
-			return false;
-		}
-	}
-	return true;
-}
-
-function modal() {
-	$('body').append("<div class='modal'><div class='modal-inner'><p>Hello world</p></div></div>");
-}
-
 ///////////////////   Stages    ///////////////////////////
 
 // executes another round of the game
@@ -112,6 +91,23 @@ function chooseName () {
 		console.log("failed, calling function again")
 		chooseName();
 	})
+}
+
+function preventDuplicateNames(playerName) {
+	if(!activePlayers.length) {
+		return true;
+	}
+	for (name in activePlayers) {
+		if(playerName === name) {
+			$('#input')
+				.css('background', '#FF8566')
+				.val('')
+				.prop('placeholder', 'Name already taken, please choose another');
+			console.log("same name!");
+			return false;
+		}
+	}
+	return true;
 }
 
 function chooseMasterWord (callback) {
@@ -222,6 +218,10 @@ function nextMasterWordLetter (callback) {
 // }
 
 /////////////////////////////////////////////////////////
+
+function modal() {
+	$('body').append("<div class='modal'><div class='modal-inner'><p>Hello world</p></div></div>");
+}
 
 // greys out the input box with a placeholder msg
 function greyInput (placeholder) {
