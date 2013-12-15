@@ -276,7 +276,7 @@ window.onload = function() {
 
 	socket.on('masterWordChosen', function(word){
 		console.log('the master word is ' + word);
-		renderMasterWord(word);
+		masterWordChosen(word);
 	});
 
 	socket.on('newRound', function(giver){
