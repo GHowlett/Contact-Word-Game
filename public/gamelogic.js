@@ -108,7 +108,7 @@ function chooseMasterWord () {
 
 function masterWordChosen (word) {
 	wordMaster.word = word;
-	$('.master-word-box').append(wordMaster.word.split('')[0]);
+	$('.master-word-box').append(wordMaster.word[0]);
 	masterWordIndex = 0;
 }
 
@@ -172,7 +172,7 @@ function successConditions () {
 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
 		if (guess === clueGiver.word) {
 			console.log("success, you guessed the word");
-			$('.master-word-box').append(wordMaster.word.split('')[++masterWordIndex]);
+			$('.master-word-box').append(wordMaster.word[++masterWordIndex]);
 			// update response <td>
 			$("td:contains(" + localPlayer.name + ")").next().text(guess);
 			masterWordIndex++;
@@ -299,6 +299,7 @@ window.onload = function() {
 		//       if it's the WordMaster, don't overwrite the old one
 
 		for (player in activePlayers)
+			// TODO: don't check the wordMaster or clueGiver
 			if (!player.guess) return;
 		console.log('all player have guessed');
 		// TODO: reveal the giver's word and all the guesses
