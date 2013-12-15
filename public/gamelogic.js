@@ -44,14 +44,11 @@ function Player (name, guess) {
 	activePlayers[this.name] = this;
 }
 
-// sets new wordMaster. if applicable, reset previous wordMaster to regular player.
 function setMaster (player) {
 	if (window.wordMaster) delete wordMaster.word;
 	return wordMaster = player;
 }
 
-// sets new clueGiver. if applicable, reset previous clueGiver to regular player.
-// TODO change property 'secret' to something else
 function setGiver (player) {
 	if (window.clueGiver) {
 		delete clueGiver.word;
@@ -311,21 +308,15 @@ window.onload = function() {
 
 
 //Jason TODOs------------------
-	//add property enable input to getInput. DONE
-	//create giverWordChosen function to emit data. DONE.
-	//rename chooseGiverWord and break out chooseGiveClue into separate fn. REMOVE.
 	//set up checkAnswers function
 
 
 //Tim TODOs-----------------
-	//increase size of modals
-	//change status header to update
 	//personalize the placeholder messages
 
 
 //Griffin TODOs-----------
 	//everything
-
 
 
 //Remaining TODOs--------
