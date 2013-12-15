@@ -64,8 +64,8 @@ function setGiver (player) {
 // executes another round of the game
 var playRound = series(
 	chooseMasterWord,
-	choosePlayerSecretWord,
-	guesssecretWord
+	chooseGiverWord,
+	guessWord
 	// TODO: add the rest of the stages
 );
 
@@ -211,8 +211,12 @@ function nextMasterWordLetter (callback) {
 
 /////////////////////////////////////////////////////////
 
-function modal() {
-	$('body').append("<div class='modal'><div class='modal-inner'><p>Hello world</p></div></div>");
+function appendModal(text) {
+	$('body').append("<div class='modal'><div class='modal-inner'><p>" + text + "</p></div></div>");
+}
+
+function removeModal() {
+	$('.modal').remove();
 }
 
 // greys out the input box with a placeholder msg
@@ -227,12 +231,11 @@ function greyInput (placeholder) {
 function getInput (placeholder, validate) {
 	var deferred = new $.Deferred();
 	var input = $("#input").attr('placeholder', placeholder);
-	
+
 	// clear out old handlers
 	$('#gameForm').off('submit');
 	$('#gameForm').submit(function(e) {
 	 	e.preventDefault();
-	 	console.log(validate);
 	 	validate(input.val())
 	 		? deferred.resolveWith(input, [input.val()])
 	 		: deferred.rejectWith(input, [input.val()]);
@@ -256,14 +259,14 @@ window.onload = function() {
 	socket.on('pause', function(reason){
 		if (localPlayer) {
 			console.log('paused');
-			// TODO: bring up a popup modal
+			appendModal(reason);
 		}
 	});
 
 	socket.on('resume', function(){
 		if (localPlayer) {
 			console.log('resumed');
-			// TODO: remove modal if it's up
+			removeModal();
 		}
 	});
 
