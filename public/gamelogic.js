@@ -137,9 +137,7 @@ function chooseGiverClue () {
 		getInput(msg)
 		.then(function(clue){
 			socket.emit('clue', clue);
-			addClue(clue);
-
-			if (clueGiver.clueCount < 3) chooseGiverClue();
+			if (addClue(clue) < 3) chooseGiverClue();
 			else greyInput('3 clues is all you get!');
 		})
 	}
@@ -149,6 +147,7 @@ function addClue (clue) {
 	console.log('new clue: ' + clue);
 	$('.clue-box').append(
 		'clue #' + ++clueGiver.clueCount + ': ' +clue+ '\n' );
+	return clueGiver.clueCount;
 }
 
 function guessWord () {
@@ -290,8 +289,7 @@ window.onload = function() {
 	});
 
 	socket.on('clue', function(clue){
-		addClue(clue);
-		if (++clueGiver.clueCount === 1) guessWord();
+		if (addClue(clue) === 1) guessWord();
 	});
 
 	socket.on('guess', function(player){
@@ -310,6 +308,7 @@ window.onload = function() {
 	});
 
 	chooseName();
+};
 
 
 //Jason TODOs------------------
@@ -345,6 +344,3 @@ window.onload = function() {
 
 // If the master secret word is not guessed at the end of the round,
 // select next player in user column and begin again.
-
-
-};
