@@ -12,7 +12,6 @@ var ioServer = http.createServer(server);
 var io = socketIO.listen(ioServer);
 
 var playerDB = {};
-var playerCount = 0; // TODO: get rid of this
 var masterName = "";
 var giverName = "";
 var minPlayers = 3;
@@ -23,22 +22,22 @@ function onJoined(player) {
     this.broadcast.emit('joined', player);
     playerDB[this.id] = player;
 
-    playerCount += 1;
-    if (playerCount == minPlayers) {
+    if (_.size(playerDB) === minPlayers) {
         this.broadcast.emit('resume');
         if (!hasStarted) startNewGame(); }
-    if (playerCount < minPlayers)
+    if (_.size(playerDB) < minPlayers)
         this.emit('pause', 'Waiting for Players');
 }
 
 function onDisconnect() {
     // you can only leave if you've joined / have a name
     if (!playerDB[this.id]) return;
-    this.broadcast.emit('left', playerDB[this.id].name);
-    delete playerDB[this.id];
 
-    if (--playerCount +1 == minPlayers) 
+    this.broadcast.emit('left', playerDB[this.id].name);
+    if (_.size(playerDB) === minPlayers) 
         this.broadcast.emit('pause', 'Waiting for Players');
+
+    delete playerDB[this.id];
 }
 
 function startNewGame() {
