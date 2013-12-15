@@ -1,18 +1,8 @@
 //global objects
 // TODO: see if connect('/') works
 var socket = io.connect('http://localhost');
-var masterWordVisibility = new WordsAndClues(true, false, false);
-var secretWordVisibility = new WordsAndClues(false, true, false);
-var clueVisibility = new WordsAndClues(true, true, true);
 var activePlayers = {};
 var masterWordIndex = -1; //later incremented to 0 before render
-
-// defines visibility of words and clues
-function WordsAndClues (visibleToWordMaster, visibleToClueGiver, visibleToPlayer) {
-	this.visibleToWordMaster = visibleToWordMaster;
-	this.visibleToClueGiver = visibleToClueGiver;
-	this.visibleToPlayer = visibleToPlayer;
-}
 
 // creates, renders, and adds player to active players array.
 function renderPlayer (player) {
@@ -70,10 +60,14 @@ function chooseName () {
 		socket.emit('joined', localPlayer);
 		$("td:empty").parent().remove(); })
 	.fail(function() {
-		this.css('background', '#FFDDDD') // TODO: change this back after timeout
+		this.css('background', '#FFDDDD') 
 			.val('')
 			.prop('placeholder', 'Name already taken, please choose another');
-		setTimeout(chooseName, 4000); // show error message for 2 seconds
+		setTimeout(function() {
+			chooseName();
+			$('#input').css('background', '#FFFFFF')
+				.prop('placeholder', 'Choose a Nickname');
+			}, 2000); // show error message for 2 seconds
 	})
 }
 
@@ -92,14 +86,14 @@ function chooseMasterWord () {
 	console.log("choosing master word");
 
 	if (localPlayer === wordMaster) {
-		getInput('Type in your secret word')
+		getInput('You are the Word Master. Type in your secret word!')
 		.then(function(word) {
 			greyInput('Your secret word is ' + word);
 			socket.emit('masterWordChosen', word);
 			wordMaster.word = word;
 			revealLetter();
 		});
-	} else greyInput('waiting for wordMaster to give a word');
+	} else greyInput('Hang tight! Waiting for wordmaster');
 }
 
 function revealLetter () {
@@ -109,7 +103,7 @@ function revealLetter () {
 
 function chooseGiverWord () {
 	if (localPlayer === clueGiver) {
-		getInput('Type in a secret word', matchLetters)
+		getInput("You're up! Type in your secret word that starts with the letter(s): " + wordMaster.word.slice(0, masterWordIndex +1) + "...", matchLetters)
 		.done(function(word) {
 			clueGiver.word = word;
 			socket.emit('giverWordChosen', word);
@@ -126,8 +120,8 @@ function chooseGiverWord () {
 function chooseGiverClue () {
 	if (localPlayer === clueGiver) {
 		var msg = (clueGiver.clueCount < 1)
-			? "Now give a clue"
-			: "You can give up to three";
+			? "Now give a clue to " 
+			: "Optional: add another clue";
 
 		getInput(msg)
 		.then(function(clue){
@@ -243,7 +237,6 @@ window.onload = function() {
 		console.log('the master word is ' + word);
 		wordMaster.word = word;
 		revealLetter();
-		// TODO: change status to waiting for giver
 	});
 
 	socket.on('newRound', function(giver){
@@ -261,7 +254,6 @@ window.onload = function() {
 	socket.on('giverWordChosen', function(word){
 		console.log('the giver word is ' + word);
 		clueGiver.word = word;
-		// TODO: change status to waiting for clue
 	});
 
 	socket.on('clue', function(clue){
@@ -292,31 +284,3 @@ window.onload = function() {
 	chooseName();
 };
 
-
-//Jason TODOs------------------
-	//set up checkAnswers function
-
-
-//Tim TODOs-----------------
-	//personalize the placeholder messages
-
-
-//Griffin TODOs-----------
-	//everything
-
-
-//Remaining TODOs--------
-// Compare user inputs with secret word. If the players have the same guesses and
-// their guess is the same as the secret word AND they do all this before the word
-// master, reveal the first obscured character of the master secret word.
-// else, failure and the character remains obscured.
-
-// If player secret word is equal to master secret word, and the master secret
-// word is correctly chosen by the players, the players win and the word
-// master loses.
-
-// The player who chose the secret word wins the game and becomes the next
-// word master.
-
-// If the master secret word is not guessed at the end of the round,
-// select next player in user column and begin again.
