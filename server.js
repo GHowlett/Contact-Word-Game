@@ -15,6 +15,7 @@ var playerDB = {};
 var playerCount = 0; // TODO: get rid of this
 var minPlayers = 3;
 var hasStarted = false;
+var masterWord = null;
 
 function startNewRound() {
     hasStarted = true;
@@ -47,12 +48,18 @@ function onDisconnect() {
         this.broadcast.emit('pause', 'Waiting for Players');
 }
 
+function onMasterWordChosen(word) {
+    masterWord = word;
+    this.broadcast.emit('masterWordChosen', word);
+}
+
 io.sockets.on("connection", function(client) {
     for (player in playerDB)
         client.emit('joined', playerDB[player]);
 
     client.on("joined", onJoined);
     client.on("disconnect", onDisconnect);
+    client.on("masterWordChosen", onMasterWordChosen);
 });
 
 var port = process.env.PORT || 3000;

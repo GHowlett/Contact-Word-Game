@@ -274,6 +274,11 @@ window.onload = function() {
 		if (localPlayer) playRound();
 	});
 
+	socket.on('masterWordChosen', function(word){
+		wordMaster.secret = word;
+		// TODO: call the next stage
+	});
+
 	chooseName();
 
 
