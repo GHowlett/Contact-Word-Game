@@ -118,14 +118,11 @@ function chooseGiverWord () {
 		.done(function(secret) {
 			clueGiver.secret = secret;
 			socket.emit('giverWordChosen', secret);
-			greyInput('Your secret word is ' + clueGiver.secret);
-			setTimeout(chooseGiverClue, 4000);
+			chooseGiverClue();
 		})
 		.fail(function(secret) {
-			clueGiver.secret = secret;
 			this.css('background', '#FFDDDD')
-			.val('')
-			.prop('placeholder', 'First letters of your word do not match master word');
+			getInput('First letters must match master word');
 			setTimeout(chooseGiverWord, 4000);
 		})
 	}
