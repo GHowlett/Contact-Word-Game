@@ -112,6 +112,7 @@ function chooseGiverWord () {
 	if (localPlayer === clueGiver) {
 		getInput('Type in a secret word')
 		.then(function(word) {})
+	socket.emit('giverWordChosen', word);
 }
 
 function chooseGiverClue () {
@@ -121,12 +122,11 @@ function chooseGiverClue () {
 	}
 	// appending string into clue box- visible to everyone.
 	$('.clue-box').append('#1: ' + clue);
-	//TODO: allow cluegiver to append up to 3 clues
-}
-
-function giverWordChosen (word) {
-	var data = {word: ''};
-	socket.emit('giverWordChosen', word);
+	//limiting 3 submits
+	if (clue.clues.length >= 3) {
+		greyInput('3 clues is all you get!');
+	}
+	socket.emit('giverWordChosen', clue);
 }
 
 function guessWord () {
