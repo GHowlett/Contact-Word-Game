@@ -104,11 +104,10 @@ function returnTrue() {
 	return true;
 }
 
-function chooseMasterWord (callback) {
+function chooseMasterWord () {
 	console.log("choosing master word");
 
 	if (localPlayer === wordMaster) {
-
 		// for wordmaster, enable input
 		$('#input').attr('disabled', false);
 
@@ -116,34 +115,37 @@ function chooseMasterWord (callback) {
 		getInput('Type in your secret word', returnTrue)
 		.then(function(wmWord) {
 			console.log(wmWord);
-			socket.emit('wordSelected', wmWord);
+			
 			//disabling input
 			$("#input").attr('disabled', true);
-
-			//splitting masterword into an array of strings
-			masterWord = wmWord.split('');
-			console.log('success!' + masterWord);
-
-			//append first letter of masterword to master-word-box
-			//BROKEN: does not append to master word box, but creates a new user instead.
-			$('.master-word-box').append(masterWord[0]);
-
-			//storing index of masterWord array in associative index
-			masterWordIndex = 0;
-			masterWordIndex++;
 		})
 		.then(callback);
 	} else {
 		// for everyone else, keep input disabled and replace placeholder text with status
-		$('#input').attr('placeholder','Waiting for MasterWord');
+		greyInput('waiting for master word');
 		}
+	
+	masterWordSelected();
 	}
+ 
+function masterWordSelected () {
+	socket.emit('MasterWordSelected', wmWord);
+	
+	//splitting masterword into an array of strings	
+	masterWord = wmWord.split('');
+	console.log('success!' + masterWord);
+
+	//append first letter of masterword to master-word-box
+	$('.master-word-box').append(masterWord[0]);
+
+	//storing index of masterWord array in associative index
+	masterWordIndex = 0;
+	masterWordIndex++;
+}
 
 function chooseGiverWord (callback) {
 
 	if (localPlayer === clueGiver) {
-		$('#input').attr('disabled', false);
-
 		//switch input context to secretword
 		getInput('Type in a secret word', returnTrue)
 			.then(function(secretWord) {})
@@ -161,17 +163,14 @@ function chooseGiverWord (callback) {
 
 function guessWord (callback) {
 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
-		//enable input for players
-		$('#input').attr('disabled', false);
-
-
+		//get input from players
 		getInput('What is ' + clueGiver + " 's word?")
 			.then(function(guess){
 				socket.emit('playerGuessed', guess);
 			})
 			.then(callback);
 		//lock input on submit
-		$('#input').attr('disabled', true);
+		greyInput ('Waiting for other guesses');
 	}
 
 	if (localPlayer === wordMaster) {
