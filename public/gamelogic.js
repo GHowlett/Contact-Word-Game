@@ -181,16 +181,16 @@ function nextMasterLetter () {
     }
 }
 
-function successConditions () 
-	//TODO: set up success condition to reveal next letter of masterword
-		//if playerGuesses === secretWord, reveal next letter in masterWord and force next round.
-	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
+// function successConditions () 
+// 	//TODO: set up success condition to reveal next letter of masterword
+// 		//if playerGuesses === secretWord, reveal next letter in masterWord and force next round.
+// 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
 	
-	//TODO: if wordMaster guess === secretWord, force next round
-	if
+// 	//TODO: if wordMaster guess === secretWord, force next round
+// 	if
 
-	//
-}
+// 	//
+// }
 
 /////////////////////////////////////////////////////////
 
@@ -304,24 +304,7 @@ window.onload = function() {
 
 
 
-
-//Remaining TODOs---------
-// Then the chosen player types in a clue. The input has a label called:
-// choose clue for secret word. On submit the clue box is populated with
-// clue.
-
-// The other players who did not choose a master secret word start
-// guessing words by typing. Their input is labeled with: "Start
-// guessing what the word is", and on submit their response is stored
-// and their input is locked up. Status becomes clue submitted, and
-// response field in table is populated with their guess, which is currently
-// hidden from everyone except them.
-
-// The word master's guess, however, is visible to everyone playing.
-
-// The input field of the player who chose the word/clue is locked for
-// this round.
-
+//Remaining TODOs--------
 // Compare user inputs with secret word. If the players have the same guesses and
 // their guess is the same as the secret word AND they do all this before the word
 // master, reveal the first obscured character of the master secret word.
