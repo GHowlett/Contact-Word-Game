@@ -112,7 +112,7 @@ function masterWordChosen (wmWord) {
 function chooseGiverWord () {
 	if (localPlayer === clueGiver) {
 		getInput('Type in a secret word')
-		.then(function(word) {})
+		.then(function(word){}) }
 	socket.emit('giverWordChosen', word);
 	chooseGiverClue();
 }
