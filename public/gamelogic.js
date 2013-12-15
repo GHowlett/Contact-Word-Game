@@ -103,6 +103,7 @@ function chooseMasterWord () {
 
 	if (localPlayer === wordMaster) {
 		//capturing user input
+		$('#input').val('');
 		getInput('Type in your secret word')
 		.then(function(wmWord) {
 			//disabling input
@@ -127,6 +128,7 @@ function chooseGiverWord () {
 		getInput('Type in a secret word', matchLetters)
 		.done(function(secret) {
 			clueGiver.secret = secret;
+			greyInput('Your secret word is ' + secret);
 			socket.emit('giverWordChosen', secret);
 			chooseGiverClue();
 		})
@@ -298,7 +300,7 @@ window.onload = function() {
 		// TODO: update the DOM to show that the player has guessed
 		//       if it's the WordMaster, don't overwrite the old one
 
-		for (player in activePlayers) 
+		for (player in activePlayers)
 			if (!player.guess) return;
 		console.log('all player have guessed');
 		// TODO: reveal the giver's word and all the guesses
