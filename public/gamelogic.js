@@ -151,20 +151,19 @@ function addClue (clue) {
 }
 
 function guessWord () {
-	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
-		//get input from players
-		getInput('What is ' + clueGiver.name + " 's word?")
-		.then(function(guess){
-			socket.emit('guess', guess);
-			console.log(guess); })
-		//lock input on submit
-		greyInput ('Waiting for other guesses');
-	}
-
 	if (localPlayer === wordMaster) {
-		getInput("Guess the secret word and break the contact!")
-		.then(function(WMguess){
-			socket.emit('wmGuess', WMguess); })
+		getInput("Guess " +clueGiver.name+ "'s word and break the contact!")
+		.then(function(guess){
+			socket.emit('guess', guess); 
+			// TODO: let wordMaster try again
+		});
+	}
+	else if (localPlayer !== clueGiver) {
+		getInput('What is ' + clueGiver.name + "'s word?")
+		.then(function(guess){
+			socket.emit('guess', guess); 
+			greyInput ("Waiting for other players' guesses");
+		});
 	}
 }
 
