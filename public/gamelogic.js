@@ -150,6 +150,7 @@ function guessWord () {
 		getInput("Guess " +clueGiver.name+ "'s word and break the contact!")
 		.then(function(guess){
 			socket.emit('guess', guess); 
+			$("td:contains(" + localPlayer.name + ")").next().text(guess);
 			// TODO: let wordMaster try again
 		});
 	}
@@ -157,30 +158,9 @@ function guessWord () {
 		getInput('What is ' + clueGiver.name + "'s word?")
 		.then(function(guess){
 			socket.emit('guess', guess); 
+			$("td:contains(" + localPlayer.name + ")").next().text(guess);
 			greyInput ("Waiting for other players' guesses");
 		});
-	}
-}
-
-function successConditions () {
-
-	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
-		if (guess === clueGiver.word) {
-			console.log("success, you guessed the word");
-			revealLetter();
-			// update response <td>
-			$("td:contains(" + localPlayer.name + ")").next().text(guess);
-			// advance to next round
-		} else {
-			console.log("you guessed wrong");
-			$("td:contains(" + localPlayer.name + ")").next().text(guess);
-		}
-
-	}
-	if (localPlayer === wordMaster) {
-		if (guess === clueGiver.word) {
-			// advance to next round
-		}
 	}
 }
 
@@ -263,6 +243,7 @@ window.onload = function() {
 		console.log('the master word is ' + word);
 		wordMaster.word = word;
 		revealLetter();
+		// TODO: change status to waiting for giver
 	});
 
 	socket.on('newRound', function(giver){
@@ -292,15 +273,20 @@ window.onload = function() {
 		activePlayers[player.name].guess = player.guess;
 		// TODO: update the DOM to show that the player has guessed
 		//       if it's the WordMaster, don't overwrite the old one
+	});
 
-		for (player in activePlayers)
-			// TODO: don't check the wordMaster or clueGiver
-			if (!player.guess) return;
-		console.log('all player have guessed');
+	socket.on('roundOver', function(success){
+
+		console.log('round over, wordMaster '+ (success? 'lost':'won'));
 		// TODO: reveal the giver's word and all the guesses
-		//		 increment the index if contact is made
-		// 		 if all letters are captured, declare victory
-		//		 else choose a new clueGiver and loop around
+		// TODO: reset any variables as are necessary
+		if (success) revealLetter();
+	});
+
+	socket.on('gameOver', function(){
+		console.log('game over');
+		// TODO: append to the DOM
+		// TODO: reset any variables as are necessary
 	});
 
 	chooseName();

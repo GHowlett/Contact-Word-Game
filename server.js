@@ -17,7 +17,16 @@ var giverName = "";
 var minPlayers = 3;
 var hasStarted = false;
 var masterWord = null;
+var wonRounds = 0;
 
+function getFilteredPlayers() {
+    return _.reject(playerDB, function(player){
+        return player.name === masterName || 
+               player.name === giverName; 
+    });
+}
+
+// TODO: store player data with this.set() instead of playerDB
 function onJoined(player) {
     this.broadcast.emit('joined', player);
     playerDB[this.id] = player;
@@ -41,11 +50,11 @@ function onDisconnect() {
 }
 
 function startNewGame() {
-    var filteredPlayers = _.reject(playerDB, function(player){
-        return player.name === masterName; });
+    var filteredPlayers = getFilteredPlayers();
 
-    masterName = _.sample(playerDB, 1)[0].name;
+    masterName = _.sample(filteredPlayers, 1)[0].name;
     hasStarted = true;
+    wonRounds = 0;
 
     io.sockets.emit('newGame', masterName);
 }
@@ -53,32 +62,59 @@ function startNewGame() {
 // TODO: maybe don't give words or guesses to the client
 //       since it could result in cheating
 function onMasterWordChosen(word) {
-    var filteredPlayers = _.reject(playerDB, function(player){
-        return player.name === masterName || 
-               player.name === giverName; });
-
-    giverName = _.sample(filteredPlayers, 1)[0].name;
     masterWord = word;
-
     this.broadcast.emit('masterWordChosen', word);
+    startNewRound();
+}
+
+function startNewRound() {
+    var filteredPlayers = getFilteredPlayers();
+    giverName = _.sample(filteredPlayers, 1)[0].name;
     io.sockets.emit('newRound', giverName);
 }
 
 function onGiverWordChosen(word) {
     giverWord = word;
     this.broadcast.emit('giverWordChosen', word);
+    if (giverWord === masterWord) endGame();
 }
 
 function onClue(clue) {
+    this.broadcast.emit('clue', clue);
     // TODO: refactor gamelogic so the giver doesn't 
     //       have any special rendering logic, and instead
     //       listens to its own events like everyone else
-    this.broadcast.emit('clue', clue);
 }
 
 function onGuess(guess) {
-    playerDB[this.id].guess = guess;
-    this.broadcast.emit('guess', playerDB[this.id]);
+    var player = playerDB[this.id];
+    player.guess = guess;
+    this.broadcast.emit('guess', player);
+
+    // round over if master guesses right
+    if (player.name === masterName && guess === giverWord)
+        endRound(false);
+
+    // round over if all players have guessed
+    var guesses = _.unique(_.pluck(getFilteredPlayers(),'guess'));
+    if (_.all(guesses, _.identity)) {
+        if (guesses.length === 1 && guesses[0] === giverWord)
+             endRound(true);
+        else endRound(false);
+    }
+}
+
+function endRound(success) {
+    io.sockets.emit('roundOver', success);
+    if (success) wonRounds++;
+    if (wonRounds >= masterWord.length) setTimeout(endGame, 15000);
+    else setTimeout(startNewRound, 15000);
+}
+
+function endGame() {
+    io.sockets.emit('gameOver');
+    // TODO: set new master to current clueGiver
+    setTimeout(startNewGame, 5000);
 }
 
 io.sockets.on("connection", function(client) {
