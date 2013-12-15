@@ -4,7 +4,7 @@ var socket = io.connect('http://localhost');
 var masterWordVisibility = new WordsAndClues(true, false, false);
 var secretWordVisibility = new WordsAndClues(false, true, false);
 var clueVisibility = new WordsAndClues(true, true, true);
-var activePlayers = {length:0}; // TDOO: remove this length prop
+var activePlayers = {};
 var masterWordIndex = -1; //later incremented to 0 before render
 
 // defines visibility of words and clues
@@ -25,7 +25,6 @@ function renderPlayer (player) {
 
 function removePlayer (name) {
 	delete activePlayers[name];
-	activePlayers.length--;
 
 	$('tr:contains(' + name + ')')
 		.remove() // remove player name
@@ -43,7 +42,6 @@ function Player (name, guess) {
 		this.name = name || "";
 		this.guess = guess || ""; }
 	activePlayers[this.name] = this;
-	activePlayers.length++;
 }
 
 // sets new wordMaster. if applicable, reset previous wordMaster to regular player.
