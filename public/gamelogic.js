@@ -61,23 +61,6 @@ function setGiver (player) {
 
 ///////////////////   Stages    ///////////////////////////
 
-// executes another round of the game
-var playRound = series(
-	chooseMasterWord,
-	chooseGiverWord,
-	guessWord
-	// TODO: add the rest of the stages
-);
-
-// runs function as a waterfall
-// TODO: maybe replace this with promises
-function series () {
-    var context = this;
-    return [].reduceRight.call(arguments, function(next,current) {
-		return current.bind(context, next);
-	});
-}
-
 // creates, renders, and emits the local player upon name decision
 function chooseName () {
 	console.log('choosing name');
@@ -264,10 +247,11 @@ window.onload = function() {
 	});
 
 	// Game Loop (runs if name has been chosen)
+	// TODO: make unnamed players be able to spectate
 	socket.on('newRound', function(pair){
 		setMaster(activePlayers[pair.master]);
 		setGiver(activePlayers[pair.giver]);
-		if (localPlayer) playRound();
+		if (localPlayer) chooseMasterWord();
 	});
 
 	socket.on('masterWordChosen', function(word){
