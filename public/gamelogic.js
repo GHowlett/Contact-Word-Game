@@ -113,6 +113,7 @@ function chooseGiverWord () {
 		getInput('Type in a secret word')
 		.then(function(word) {})
 	socket.emit('giverWordChosen', word);
+	chooseGiverClue();
 }
 
 function chooseGiverClue () {
@@ -126,7 +127,7 @@ function chooseGiverClue () {
 	if (clue.clues.length >= 3) {
 		greyInput('3 clues is all you get!');
 	}
-	socket.emit('giverClueDone', clue);
+	socket.emit('enteredClue', clue);
 }
 
 function guessWord () {
@@ -155,7 +156,7 @@ function nextMasterWordLetter () {
     }
 }
 
-// function checkAnswers () { [IN PROGRESS]
+// function checkAnswers () 
 // 	//TODO: set up success condition to reveal next letter of masterword
 // 		//if playerGuesses === secretWord, reveal next letter in masterWord and force next round.
 
@@ -269,8 +270,8 @@ window.onload = function() {
 
 //Jason TODOs------------------
 	//add property enable input to getInput. DONE
-	//create giverWordChosen function to emit data. 
-	//rename chooseGiverWord and break out chooseGiveClue into separate fn.
+	//create giverWordChosen function to emit data. DONE.
+	//rename chooseGiverWord and break out chooseGiveClue into separate fn. REMOVE.
 	//set up checkAnswers function
 
 
