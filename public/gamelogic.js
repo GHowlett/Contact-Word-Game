@@ -101,7 +101,7 @@ function isDuplicateName(playerName) {
 	return true;
 }
 
-function chooseMasterWord (callback) {
+function chooseMasterWord () {
 	console.log("choosing master word");
 
 	if (localPlayer === wordMaster) {
@@ -128,15 +128,14 @@ function chooseMasterWord (callback) {
 			//storing index of masterWord array in associative index
 			masterWordIndex = 0;
 			masterWordIndex++;
-		})
-		.then(callback);
+		});
 	} else {
 		// for everyone else, keep input disabled and replace placeholder text with status
 		$('#input').attr('placeholder','Waiting for MasterWord');
 		}
 	}
 
-function chooseGiverWord (callback) {
+function chooseGiverWord () {
 
 	if (localPlayer === clueGiver) {
 		$('#input').attr('disabled', false);
@@ -144,19 +143,17 @@ function chooseGiverWord (callback) {
 		//switch input context to secretword
 		getInput('Type in a secret word', returnTrue)
 			.then(function(secretWord) {})
-			.then(callback);
 
 		//switch input context from secret word to secret clue
 		getInput("Now type a clue.", returnTrue)
 			.then(function(clue){})
-			.then(callback);
 	}
 	// appending string into clue box- visible to everyone.
 	$('.clue-box').append('#1: ' + clue);
 	//TODO: allow cluegiver to append up to 3 clues
 }
 
-function guessWord (callback) {
+function guessWord () {
 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
 		//enable input for players
 		$('#input').attr('disabled', false);
@@ -166,7 +163,6 @@ function guessWord (callback) {
 			.then(function(guess){
 				socket.emit('playerGuessed', guess);
 			})
-			.then(callback);
 		//lock input on submit
 		$('#input').attr('disabled', true);
 	}
@@ -176,11 +172,10 @@ function guessWord (callback) {
 			.then(function(WMguess){
 				socket.emit('wmGuessed', WMguess);
 			})
-			.then(callback);
 	}
 }
 
-function nextMasterWordLetter (callback) {
+function nextMasterWordLetter () {
 	for (var i= 0; masterWord[i] >= masterWordIndex; i++) {
 		//append letter to master word box
 		$('.master-word-box').append(masterWord[i]);
@@ -189,7 +184,7 @@ function nextMasterWordLetter (callback) {
     }
 }
 
-// function checkAnswers (callback) { [IN PROGRESS]
+// function checkAnswers () { [IN PROGRESS]
 // 	//TODO: set up success condition to reveal next letter of masterword
 // 		//if playerGuesses === secretWord, reveal next letter in masterWord and force next round.
 
@@ -278,8 +273,8 @@ window.onload = function() {
 	});
 
 	socket.on('masterWordChosen', function(word){
-		wordMaster.secret = word;
-		// TODO: call the next stage
+		// TODO: split up and append part of the word to the dom
+		chooseGiverWord();
 	});
 
 	chooseName();
