@@ -91,12 +91,10 @@ function chooseMasterWord () {
 		//capturing user input
 		getInput('Type in your secret word')
 		.then(function(wmWord) {
-			console.log(wmWord);
-			
 			//disabling input
 			greyInput('Your secret word is ' + wmWord);
-
-			masterWordChosen();
+			socket.emit('masterWordChosen', wmWord);
+			masterWordChosen(wmWord);
 		})
 	} else {
 		// for everyone else, keep input disabled and replace placeholder text with status
@@ -104,19 +102,10 @@ function chooseMasterWord () {
 		}
 	}
  
-function masterWordChosen () {
-	socket.emit('masterWordChosen', wmWord);
-	
-	//splitting masterword into an array of strings	
-	masterWord = wmWord.split('');
-	console.log('success!' + masterWord);
-
-	//append first letter of masterword to master-word-box
-	$('.master-word-box').append(masterWord[0]);
-
-	//storing index of masterWord array in associative index
-	masterWordIndex = 0;
-	masterWordIndex++;
+function masterWordChosen (wmWord) {
+	wordMaster.word = wmWord;
+	$('.master-word-box').append(wordMaster.word.split('')[0]);
+	masterWordIndex = 1;
 }
 
 function chooseGiverWord () {
@@ -252,7 +241,8 @@ window.onload = function() {
 	});
 
 	socket.on('masterWordChosen', function(word){
-		// TODO: split up and append part of the word to the dom
+		console.log('the master word is ' + word);
+		masterWordChosen(word);
 		chooseGiverWord();
 	});
 
