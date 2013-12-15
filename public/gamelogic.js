@@ -147,7 +147,7 @@ function chooseGiverClue () {
 		getInput("Now type a clue.")
 		.then(function(clue){
 			clueGiver.clue = clue;
-			socket.emit('clue', clue);	
+			socket.emit('clue', clue);
 		})
 		// appending string into clue box- visible to everyone.
 		$('.clue-box').append(clueGiver.clue);
@@ -155,22 +155,23 @@ function chooseGiverClue () {
 		if (clueGiver.clueCount >= 3) {
 			greyInput('3 clues is all you get!');
 		}
-		
+
 	}
 }
 
 function guessWord () {
 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
 		//get input from players
-		getInput('What is ' + clueGiver + " 's word?")
+		getInput('What is ' + clueGiver.name + " 's word?")
 		.then(function(guess){
-			socket.emit('guess', guess); })
+			socket.emit('guess', guess);
+			console.log(guess); })
 		//lock input on submit
 		greyInput ('Waiting for other guesses');
 	}
 
 	if (localPlayer === wordMaster) {
-		getInput("Guess the clue and break the contact!")
+		getInput("Guess the secret word and break the contact!")
 		.then(function(WMguess){
 			socket.emit('wmGuess', WMguess); })
 	}
@@ -185,16 +186,27 @@ function nextMasterLetter () {
     }
 }
 
-// function successConditions () 
-// 	//TODO: set up success condition to reveal next letter of masterword
-// 		//if playerGuesses === secretWord, reveal next letter in masterWord and force next round.
-// 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
-	
-// 	//TODO: if wordMaster guess === secretWord, force next round
-// 	if
+function successConditions ()
 
-// 	//
-// }
+	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
+		if(guess === clueGiver.secret) {
+			console.log("success, you guessed the word");
+			$('.master-word-box').append(wordMaster.word.split('')[++masterWordIndex]);
+			// update response <td>
+			$("td:contains(" + localPlayer.name + ")").next().text(guess);
+			masterWordIndex++;
+			// advance to next round
+		} else {
+			console.log("you guessed wrong");
+			$("td:contains(" + localPlayer.name + ")").next().text(guess);
+		}
+
+	}
+	if (localPlayer === wordMaster) {
+		if(guess === clueGiver.secret) {
+			// advance to next round
+		}
+	}
 
 /////////////////////////////////////////////////////////
 
