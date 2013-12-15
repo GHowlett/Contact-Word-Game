@@ -177,15 +177,6 @@ function guessWord () {
 	}
 }
 
-function nextMasterLetter () {
-	for (var i= 0; masterWord[i] >= masterWordIndex; i++) {
-		//append letter to master word box
-		$('.master-word-box').append(masterWord[i]);
-		//increment associative index by 1
-		masterWordIndex++;
-    }
-}
-
 function successConditions ()
 
 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
@@ -284,8 +275,7 @@ window.onload = function() {
 
 	socket.on('masterWordChosen', function(word){
 		console.log('the master word is ' + word);
-		// TODO: rename this to 'renderMasterWord'
-		masterWordChosen(word);
+		renderMasterWord(word);
 	});
 
 	socket.on('newRound', function(giver){
