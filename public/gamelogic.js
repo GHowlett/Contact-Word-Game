@@ -246,17 +246,27 @@ window.onload = function() {
 
 	// Game Loop (runs if name has been chosen)
 	// TODO: make unnamed players be able to spectate
-	socket.on('newRound', function(pair){
-		setMaster(activePlayers[pair.master]);
-		setGiver(activePlayers[pair.giver]);
+	socket.on('newGame', function(master){
+		console.log(master + ' is the new master');
+		setMaster(activePlayers[master]);
 		if (localPlayer) chooseMasterWord();
 	});
 
 	socket.on('masterWordChosen', function(word){
 		console.log('the master word is ' + word);
-		// TODO: split up and append part of the word to the dom
+		// TODO: rename this to 'renderMasterWord'
 		masterWordChosen(word);
-		chooseGiverWord();
+	});
+
+	socket.on('newRound', function(giver){
+		console.log(giver + ' is the new giver');
+		
+		// reset player guesses
+		for (player in activePlayers)
+			activePlayers[player].guess = null;
+
+		setGiver(activePlayers[giver]);
+		if (localPlayer) chooseGiverWord();
 	});
 
 	socket.on('giverWordChosen', function(word){
@@ -298,6 +308,7 @@ window.onload = function() {
 //Tim TODOs-----------------
 	//increase size of modals
 	//change status header to update
+	//personalize the placeholder messages
 
 
 //Griffin TODOs-----------

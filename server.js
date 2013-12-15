@@ -13,18 +13,11 @@ var io = socketIO.listen(ioServer);
 
 var playerDB = {};
 var playerCount = 0; // TODO: get rid of this
+var masterName = "";
+var giverName = "";
 var minPlayers = 3;
 var hasStarted = false;
 var masterWord = null;
-
-function startNewRound() {
-    hasStarted = true;
-    var sample = _.sample(playerDB, 2);
-    var pair = {
-        master: sample[0].name,
-        giver: sample[1].name }
-    io.sockets.emit('newRound', pair);
-}
 
 function onJoined(player) {
     this.broadcast.emit('joined', player);
@@ -33,7 +26,7 @@ function onJoined(player) {
     playerCount += 1;
     if (playerCount == minPlayers) {
         this.broadcast.emit('resume');
-        if (!hasStarted) startNewRound(); }
+        if (!hasStarted) startNewGame(); }
     if (playerCount < minPlayers)
         this.emit('pause', 'Waiting for Players');
 }
@@ -48,11 +41,28 @@ function onDisconnect() {
         this.broadcast.emit('pause', 'Waiting for Players');
 }
 
+function startNewGame() {
+    var filteredPlayers = _.reject(playerDB, function(player){
+        return player.name === masterName; });
+
+    masterName = _.sample(playerDB, 1)[0].name;
+    hasStarted = true;
+
+    io.sockets.emit('newGame', masterName);
+}
+
 // TODO: maybe don't give words or guesses to the client
 //       since it could result in cheating
 function onMasterWordChosen(word) {
+    var filteredPlayers = _.reject(playerDB, function(player){
+        return player.name === masterName || 
+               player.name === giverName; });
+
+    giverName = _.sample(filteredPlayers, 1)[0].name;
     masterWord = word;
+
     this.broadcast.emit('masterWordChosen', word);
+    this.broadcast.emit('newRound', giverName);
 }
 
 function onGiverWordChosen(word) {
