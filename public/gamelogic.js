@@ -148,14 +148,14 @@ function chooseGiverClue () {
 		getInput("Now type a clue.")
 		.then(function(clue){
 			clueGiver.clue = clue;
-			socket.emit('clue', clue);
+			socket.emit('clue', clue);	
+			// appending string into clue box- visible to everyone.
+			$('.clue-box').append(clueGiver.clue + ".	");
+			clueGiver.clueCount++
+			//limiting 3 submits
+			if (clueGiver.clueCount < 3) chooseGiverClue();
+			else greyInput('3 clues is all you get!');
 		})
-		// appending string into clue box- visible to everyone.
-		$('.clue-box').append(clueGiver.clue);
-		//limiting 3 submits
-		if (clueGiver.clueCount >= 3) {
-			greyInput('3 clues is all you get!');
-		}
 	}
 }
 
