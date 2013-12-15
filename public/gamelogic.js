@@ -246,6 +246,13 @@ window.onload = function() {
 		chooseGiverWord();
 	});
 
+	socket.on('giverDone', function(data){
+		console.log('the giver word is ' + data.word);
+		conosle.log('the giver clue is ' + data.clue);
+		// TODO: display clues
+		guessWord();
+	});
+
 	chooseName();
 
 

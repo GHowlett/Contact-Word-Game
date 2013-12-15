@@ -53,6 +53,11 @@ function onMasterWordChosen(word) {
     this.broadcast.emit('masterWordChosen', word);
 }
 
+function onGiverDone(data) {
+    giverWord = data.word;
+    this.broadcast.emit('giverDone', data);
+}
+
 io.sockets.on("connection", function(client) {
     for (player in playerDB)
         client.emit('joined', playerDB[player]);
@@ -60,6 +65,7 @@ io.sockets.on("connection", function(client) {
     client.on("joined", onJoined);
     client.on("disconnect", onDisconnect);
     client.on("masterWordChosen", onMasterWordChosen);
+    client.on("giverDone", onGiverDone);
 });
 
 var port = process.env.PORT || 3000;
