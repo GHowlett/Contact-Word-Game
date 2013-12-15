@@ -64,8 +64,8 @@ function setGiver (player) {
 // executes another round of the game
 var playRound = series(
 	chooseMasterWord,
-	choosePlayerSecretWord,
-	guesssecretWord
+	chooseGiverWord,
+	guessWord
 	// TODO: add the rest of the stages
 );
 
@@ -140,46 +140,40 @@ function masterWordSelected () {
 	masterWordIndex++;
 }
 
-function chooseGiverWord (callback) {
+function chooseGiverWord () {
 
 	if (localPlayer === clueGiver) {
 		//switch input context to secretword
 		getInput('Type in a secret word', returnTrue)
-			.then(function(secretWord) {})
-			.then(callback);
+		.then(function(secretWord) {})
 
 		//switch input context from secret word to secret clue
 		getInput("Now type a clue.", returnTrue)
-			.then(function(clue){})
-			.then(callback);
+		.then(function(clue){})
 	}
 	// appending string into clue box- visible to everyone.
 	$('.clue-box').append('#1: ' + clue);
 	//TODO: allow cluegiver to append up to 3 clues
 }
 
-function guessWord (callback) {
+function guessWord () {
 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
 		//get input from players
 		getInput('What is ' + clueGiver + " 's word?")
-			.then(function(guess){
-				socket.emit('playerGuessed', guess);
-			})
-			.then(callback);
+		.then(function(guess){
+			socket.emit('playerGuessed', guess); })
 		//lock input on submit
 		greyInput ('Waiting for other guesses');
 	}
 
 	if (localPlayer === wordMaster) {
 		getInput("Guess the clue and break the contact!")
-			.then(function(WMguess){
-				socket.emit('wmGuessed', WMguess);
-			})
-			.then(callback);
+		.then(function(WMguess){
+			socket.emit('wmGuessed', WMguess); })
 	}
 }
 
-function nextMasterWordLetter (callback) {
+function nextMasterWordLetter () {
 	for (var i= 0; masterWord[i] >= masterWordIndex; i++) {
 		//append letter to master word box
 		$('.master-word-box').append(masterWord[i]);
@@ -188,7 +182,7 @@ function nextMasterWordLetter (callback) {
     }
 }
 
-// function checkAnswers (callback) { [IN PROGRESS]
+// function checkAnswers () { [IN PROGRESS]
 // 	//TODO: set up success condition to reveal next letter of masterword
 // 		//if playerGuesses === secretWord, reveal next letter in masterWord and force next round.
 
@@ -210,8 +204,12 @@ function nextMasterWordLetter (callback) {
 
 /////////////////////////////////////////////////////////
 
-function modal() {
-	$('body').append("<div class='modal'><div class='modal-inner'><p>Hello world</p></div></div>");
+function appendModal(text) {
+	$('body').append("<div class='modal'><div class='modal-inner'><p>" + text + "</p></div></div>");
+}
+
+function removeModal() {
+	$('.modal').remove();
 }
 
 // greys out the input box with a placeholder msg
@@ -226,12 +224,11 @@ function greyInput (placeholder) {
 function getInput (placeholder, validate) {
 	var deferred = new $.Deferred();
 	var input = $("#input").attr('placeholder', placeholder);
-	
+
 	// clear out old handlers
 	$('#gameForm').off('submit');
 	$('#gameForm').submit(function(e) {
 	 	e.preventDefault();
-	 	console.log(validate);
 	 	validate(input.val())
 	 		? deferred.resolveWith(input, [input.val()])
 	 		: deferred.rejectWith(input, [input.val()]);
@@ -255,14 +252,14 @@ window.onload = function() {
 	socket.on('pause', function(reason){
 		if (localPlayer) {
 			console.log('paused');
-			// TODO: bring up a popup modal
+			appendModal(reason);
 		}
 	});
 
 	socket.on('resume', function(){
 		if (localPlayer) {
 			console.log('resumed');
-			// TODO: remove modal if it's up
+			removeModal();
 		}
 	});
 
@@ -274,8 +271,8 @@ window.onload = function() {
 	});
 
 	socket.on('masterWordChosen', function(word){
-		wordMaster.secret = word;
-		// TODO: call the next stage
+		// TODO: split up and append part of the word to the dom
+		chooseGiverWord();
 	});
 
 	chooseName();

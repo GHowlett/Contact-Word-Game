@@ -165,6 +165,6 @@ input[type=submit]:hover {
 	position: relative;
 	z-index: 3;
 		background: #fff;
-	box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.1);
+	box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.3);
 	padding: 1em;
 }
