@@ -261,7 +261,7 @@ window.onload = function() {
 	socket.on('giverWordChosen', function(word){
 		console.log('the giver word is ' + word);
 		clueGiver.word = word;
-		// TODO: change status to waiting for clue
+		greyInput('Waiting for a clue');
 	});
 
 	socket.on('clue', function(clue){
