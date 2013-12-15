@@ -4,7 +4,8 @@ var socket = io.connect('http://localhost');
 var masterWordVisibility = new WordsAndClues(true, false, false);
 var secretWordVisibility = new WordsAndClues(false, true, false);
 var clueVisibility = new WordsAndClues(true, true, true);
-var activePlayers = {length:0};
+var activePlayers = {};
+var masterWordIndex = -1; //later incremented to 0 before render
 
 // defines visibility of words and clues
 function WordsAndClues (visibleToWordMaster, visibleToClueGiver, visibleToPlayer) {
@@ -24,7 +25,6 @@ function renderPlayer (player) {
 
 function removePlayer (name) {
 	delete activePlayers[name];
-	activePlayers.length--;
 
 	$('tr:contains(' + name + ')')
 		.remove() // remove player name
@@ -42,20 +42,16 @@ function Player (name, guess) {
 		this.name = name || "";
 		this.guess = guess || ""; }
 	activePlayers[this.name] = this;
-	activePlayers.length++;
 }
 
-// sets new wordMaster. if applicable, reset previous wordMaster to regular player.
 function setMaster (player) {
 	if (window.wordMaster) delete wordMaster.word;
 	return wordMaster = player;
 }
 
-// sets new clueGiver. if applicable, reset previous clueGiver to regular player.
-// TODO change property 'secret' to something else
 function setGiver (player) {
 	if (window.clueGiver) {
-		delete clueGiver.secret;
+		delete clueGiver.word;
 		delete clueGiver.clueCount;
 	}
 	player.clueCount = 0;
@@ -88,56 +84,40 @@ function isDuplicateName(playerName) {
 }
 
 function matchLetters(word) {
-	var masterLetter = wordMaster.word.split('');
-	var giversLetter = word.split('');
-	var indexMatch = masterWordIndex;
-
-	if(masterLetter[indexMatch] !== giversLetter[indexMatch]) {
-		return false;
-	} else {
-		return true;
-	}
+	return word.slice(0, masterWordIndex +1) === 
+		wordMaster.word.slice(0, masterWordIndex +1);
 }
 
 function chooseMasterWord () {
 	console.log("choosing master word");
 
 	if (localPlayer === wordMaster) {
-		//capturing user input
-		$('#input').val('');
 		getInput('Type in your secret word')
 		.then(function(word) {
-			//disabling input
 			greyInput('Your secret word is ' + word);
 			socket.emit('masterWordChosen', word);
-			masterWordChosen(word);
-		})
-	} else {
-		// for everyone else, keep input disabled and replace placeholder text with status
-		greyInput('waiting for master word');
-		}
-	}
+			wordMaster.word = word;
+			revealLetter();
+		});
+	} else greyInput('waiting for wordMaster to give a word');
+}
 
-function masterWordChosen (word) {
-	wordMaster.word = word;
-	$('.master-word-box').append(wordMaster.word.split('')[0]);
-	masterWordIndex = 0;
+function revealLetter () {
+	$('.master-word-box').append(
+		wordMaster.word[++masterWordIndex] );
 }
 
 function chooseGiverWord () {
 	if (localPlayer === clueGiver) {
 		getInput('Type in a secret word', matchLetters)
-		.done(function(secret) {
-			clueGiver.secret = secret;
-			socket.emit('giverWordChosen', secret);
-			greyInput('Your secret word is ' + clueGiver.secret);
-			setTimeout(chooseGiverClue, 4000);
+		.done(function(word) {
+			clueGiver.word = word;
+			socket.emit('giverWordChosen', word);
+			chooseGiverClue();
 		})
-		.fail(function(secret) {
-			clueGiver.secret = secret;
+		.fail(function(word) {
 			this.css('background', '#FFDDDD')
-			.val('')
-			.prop('placeholder', 'First letters of your word do not match master word');
+			getInput('First letters must match master word');
 			setTimeout(chooseGiverWord, 4000);
 		})
 	}
@@ -145,58 +125,42 @@ function chooseGiverWord () {
 
 function chooseGiverClue () {
 	if (localPlayer === clueGiver) {
-		getInput("Now type a clue.")
+		var msg = (clueGiver.clueCount < 1)
+			? "Now give a clue"
+			: "You can give up to three";
+
+		getInput(msg)
 		.then(function(clue){
-			clueGiver.clue = clue;
-			socket.emit('clue', clue);	
-			// appending string into clue box- visible to everyone.
-			$('.clue-box').append(clueGiver.clue + ".	");
-			clueGiver.clueCount++
-			//limiting 3 submits
-			if (clueGiver.clueCount < 3) chooseGiverClue();
+			socket.emit('clue', clue);
+			if (addClue(clue) < 3) chooseGiverClue();
 			else greyInput('3 clues is all you get!');
 		})
 	}
 }
 
-function guessWord () {
-	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
-		//get input from players
-		getInput('What is ' + clueGiver.name + " 's word?")
-		.then(function(guess){
-			socket.emit('guess', guess);
-			console.log(guess); })
-		//lock input on submit
-		greyInput ('Waiting for other guesses');
-	}
-
-	if (localPlayer === wordMaster) {
-		getInput("Guess the secret word and break the contact!")
-		.then(function(WMguess){
-			socket.emit('wmGuess', WMguess); })
-	}
+function addClue (clue) {
+	console.log('new clue: ' + clue);
+	$('.clue-box').append(
+		'clue #' + ++clueGiver.clueCount + ': ' +clue+ '\n' );
+	return clueGiver.clueCount;
 }
 
-function successConditions () {
-
-	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
-		if(guess === clueGiver.secret) {
-			console.log("success, you guessed the word");
-			$('.master-word-box').append(wordMaster.word.split('')[++masterWordIndex]);
-			// update response <td>
-			$("td:contains(" + localPlayer.name + ")").next().text(guess);
-			masterWordIndex++;
-			// advance to next round
-		} else {
-			console.log("you guessed wrong");
-			$("td:contains(" + localPlayer.name + ")").next().text(guess);
-		}
-
-	}
+function guessWord () {
 	if (localPlayer === wordMaster) {
-		if(guess === clueGiver.secret) {
-			// advance to next round
-		}
+		getInput("Guess " +clueGiver.name+ "'s word and break the contact!")
+		.then(function(guess){
+			socket.emit('guess', guess); 
+			$("td:contains(" + localPlayer.name + ")").next().text(guess);
+			// TODO: let wordMaster try again
+		});
+	}
+	else if (localPlayer !== clueGiver) {
+		getInput('What is ' + clueGiver.name + "'s word?")
+		.then(function(guess){
+			socket.emit('guess', guess); 
+			$("td:contains(" + localPlayer.name + ")").next().text(guess);
+			greyInput ("Waiting for other players' guesses");
+		});
 	}
 }
 
@@ -222,6 +186,7 @@ function greyInput (placeholder) {
 function getInput (placeholder, validate) {
 	var deferred = new $.Deferred();
 	var input = $("#input")
+		.val('')
 		.prop('disabled', false)
 		.attr('placeholder', placeholder);
 
@@ -276,13 +241,16 @@ window.onload = function() {
 
 	socket.on('masterWordChosen', function(word){
 		console.log('the master word is ' + word);
-		renderMasterWord(word);
+		wordMaster.word = word;
+		revealLetter();
+		// TODO: change status to waiting for giver
 	});
 
 	socket.on('newRound', function(giver){
 		console.log(giver + ' is the new giver');
 		
 		// reset player guesses
+		// is this necessary?
 		for (player in activePlayers)
 			activePlayers[player].guess = null;
 
@@ -292,13 +260,12 @@ window.onload = function() {
 
 	socket.on('giverWordChosen', function(word){
 		console.log('the giver word is ' + word);
-		clueGiver.secret = word;
+		clueGiver.word = word;
 		// TODO: change status to waiting for clue
 	});
 
 	socket.on('clue', function(clue){
-		// TODO: append clue to DOM
-		if (++clueGiver.clueCount === 1) guessWord();
+		if (addClue(clue) === 1) guessWord();
 	});
 
 	socket.on('guess', function(player){
@@ -306,35 +273,36 @@ window.onload = function() {
 		activePlayers[player.name].guess = player.guess;
 		// TODO: update the DOM to show that the player has guessed
 		//       if it's the WordMaster, don't overwrite the old one
+	});
 
-		for (player in activePlayers)
-			if (!player.guess) return;
-		console.log('all player have guessed');
+	socket.on('roundOver', function(success){
+
+		console.log('round over, wordMaster '+ (success? 'lost':'won'));
 		// TODO: reveal the giver's word and all the guesses
-		//		 increment the index if contact is made
-		// 		 if all letters are captured, declare victory
-		//		 else choose a new clueGiver and loop around
+		// TODO: reset any variables as are necessary
+		if (success) revealLetter();
+	});
+
+	socket.on('gameOver', function(){
+		console.log('game over');
+		// TODO: append to the DOM
+		// TODO: reset any variables as are necessary
 	});
 
 	chooseName();
+};
 
 
 //Jason TODOs------------------
-	//add property enable input to getInput. DONE
-	//create giverWordChosen function to emit data. DONE.
-	//rename chooseGiverWord and break out chooseGiveClue into separate fn. REMOVE.
 	//set up checkAnswers function
 
 
 //Tim TODOs-----------------
-	//increase size of modals
-	//change status header to update
 	//personalize the placeholder messages
 
 
 //Griffin TODOs-----------
 	//everything
-
 
 
 //Remaining TODOs--------
@@ -352,6 +320,3 @@ window.onload = function() {
 
 // If the master secret word is not guessed at the end of the round,
 // select next player in user column and begin again.
-
-
-};
