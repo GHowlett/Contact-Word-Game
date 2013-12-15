@@ -145,18 +145,25 @@ function chooseGiverWord () {
 
 function chooseGiverClue () {
 	if (localPlayer === clueGiver) {
-		getInput("Now type a clue.")
+		var msg = (clueGiver.clueCount < 1)
+			? "Now give a clue"
+			: "You can give up to three";
+
+		getInput(msg)
 		.then(function(clue){
-			clueGiver.clue = clue;
-			socket.emit('clue', clue);	
-			// appending string into clue box- visible to everyone.
-			$('.clue-box').append(clueGiver.clue + ".	");
-			clueGiver.clueCount++
-			//limiting 3 submits
+			socket.emit('clue', clue);
+			addClue(clue);
+
 			if (clueGiver.clueCount < 3) chooseGiverClue();
 			else greyInput('3 clues is all you get!');
 		})
 	}
+}
+
+function addClue (clue) {
+	console.log('new clue: ' + clue);
+	$('.clue-box').append(
+		'clue #' + ++clueGiver.clueCount + ': ' +clue+ '\n' );
 }
 
 function guessWord () {
@@ -297,7 +304,7 @@ window.onload = function() {
 	});
 
 	socket.on('clue', function(clue){
-		// TODO: append clue to DOM
+		addClue(clue);
 		if (++clueGiver.clueCount === 1) guessWord();
 	});
 
