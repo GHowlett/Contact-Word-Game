@@ -4,7 +4,8 @@ var socket = io.connect('http://localhost');
 var masterWordVisibility = new WordsAndClues(true, false, false);
 var secretWordVisibility = new WordsAndClues(false, true, false);
 var clueVisibility = new WordsAndClues(true, true, true);
-var activePlayers = {length:0};
+var activePlayers = {length:0}; // TDOO: remove this length prop
+var masterWordIndex = -1; //later incremented to 0 before render
 
 // defines visibility of words and clues
 function WordsAndClues (visibleToWordMaster, visibleToClueGiver, visibleToPlayer) {
@@ -98,18 +99,17 @@ function chooseMasterWord () {
 	if (localPlayer === wordMaster) {
 		getInput('Type in your secret word')
 		.then(function(word) {
-			//disabling input
 			greyInput('Your secret word is ' + word);
 			socket.emit('masterWordChosen', word);
-			masterWordChosen(word);
+			wordMaster.word = word;
+			revealLetter();
 		});
 	} else greyInput('waiting for wordMaster to give a word');
 }
 
-function masterWordChosen (word) {
-	wordMaster.word = word;
-	$('.master-word-box').append(wordMaster.word[0]);
-	masterWordIndex = 0;
+function revealLetter () {
+	$('.master-word-box').append(
+		wordMaster.word[++masterWordIndex] );
 }
 
 function chooseGiverWord () {
@@ -172,10 +172,9 @@ function successConditions () {
 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
 		if (guess === clueGiver.word) {
 			console.log("success, you guessed the word");
-			$('.master-word-box').append(wordMaster.word[++masterWordIndex]);
+			revealLetter();
 			// update response <td>
 			$("td:contains(" + localPlayer.name + ")").next().text(guess);
-			masterWordIndex++;
 			// advance to next round
 		} else {
 			console.log("you guessed wrong");
@@ -267,7 +266,8 @@ window.onload = function() {
 
 	socket.on('masterWordChosen', function(word){
 		console.log('the master word is ' + word);
-		masterWordChosen(word);
+		wordMaster.word = word;
+		revealLetter();
 	});
 
 	socket.on('newRound', function(giver){
