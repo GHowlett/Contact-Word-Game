@@ -55,6 +55,7 @@ function setMaster (player) {
 // TODO change property 'secret' to something else
 function setGiver (player) {
 	if (window.clueGiver) {
+		//change .secret
 		delete clueGiver.secret;
 		delete clueGiver.clues; }
 	player.clues = [];
@@ -152,7 +153,7 @@ function chooseGiverClue () {
 	if (clue.clues.length >= 3) {
 		greyInput('3 clues is all you get!');
 	}
-	socket.emit('enteredClue', clue);
+	socket.emit('clue', clue);
 }
 
 function guessWord () {
@@ -168,11 +169,11 @@ function guessWord () {
 	if (localPlayer === wordMaster) {
 		getInput("Guess the clue and break the contact!")
 		.then(function(WMguess){
-			socket.emit('wmGuessed', WMguess); })
+			socket.emit('wmGuess', WMguess); })
 	}
 }
 
-function nextMasterWordLetter () {
+function nextMasterLetter () {
 	for (var i= 0; masterWord[i] >= masterWordIndex; i++) {
 		//append letter to master word box
 		$('.master-word-box').append(masterWord[i]);
@@ -181,25 +182,16 @@ function nextMasterWordLetter () {
     }
 }
 
-// function checkAnswers ()
-// 	//TODO: set up success condition to reveal next letter of masterword
-// 		//if playerGuesses === secretWord, reveal next letter in masterWord and force next round.
+function successConditions () 
+	//TODO: set up success condition to reveal next letter of masterword
+		//if playerGuesses === secretWord, reveal next letter in masterWord and force next round.
+	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
+	
+	//TODO: if wordMaster guess === secretWord, force next round
+	if
 
-// 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
-// 		getInput('') //in-progress
-// 			.then(function(success) {
-// 		//reveal the next letter of m
-// 	}	else	{
-// 			//move cluegiver to the next player in array
-// 			//start the gameflow overloading
-// 		}
-// 	}
-
-// 	//TODO: if wordMaster guess === secretWord, force next round
-// 	if
-
-// 	//
-// }
+	//
+}
 
 /////////////////////////////////////////////////////////
 
@@ -288,7 +280,7 @@ window.onload = function() {
 		// TODO: change status to waiting for clue
 	});
 
-	socket.on('clue', function(clue){
+	socket.on('enteredClue', function(clue){
 		// TODO: append clue to DOM
 		if (clueGiver.clues.push(clue) === 1) guessWord();
 	});
