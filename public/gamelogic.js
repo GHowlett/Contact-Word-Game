@@ -104,6 +104,7 @@ function chooseMasterWord () {
 
 	if (localPlayer === wordMaster) {
 		//capturing user input
+		$('#input').val('');
 		getInput('Type in your secret word')
 		.then(function(word) {
 			//disabling input
@@ -285,6 +286,21 @@ window.onload = function() {
 	socket.on('clue', function(clue){
 		// TODO: append clue to DOM
 		if (++clueGiver.clueCount === 1) guessWord();
+	});
+
+	socket.on('guess', function(player){
+		console.log(player.name +' has guessed '+ player.guess);
+		activePlayers[player.name].guess = player.guess;
+		// TODO: update the DOM to show that the player has guessed
+		//       if it's the WordMaster, don't overwrite the old one
+
+		for (player in activePlayers)
+			if (!player.guess) return;
+		console.log('all player have guessed');
+		// TODO: reveal the giver's word and all the guesses
+		//		 increment the index if contact is made
+		// 		 if all letters are captured, declare victory
+		//		 else choose a new clueGiver and loop around
 	});
 
 	chooseName();
