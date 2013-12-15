@@ -198,6 +198,7 @@ function successConditions () {
 			// advance to next round
 		}
 	}
+}
 
 /////////////////////////////////////////////////////////
 
