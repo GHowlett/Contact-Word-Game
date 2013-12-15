@@ -56,7 +56,7 @@ function setMaster (player) {
 function setGiver (player) {
 	if (window.clueGiver) {
 		delete clueGiver.secret;
-		delete clueGiver.cluecount;
+		delete clueGiver.clueCount;
 	}
 	player.clueCount = 0;
 	return clueGiver = player;
@@ -130,7 +130,8 @@ function chooseGiverWord () {
 		.done(function(secret) {
 			clueGiver.secret = secret;
 			socket.emit('giverWordChosen', secret);
-			chooseGiverClue();
+			greyInput('Your secret word is ' + clueGiver.secret);
+			setTimeout(chooseGiverClue, 4000);
 		})
 		.fail(function(secret) {
 			clueGiver.secret = secret;
@@ -155,7 +156,6 @@ function chooseGiverClue () {
 		if (clueGiver.clueCount >= 3) {
 			greyInput('3 clues is all you get!');
 		}
-
 	}
 }
 
