@@ -8,30 +8,11 @@ var activePlayers = {};
 var masterWordIndex = -1; //later incremented to 0 before render
 
 // defines visibility of words and clues
+// TODO: get rid of this
 function WordsAndClues (visibleToWordMaster, visibleToClueGiver, visibleToPlayer) {
 	this.visibleToWordMaster = visibleToWordMaster;
 	this.visibleToClueGiver = visibleToClueGiver;
 	this.visibleToPlayer = visibleToPlayer;
-}
-
-// creates, renders, and adds player to active players array.
-function renderPlayer (player) {
-	$('tbody').append(
-		'<tr>' +
-			'<td>' + player.name + '</td>' +
-			'<td>' + 'response placeholder' + '</td>' +
-		'</tr>' );
-}
-
-function removePlayer (name) {
-	delete activePlayers[name];
-
-	$('tr:contains(' + name + ')')
-		.remove() // remove player name
-		.next()
-		.remove() // remove player status
-		.next()
-		.remove(); // remove player response
 }
 
 // TODO: find a more semantic convention for type overloading
@@ -41,6 +22,10 @@ function Player (name, guess) {
 	else {
 		this.name = name || "";
 		this.guess = guess || ""; }
+
+	Object.defineProperty(this, 'el', 
+		{value: $('<tr/>').appendTo('tbody'), writable:true});
+
 	activePlayers[this.name] = this;
 }
 
@@ -83,11 +68,6 @@ function isDuplicateName(playerName) {
 	return true;
 }
 
-function matchLetters(word) {
-	return word.slice(0, masterWordIndex +1) === 
-		wordMaster.word.slice(0, masterWordIndex +1);
-}
-
 function chooseMasterWord () {
 	console.log("choosing master word");
 
@@ -100,11 +80,6 @@ function chooseMasterWord () {
 			revealLetter();
 		});
 	} else greyInput('waiting for wordMaster to give a word');
-}
-
-function revealLetter () {
-	$('.master-word-box').append(
-		wordMaster.word[++masterWordIndex] );
 }
 
 function chooseGiverWord () {
@@ -121,6 +96,11 @@ function chooseGiverWord () {
 			setTimeout(chooseGiverWord, 4000);
 		})
 	}
+}
+
+function matchLetters(word) {
+	return word.slice(0, masterWordIndex +1) === 
+		wordMaster.word.slice(0, masterWordIndex +1);
 }
 
 function chooseGiverClue () {
@@ -164,7 +144,24 @@ function guessWord () {
 	}
 }
 
-/////////////////////////////////////////////////////////
+function revealLetter () {
+	$('.master-word-box').append(
+		wordMaster.word[++masterWordIndex] );
+}
+
+//////////////////////  DOM Manipluation  ///////////////////////
+
+// creates, renders, and adds player to active players array.
+function renderPlayer (player) {
+	player.el.html(
+		'<td class="name">' + player.name + '</td>' +
+		'<td class="response">' + 'none' + '</td>');
+}
+
+function removePlayer (name) {
+	activePlayers[name].el.remove();
+	delete activePlayers[name];
+}
 
 function appendModal(text) {
 	$('body').append("<div class='modal'><div class='modal-inner'><p>" + text + "</p><div class='spinner'></div></div></div>");
@@ -204,6 +201,8 @@ function getInput (placeholder, validate) {
 
 	return deferred.promise()
 }
+
+////////////////////////  Event Listeners  ///////////////////////
 
 window.onload = function() {
 	// TODO: make sure all emitions are being captured
