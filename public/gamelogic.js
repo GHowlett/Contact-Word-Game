@@ -88,15 +88,8 @@ function isDuplicateName(playerName) {
 }
 
 function matchLetters(word) {
-	var masterLetter = wordMaster.word.split('');
-	var giversLetter = word.split('');
-	var indexMatch = masterWordIndex;
-
-	if(masterLetter[indexMatch] !== giversLetter[indexMatch]) {
-		return false;
-	} else {
-		return true;
-	}
+	return word.slice(0, masterWordIndex +1) === 
+		wordMaster.word.slice(0, masterWordIndex +1);
 }
 
 function chooseMasterWord () {
