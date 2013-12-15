@@ -110,19 +110,24 @@ function masterWordChosen (wmWord) {
 }
 
 function chooseGiverWord () {
-
 	if (localPlayer === clueGiver) {
-		//switch input context to secretword
 		getInput('Type in a secret word')
-		.then(function(secretWord) {})
+		.then(function(word) {})
+	socket.emit('giverWordChosen', word);
+}
 
-		//switch input context from secret word to secret clue
+function chooseGiverClue () {
+	if (localPlayer === clueGiver) {
 		getInput("Now type a clue.")
 		.then(function(clue){})
 	}
 	// appending string into clue box- visible to everyone.
 	$('.clue-box').append('#1: ' + clue);
-	//TODO: allow cluegiver to append up to 3 clues
+	//limiting 3 submits
+	if (clue.clues.length >= 3) {
+		greyInput('3 clues is all you get!');
+	}
+	socket.emit('giverClueDone', clue);
 }
 
 function guessWord () {
@@ -192,7 +197,9 @@ function greyInput (placeholder) {
 // returns a promise that binds function contexts to #input
 function getInput (placeholder, validate) {
 	var deferred = new $.Deferred();
-	var input = $("#input").attr('placeholder', placeholder);
+	var input = $("#input")
+		.prop('disabled', false)
+		.attr('placeholder', placeholder);
 
 	// clear out old handlers
 	$('#gameForm').off('submit');
@@ -203,6 +210,9 @@ function getInput (placeholder, validate) {
 	 		? deferred.resolveWith(input, [input.val()])
 	 		: deferred.rejectWith(input, [input.val()]);
  	});
+
+ 	// clear/change status header
+ 	$('header .game-status').text('').text(placeholder);
 
 	return deferred.promise()
 }
@@ -243,6 +253,7 @@ window.onload = function() {
 
 	socket.on('masterWordChosen', function(word){
 		console.log('the master word is ' + word);
+		// TODO: split up and append part of the word to the dom
 		masterWordChosen(word);
 		chooseGiverWord();
 	});
@@ -261,34 +272,28 @@ window.onload = function() {
 	chooseName();
 
 
+//Jason TODOs------------------
+	//add property enable input to getInput. DONE
+	//create giverWordChosen function to emit data. 
+	//rename chooseGiverWord and break out chooseGiveClue into separate fn.
+	//set up checkAnswers function
 
-//Remaining TODOs------------------
 
-// Set the input placeholder of players to 'waiting for wordmaster'. DONE
+//Tim TODOs-----------------
+	//increase size of modals
+	//change status header to update
 
-// Enable input for word master. DONE
 
-// word master's input is labeled with "Choose master word". DONE
+//Griffin TODOs-----------
+	//everything
 
-// when user enters in master word it is populated into the master. In PROGRESS.
 
-// word box, but this is hidden from everyone except the word master.
 
-// Disable input for wordmaster
 
-// Enable input for word/clue chooser
-
-// Select first person in the user column, prompt him or her to enter
-// a word -- the input field has a label choose secret word. The chosen
-// user's status is populated with the secret word they chose. IN PROGRESS
-
+//Remaining TODOs---------
 // Then the chosen player types in a clue. The input has a label called:
 // choose clue for secret word. On submit the clue box is populated with
 // clue.
-
-// Disable input for word/clue chooser
-
-// Enable input for other players and wordmaster
 
 // The other players who did not choose a master secret word start
 // guessing words by typing. Their input is labeled with: "Start
@@ -296,8 +301,6 @@ window.onload = function() {
 // and their input is locked up. Status becomes clue submitted, and
 // response field in table is populated with their guess, which is currently
 // hidden from everyone except them.
-
-// Once a player has guessed, disable input
 
 // The word master's guess, however, is visible to everyone playing.
 
