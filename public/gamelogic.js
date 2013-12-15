@@ -47,16 +47,18 @@ function Player (name, guess) {
 
 // sets new wordMaster. if applicable, reset previous wordMaster to regular player.
 function setMaster (player) {
-	if (window.wordMaster) delete wordMaster.wmWord;
+	if (window.wordMaster) delete wordMaster.word;
 	return wordMaster = player;
 }
 
 // sets new clueGiver. if applicable, reset previous clueGiver to regular player.
+// TODO change property 'secret' to something else
 function setGiver (player) {
 	if (window.clueGiver) {
 		delete clueGiver.secret;
-		delete clueGiver.clues; }
-	player.clues = [];
+		delete clueGiver.clueCount;
+	}
+	player.clueCount = 0;
 	return clueGiver = player;
 }
 
@@ -85,17 +87,30 @@ function isDuplicateName(playerName) {
 	return true;
 }
 
+function matchLetters(word) {
+	var masterLetter = wordMaster.word.split('');
+	var giversLetter = word.split('');
+	var indexMatch = masterWordIndex;
+
+	if(masterLetter[indexMatch] !== giversLetter[indexMatch]) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
 function chooseMasterWord () {
 	console.log("choosing master word");
 
 	if (localPlayer === wordMaster) {
 		//capturing user input
+		$('#input').val('');
 		getInput('Type in your secret word')
-		.then(function(wmWord) {
+		.then(function(word) {
 			//disabling input
-			greyInput('Your secret word is ' + wmWord);
-			socket.emit('masterWordChosen', wmWord);
-			masterWordChosen(wmWord);
+			greyInput('Your secret word is ' + word);
+			socket.emit('masterWordChosen', word);
+			masterWordChosen(word);
 		})
 	} else {
 		// for everyone else, keep input disabled and replace placeholder text with status
@@ -103,52 +118,66 @@ function chooseMasterWord () {
 		}
 	}
 
-function masterWordChosen (wmWord) {
-	wordMaster.word = wmWord;
+function masterWordChosen (word) {
+	wordMaster.word = word;
 	$('.master-word-box').append(wordMaster.word.split('')[0]);
-	masterWordIndex = 1;
+	masterWordIndex = 0;
 }
 
 function chooseGiverWord () {
 	if (localPlayer === clueGiver) {
-		getInput('Type in a secret word')
-		.then(function(word){}) }
-	socket.emit('giverWordChosen', word);
-	chooseGiverClue();
+		getInput('Type in a secret word', matchLetters)
+		.done(function(secret) {
+			clueGiver.secret = secret;
+			socket.emit('giverWordChosen', secret);
+			greyInput('Your secret word is ' + clueGiver.secret);
+			setTimeout(chooseGiverClue, 4000);
+		})
+		.fail(function(secret) {
+			clueGiver.secret = secret;
+			this.css('background', '#FFDDDD')
+			.val('')
+			.prop('placeholder', 'First letters of your word do not match master word');
+			setTimeout(chooseGiverWord, 4000);
+		})
+	}
 }
 
 function chooseGiverClue () {
 	if (localPlayer === clueGiver) {
 		getInput("Now type a clue.")
-		.then(function(clue){})
+		.then(function(clue){
+			clueGiver.clue = clue;
+			socket.emit('clue', clue);
+		})
+		// appending string into clue box- visible to everyone.
+		$('.clue-box').append(clueGiver.clue);
+		//limiting 3 submits
+		if (clueGiver.clueCount >= 3) {
+			greyInput('3 clues is all you get!');
+		}
 	}
-	// appending string into clue box- visible to everyone.
-	$('.clue-box').append('#1: ' + clue);
-	//limiting 3 submits
-	if (clue.clues.length >= 3) {
-		greyInput('3 clues is all you get!');
-	}
-	socket.emit('enteredClue', clue);
 }
 
 function guessWord () {
 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
 		//get input from players
-		getInput('What is ' + clueGiver + " 's word?")
+		getInput('What is ' + clueGiver.name + " 's word?")
 		.then(function(guess){
-			socket.emit('guess', guess); })
+			socket.emit('guess', guess);
+			console.log(guess); })
 		//lock input on submit
 		greyInput ('Waiting for other guesses');
 	}
 
 	if (localPlayer === wordMaster) {
-		getInput("Guess the clue and break the contact!")
+		getInput("Guess the secret word and break the contact!")
 		.then(function(WMguess){
-			socket.emit('wmGuessed', WMguess); })
+			socket.emit('wmGuess', WMguess); })
 	}
 }
 
-function nextMasterWordLetter () {
+function nextMasterLetter () {
 	for (var i= 0; masterWord[i] >= masterWordIndex; i++) {
 		//append letter to master word box
 		$('.master-word-box').append(masterWord[i]);
@@ -157,25 +186,27 @@ function nextMasterWordLetter () {
     }
 }
 
-// function checkAnswers () 
-// 	//TODO: set up success condition to reveal next letter of masterword
-// 		//if playerGuesses === secretWord, reveal next letter in masterWord and force next round.
+function successConditions ()
 
-// 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
-// 		getInput('') //in-progress
-// 			.then(function(success) {
-// 		//reveal the next letter of m
-// 	}	else	{
-// 			//move cluegiver to the next player in array
-// 			//start the gameflow overloading
-// 		}
-// 	}
+	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
+		if(guess === clueGiver.secret) {
+			console.log("success, you guessed the word");
+			$('.master-word-box').append(wordMaster.word.split('')[++masterWordIndex]);
+			// update response <td>
+			$("td:contains(" + localPlayer.name + ")").next().text(guess);
+			masterWordIndex++;
+			// advance to next round
+		} else {
+			console.log("you guessed wrong");
+			$("td:contains(" + localPlayer.name + ")").next().text(guess);
+		}
 
-// 	//TODO: if wordMaster guess === secretWord, force next round
-// 	if
-
-// 	//
-// }
+	}
+	if (localPlayer === wordMaster) {
+		if(guess === clueGiver.secret) {
+			// advance to next round
+		}
+	}
 
 /////////////////////////////////////////////////////////
 
@@ -206,7 +237,6 @@ function getInput (placeholder, validate) {
 	$('#gameForm').off('submit');
 	$('#gameForm').submit(function(e) {
 	 	e.preventDefault();
-	 	console.log(validate);
 		(!validate || validate(input.val()))
 	 		? deferred.resolveWith(input, [input.val()])
 	 		: deferred.rejectWith(input, [input.val()]);
@@ -277,7 +307,7 @@ window.onload = function() {
 
 	socket.on('clue', function(clue){
 		// TODO: append clue to DOM
-		if (clueGiver.clues.push(clue) === 1) guessWord();
+		if (++clueGiver.clueCount === 1) guessWord();
 	});
 
 	socket.on('guess', function(player){
@@ -286,7 +316,7 @@ window.onload = function() {
 		// TODO: update the DOM to show that the player has guessed
 		//       if it's the WordMaster, don't overwrite the old one
 
-		for (player in activePlayers) 
+		for (player in activePlayers)
 			if (!player.guess) return;
 		console.log('all player have guessed');
 		// TODO: reveal the giver's word and all the guesses
@@ -316,24 +346,7 @@ window.onload = function() {
 
 
 
-
-//Remaining TODOs---------
-// Then the chosen player types in a clue. The input has a label called:
-// choose clue for secret word. On submit the clue box is populated with
-// clue.
-
-// The other players who did not choose a master secret word start
-// guessing words by typing. Their input is labeled with: "Start
-// guessing what the word is", and on submit their response is stored
-// and their input is locked up. Status becomes clue submitted, and
-// response field in table is populated with their guess, which is currently
-// hidden from everyone except them.
-
-// The word master's guess, however, is visible to everyone playing.
-
-// The input field of the player who chose the word/clue is locked for
-// this round.
-
+//Remaining TODOs--------
 // Compare user inputs with secret word. If the players have the same guesses and
 // their guess is the same as the secret word AND they do all this before the word
 // master, reveal the first obscured character of the master secret word.
