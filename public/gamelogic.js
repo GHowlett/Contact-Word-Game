@@ -47,7 +47,7 @@ function Player (name, guess) {
 
 // sets new wordMaster. if applicable, reset previous wordMaster to regular player.
 function setMaster (player) {
-	if (window.wordMaster) delete wordMaster.secret;
+	if (window.wordMaster) delete wordMaster.wmWord;
 	return wordMaster = player;
 }
 
@@ -88,28 +88,24 @@ function chooseMasterWord () {
 	console.log("choosing master word");
 
 	if (localPlayer === wordMaster) {
-		// for wordmaster, enable input
-		$('#input').attr('disabled', false);
-
 		//capturing user input
-		getInput('Type in your secret word', returnTrue)
+		getInput('Type in your secret word')
 		.then(function(wmWord) {
 			console.log(wmWord);
 			
 			//disabling input
-			$("#input").attr('disabled', true);
+			greyInput('Your secret word is ' + wmWord);
+
+			masterWordChosen();
 		})
-		.then(callback);
 	} else {
 		// for everyone else, keep input disabled and replace placeholder text with status
 		greyInput('waiting for master word');
 		}
-	
-	masterWordSelected();
 	}
  
-function masterWordSelected () {
-	socket.emit('MasterWordSelected', wmWord);
+function masterWordChosen () {
+	socket.emit('masterWordChosen', wmWord);
 	
 	//splitting masterword into an array of strings	
 	masterWord = wmWord.split('');
@@ -127,11 +123,11 @@ function chooseGiverWord () {
 
 	if (localPlayer === clueGiver) {
 		//switch input context to secretword
-		getInput('Type in a secret word', returnTrue)
+		getInput('Type in a secret word')
 		.then(function(secretWord) {})
 
 		//switch input context from secret word to secret clue
-		getInput("Now type a clue.", returnTrue)
+		getInput("Now type a clue.")
 		.then(function(clue){})
 	}
 	// appending string into clue box- visible to everyone.
@@ -212,7 +208,8 @@ function getInput (placeholder, validate) {
 	$('#gameForm').off('submit');
 	$('#gameForm').submit(function(e) {
 	 	e.preventDefault();
-	 	validate(input.val())
+	 	console.log(validate);
+		(!validate || validate(input.val()))
 	 		? deferred.resolveWith(input, [input.val()])
 	 		: deferred.rejectWith(input, [input.val()]);
  	});
