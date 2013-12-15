@@ -62,7 +62,7 @@ function onMasterWordChosen(word) {
     masterWord = word;
 
     this.broadcast.emit('masterWordChosen', word);
-    this.broadcast.emit('newRound', giverName);
+    io.sockets.emit('newRound', giverName);
 }
 
 function onGiverWordChosen(word) {
