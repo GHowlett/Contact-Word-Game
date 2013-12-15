@@ -86,9 +86,9 @@ function isDuplicateName(playerName) {
 	return true;
 }
 
-function matchLetters() {
+function matchLetters(word) {
 	var masterLetter = wordMaster.word.split('');
-	var giversLetter = clueGiver.secret.split('');
+	var giversLetter = word.split('');
 	var indexMatch = masterWordIndex;
 
 	if(masterLetter[indexMatch] !== giversLetter[indexMatch]) {
@@ -125,17 +125,16 @@ function masterWordChosen (wmWord) {
 function chooseGiverWord () {
 	if (localPlayer === clueGiver) {
 		getInput('Type in a secret word', matchLetters)
-		.done(function(cgSecret) {
-			clueGiver.secret = cgSecret;
+		.done(function(secret) {
+			clueGiver.secret = secret;
 			socket.emit('giverWordChosen', secret);
-			matchLetters();
 			chooseGiverClue();
 		})
-		.fail(function(cgSecret) {
-			clueGiver.secret = cgSecret;
+		.fail(function(secret) {
+			clueGiver.secret = secret;
 			this.css('background', '#FFDDDD')
 			.val('')
-			.prop('placeholder', 'First letter of your word does not match first letter of master word');
+			.prop('placeholder', 'First letters of your word do not match master word');
 			setTimeout(chooseGiverWord, 4000);
 		})
 	}
