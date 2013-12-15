@@ -177,7 +177,7 @@ function guessWord () {
 	}
 }
 
-function successConditions ()
+function successConditions () {
 
 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
 		if(guess === clueGiver.secret) {
