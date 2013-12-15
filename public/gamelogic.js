@@ -203,6 +203,9 @@ function getInput (placeholder, validate) {
 	 		: deferred.rejectWith(input, [input.val()]);
  	});
 
+ 	// clear/change status header
+ 	$('header .game-status').text('').text(placeholder);
+
 	return deferred.promise()
 }
 
