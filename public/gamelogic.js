@@ -52,6 +52,7 @@ function setMaster (player) {
 }
 
 // sets new clueGiver. if applicable, reset previous clueGiver to regular player.
+// TODO change property 'secret' to something else
 function setGiver (player) {
 	if (window.clueGiver) {
 		delete clueGiver.secret;
@@ -85,6 +86,18 @@ function isDuplicateName(playerName) {
 	return true;
 }
 
+function matchLetters() {
+	var masterLetter = wordMaster.word.split('');
+	var giversLetter = clueGiver.secret.split('');
+	var indexMatch = masterWordIndex;
+
+	if(masterLetter[indexMatch] !== giversLetter[indexMatch]) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
 function chooseMasterWord () {
 	console.log("choosing master word");
 
@@ -106,15 +119,26 @@ function chooseMasterWord () {
 function masterWordChosen (wmWord) {
 	wordMaster.word = wmWord;
 	$('.master-word-box').append(wordMaster.word.split('')[0]);
-	masterWordIndex = 1;
+	masterWordIndex = 0;
 }
 
 function chooseGiverWord () {
 	if (localPlayer === clueGiver) {
-		getInput('Type in a secret word')
-		.then(function(word){}) }
-	socket.emit('giverWordChosen', word);
-	chooseGiverClue();
+		getInput('Type in a secret word', matchLetters)
+		.done(function(cgSecret) {
+			clueGiver.secret = cgSecret;
+			socket.emit('giverWordChosen', secret);
+			matchLetters();
+			chooseGiverClue();
+		})
+		.fail(function(cgSecret) {
+			clueGiver.secret = cgSecret;
+			this.css('background', '#FFDDDD')
+			.val('')
+			.prop('placeholder', 'First letter of your word does not match first letter of master word');
+			setTimeout(chooseGiverWord, 4000);
+		})
+	}
 }
 
 function chooseGiverClue () {
@@ -157,7 +181,7 @@ function nextMasterWordLetter () {
     }
 }
 
-// function checkAnswers () 
+// function checkAnswers ()
 // 	//TODO: set up success condition to reveal next letter of masterword
 // 		//if playerGuesses === secretWord, reveal next letter in masterWord and force next round.
 
@@ -206,7 +230,6 @@ function getInput (placeholder, validate) {
 	$('#gameForm').off('submit');
 	$('#gameForm').submit(function(e) {
 	 	e.preventDefault();
-	 	console.log(validate);
 		(!validate || validate(input.val()))
 	 		? deferred.resolveWith(input, [input.val()])
 	 		: deferred.rejectWith(input, [input.val()]);
