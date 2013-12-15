@@ -96,20 +96,15 @@ function chooseMasterWord () {
 	console.log("choosing master word");
 
 	if (localPlayer === wordMaster) {
-		//capturing user input
-		$('#input').val('');
 		getInput('Type in your secret word')
 		.then(function(word) {
 			//disabling input
 			greyInput('Your secret word is ' + word);
 			socket.emit('masterWordChosen', word);
 			masterWordChosen(word);
-		})
-	} else {
-		// for everyone else, keep input disabled and replace placeholder text with status
-		greyInput('waiting for master word');
-		}
-	}
+		});
+	} else greyInput('waiting for wordMaster to give a word');
+}
 
 function masterWordChosen (word) {
 	wordMaster.word = word;
