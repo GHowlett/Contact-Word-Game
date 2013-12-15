@@ -217,6 +217,7 @@ function greyInput (placeholder) {
 function getInput (placeholder, validate) {
 	var deferred = new $.Deferred();
 	var input = $("#input")
+		.val('')
 		.prop('disabled', false)
 		.attr('placeholder', placeholder);
 
