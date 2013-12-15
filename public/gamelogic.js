@@ -112,10 +112,9 @@ function chooseMasterWord () {
 			masterWordIndex = 0;
 			masterWordIndex++;
 		});
-	} else {
+	} else
 		// for everyone else, keep input disabled and replace placeholder text with status
 		$('#input').attr('placeholder','Waiting for MasterWord');
-		}
 	}
 
 function chooseGiverWord () {
@@ -125,11 +124,11 @@ function chooseGiverWord () {
 
 		//switch input context to secretword
 		getInput('Type in a secret word', returnTrue)
-			.then(function(secretWord) {})
+		.then(function(secretWord) {})
 
 		//switch input context from secret word to secret clue
 		getInput("Now type a clue.", returnTrue)
-			.then(function(clue){})
+		.then(function(clue){})
 	}
 	// appending string into clue box- visible to everyone.
 	$('.clue-box').append('#1: ' + clue);
@@ -143,18 +142,16 @@ function guessWord () {
 
 
 		getInput('What is ' + clueGiver + " 's word?")
-			.then(function(guess){
-				socket.emit('playerGuessed', guess);
-			})
+		.then(function(guess){
+			socket.emit('playerGuessed', guess); })
 		//lock input on submit
 		$('#input').attr('disabled', true);
 	}
 
 	if (localPlayer === wordMaster) {
 		getInput("Guess the clue and break the contact!")
-			.then(function(WMguess){
-				socket.emit('wmGuessed', WMguess);
-			})
+		.then(function(WMguess){
+			socket.emit('wmGuessed', WMguess); })
 	}
 }
 
