@@ -48,6 +48,8 @@ function onDisconnect() {
         this.broadcast.emit('pause', 'Waiting for Players');
 }
 
+// TODO: maybe don't give words or guesses to the client
+//       since it could result in cheating
 function onMasterWordChosen(word) {
     masterWord = word;
     this.broadcast.emit('masterWordChosen', word);
@@ -65,6 +67,11 @@ function onClue(clue) {
     this.broadcast.emit('clue', clue);
 }
 
+function onGuess(guess) {
+    playerDB[this.id].guess = guess;
+    this.broadcast.emit('guess', playerDB[this.id]);
+}
+
 io.sockets.on("connection", function(client) {
     for (player in playerDB)
         client.emit('joined', playerDB[player]);
@@ -74,6 +81,7 @@ io.sockets.on("connection", function(client) {
     client.on("masterWordChosen", onMasterWordChosen);
     client.on("giverWordChosen", onGiverWordChosen);
     client.on("clue", onClue);
+    client.on("guess", onGuess);
 });
 
 var port = process.env.PORT || 3000;
