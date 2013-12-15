@@ -53,9 +53,16 @@ function onMasterWordChosen(word) {
     this.broadcast.emit('masterWordChosen', word);
 }
 
-function onGiverDone(data) {
-    giverWord = data.word;
-    this.broadcast.emit('giverDone', data);
+function onGiverWordChosen(word) {
+    giverWord = word;
+    this.broadcast.emit('giverWordChosen', word);
+}
+
+function onClue(clue) {
+    // TODO: refactor gamelogic so the giver doesn't 
+    //       have any special rendering logic, and instead
+    //       listens to its own events like everyone else
+    this.broadcast.emit('clue', clue);
 }
 
 io.sockets.on("connection", function(client) {
@@ -65,7 +72,8 @@ io.sockets.on("connection", function(client) {
     client.on("joined", onJoined);
     client.on("disconnect", onDisconnect);
     client.on("masterWordChosen", onMasterWordChosen);
-    client.on("giverDone", onGiverDone);
+    client.on("giverWordChosen", onGiverWordChosen);
+    client.on("clue", onClue);
 });
 
 var port = process.env.PORT || 3000;
