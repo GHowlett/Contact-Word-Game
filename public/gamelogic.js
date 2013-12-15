@@ -55,7 +55,7 @@ function setMaster (player) {
 // TODO change property 'secret' to something else
 function setGiver (player) {
 	if (window.clueGiver) {
-		delete clueGiver.secret;
+		delete clueGiver.word;
 		delete clueGiver.clueCount;
 	}
 	player.clueCount = 0;
@@ -115,12 +115,12 @@ function masterWordChosen (word) {
 function chooseGiverWord () {
 	if (localPlayer === clueGiver) {
 		getInput('Type in a secret word', matchLetters)
-		.done(function(secret) {
-			clueGiver.secret = secret;
-			socket.emit('giverWordChosen', secret);
+		.done(function(word) {
+			clueGiver.word = word;
+			socket.emit('giverWordChosen', word);
 			chooseGiverClue();
 		})
-		.fail(function(secret) {
+		.fail(function(word) {
 			this.css('background', '#FFDDDD')
 			getInput('First letters must match master word');
 			setTimeout(chooseGiverWord, 4000);
@@ -170,7 +170,7 @@ function guessWord () {
 function successConditions () {
 
 	if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
-		if(guess === clueGiver.secret) {
+		if (guess === clueGiver.word) {
 			console.log("success, you guessed the word");
 			$('.master-word-box').append(wordMaster.word.split('')[++masterWordIndex]);
 			// update response <td>
@@ -184,7 +184,7 @@ function successConditions () {
 
 	}
 	if (localPlayer === wordMaster) {
-		if(guess === clueGiver.secret) {
+		if (guess === clueGiver.word) {
 			// advance to next round
 		}
 	}
@@ -274,6 +274,7 @@ window.onload = function() {
 		console.log(giver + ' is the new giver');
 		
 		// reset player guesses
+		// is this necessary?
 		for (player in activePlayers)
 			activePlayers[player].guess = null;
 
@@ -283,7 +284,7 @@ window.onload = function() {
 
 	socket.on('giverWordChosen', function(word){
 		console.log('the giver word is ' + word);
-		clueGiver.secret = word;
+		clueGiver.word = word;
 		// TODO: change status to waiting for clue
 	});
 
