@@ -126,7 +126,7 @@ function chooseGiverClue () {
 	if (clue.clues.length >= 3) {
 		greyInput('3 clues is all you get!');
 	}
-	socket.emit('giverWordChosen', clue);
+	socket.emit('giverClueDone', clue);
 }
 
 function guessWord () {
