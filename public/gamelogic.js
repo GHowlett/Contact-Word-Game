@@ -55,7 +55,8 @@ function setMaster (player) {
 function setGiver (player) {
 	if (window.clueGiver) {
 		delete clueGiver.secret;
-		delete clueGiver.clue; }
+		delete clueGiver.clues; }
+	player.clues = [];
 	return clueGiver = player;
 }
 
@@ -135,7 +136,7 @@ function guessWord () {
 		//get input from players
 		getInput('What is ' + clueGiver + " 's word?")
 		.then(function(guess){
-			socket.emit('playerGuessed', guess); })
+			socket.emit('guess', guess); })
 		//lock input on submit
 		greyInput ('Waiting for other guesses');
 	}
@@ -258,11 +259,15 @@ window.onload = function() {
 		chooseGiverWord();
 	});
 
-	socket.on('giverDone', function(data){
-		console.log('the giver word is ' + data.word);
-		conosle.log('the giver clue is ' + data.clue);
-		// TODO: display clues
-		guessWord();
+	socket.on('giverWordChosen', function(word){
+		console.log('the giver word is ' + word);
+		clueGiver.secret = word;
+		// TODO: change status to waiting for clue
+	});
+
+	socket.on('clue', function(clue){
+		// TODO: append clue to DOM
+		if (clueGiver.clues.push(clue) === 1) guessWord();
 	});
 
 	chooseName();
