@@ -101,7 +101,7 @@ function chooseMasterWord () {
 		greyInput('waiting for master word');
 		}
 	}
- 
+
 function masterWordChosen (wmWord) {
 	wordMaster.word = wmWord;
 	$('.master-word-box').append(wordMaster.word.split('')[0]);
@@ -173,7 +173,7 @@ function nextMasterWordLetter () {
 /////////////////////////////////////////////////////////
 
 function appendModal(text) {
-	$('body').append("<div class='modal'><div class='modal-inner'><p>" + text + "</p></div></div>");
+	$('body').append("<div class='modal'><div class='modal-inner'><p>" + text + "</p><div class='spinner'></div></div></div>");
 }
 
 function removeModal() {
