@@ -211,21 +211,42 @@ function getInput (placeholder, validate) {
 	return deferred.promise()
 }
 
-function roundOverMessage () {
+function playersWin () {
 	if (localPlayer === clueGiver) {
 		$('header .game-status').text('Success! Revealing the next letter...');
-		greyInput('Waiting for next clue.')
 	}
 	else if (localPlayer === wordMaster) {
 		$('header .game-status').text('Fail! The word was [' + clueGiver.word +']. Revealing next letter..');
-		greyInput('Waiting for next clue.')
 	}
 	else if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
 		$('header .game-status').text("Success! [" + clueGiver.word + "] was correct! Revealing next letter...");
-		greyInput('Waiting for next clue.')
+	 }
+}
+
+function wordMasterWins () {
+	if (localPlayer === clueGiver) {
+		$('header .game-status').text('Failed contact!');
+	}
+	else if (localPlayer === wordMaster) {
+		$('header .game-status').text('Too Easy! You successfully denied a contact attempt!');
+	}
+	else if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
+		$('header .game-status').text('Fail! The word was [' + clueGiver.word +'].');
 	}
 }
 
+
+function gameOver () {
+	if (localPlayer === clueGiver) {
+		$('header .game-status').text('The master word ['+ wordMaster.word '] was revealed! You are now the new Word Master.');
+	}
+	else if (localPlayer === wordMaster) {
+		$('header .game-status').text('Game over. Your master word was revealed!');
+	}
+	else if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
+		$('header .game-status').text('The master word ['+ wordMaster.word '] was revealed!');
+	}
+}
 
 ////////////////////////  Event Listeners  ///////////////////////
 
@@ -308,14 +329,17 @@ window.onload = function() {
 
 	socket.on('roundOver', function(success){
 		console.log('round over, wordMaster '+ (success? 'lost':'won'));
-		roundOverMessage();
-		setTimeout(function() {
-			revealLetter();
-		}, 4000); 
+		if (success) {
+			playersWin();
+			setTimeout(revealLetter(), 4000); 
+		}	else{
+				wordMasterWins();
+		}
 	});
 
 	socket.on('gameOver', function(){
 		console.log('game over');
+		gameOver();
 		// TODO: reset any variables as are necessary
 	});
 
