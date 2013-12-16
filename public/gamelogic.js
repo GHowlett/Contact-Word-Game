@@ -21,6 +21,7 @@ function Player (name, guess) {
 function setMaster (player) {
 	if (window.wordMaster) delete wordMaster.word;
 	return wordMaster = player;
+	localPlayer.el.find('.response').text(guess);
 }
 
 function setGiver (player) {
@@ -30,6 +31,7 @@ function setGiver (player) {
 	}
 	player.clueCount = 0;
 	return clueGiver = player;
+	localPlayer.el.find('.response').text(guess);
 }
 
 ///////////////////   Stages    ///////////////////////////
@@ -98,7 +100,7 @@ function matchLetters(word) {
 function chooseGiverClue () {
 	if (localPlayer === clueGiver) {
 		var msg = (clueGiver.clueCount < 1)
-			? "Now give a clue to " 
+			? "Give a clue to your word" 
 			: "Optional: add another clue";
 
 		getInput(msg)
@@ -228,6 +230,7 @@ window.onload = function() {
 		console.log(master + ' is the new master');
 		setMaster(activePlayers[master]);
 		if (localPlayer) chooseMasterWord();
+		wordMaster.el.find('.name').append(' [WordMaster]');
 	});
 
 	socket.on('masterWordChosen', function(word){
@@ -246,6 +249,7 @@ window.onload = function() {
 
 		setGiver(activePlayers[giver]);
 		if (localPlayer) chooseGiverWord();
+		clueGiver.el.find('.name').append(' [Clue Giver]');
 	});
 
 	socket.on('giverWordChosen', function(word){
@@ -269,7 +273,12 @@ window.onload = function() {
 		console.log('round over, wordMaster '+ (success? 'lost':'won'));
 		// TODO: reveal the giver's word and all the guesses
 		// TODO: reset any variables as are necessary
-		if (success) revealLetter();
+		if (success) {
+			revealLetter();	
+			// if (player===clueGiver) {
+			// 	$('.input').
+			// }
+		}
 	});
 
 	socket.on('gameOver', function(){
