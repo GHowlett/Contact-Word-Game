@@ -89,7 +89,7 @@ function onClue(clue) {
 function onGuess(guess) {
     var player = playerDB[this.id];
     player.guess = guess;
-    //this.broadcast.emit('guess', player);
+    this.broadcast.emit('guess', player);
 
     // round over if master guesses right
     if (player.name === masterName && guess === giverWord)

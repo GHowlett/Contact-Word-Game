@@ -137,6 +137,7 @@ function guessWord () {
 		.then(function(guess){
 			socket.emit('guess', guess);
 			localPlayer.guess = guess;
+			localPlayer.el.find('.response').append('...' + guess);
 			if (wordMaster.guess !== clueGiver.secret) {
 				guessWord();
 			}
@@ -146,6 +147,7 @@ function guessWord () {
 		getInput('What is ' + clueGiver.name + "'s word?")
 		.then(function(guess){
 			socket.emit('guess', guess);
+			localPlayer.guess = guess;
 			localPlayer.el.find('.response').text(guess);
 			greyInput ("Waiting for other players' guesses");
 		});
@@ -238,13 +240,13 @@ function wordMasterWins () {
 
 function gameOver () {
 	if (localPlayer === clueGiver) {
-		$('header .game-status').text('The master word ['+ wordMaster.word '] was revealed! You are now the new Word Master.');
+		$('header .game-status').text('The master word ['+ wordMaster.word + '] was revealed! You are now the new Word Master.');
 	}
 	else if (localPlayer === wordMaster) {
 		$('header .game-status').text('Game over. Your master word was revealed!');
 	}
 	else if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
-		$('header .game-status').text('The master word ['+ wordMaster.word '] was revealed!');
+		$('header .game-status').text('The master word ['+ wordMaster.word + '] was revealed!');
 	}
 }
 
@@ -317,13 +319,13 @@ window.onload = function() {
 
 	socket.on('guess', function(player){
 		console.log(player.name +' has guessed '+ player.guess);
-		console.log()
 		activePlayers[player.name].guess = player.guess;
 		// update the DOM to show that the player has guessed
-		localPlayer.el.find('.guess').text('Guess Submitted!');
+		activePlayers[player.name].el.find('.guess').text('Guess Submitted!');
+
 		//append wordMaster guess
-		if (wordMaster) {
-			wordMaster.el.find('.guess').append('...' + wordMaster.guess);
+		if (player.name === wordMaster.name) {
+			wordMaster.el.find('.guess').append('...' + player.guess);
 		};
 	});
 
