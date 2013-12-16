@@ -43,12 +43,13 @@ header {
 	width: 80%;
 	margin: 50px auto 25px;
 	height: 45px;
+	font-size: 2em;
 	/*border-bottom: 1px solid #ccc;*/
 }
 
 .master-word-box:before {
 	content: "Master Word";
-	font-size: 1em;
+	font-size: 0.5em;
 	font-family: sans-serif;
 	position: absolute;
 	margin-top: -25px;
@@ -124,11 +125,8 @@ form {
 }
 
 input {
-	width: 52%;
 	border-radius: 6px;
 	padding: 0.5em;
-	float: left;
-	margin-left: 3.95em;
 }
 
 input[type=submit] {
@@ -138,10 +136,6 @@ input[type=submit] {
 	margin-top: 10px;
 	padding: 0.62em;
 	border: 0;
-	float: right;
-	width: 25%;
-	margin-right: 3.75em;
-	margin-top: -2.4em;
 }
 
 input[type=submit]:hover {
