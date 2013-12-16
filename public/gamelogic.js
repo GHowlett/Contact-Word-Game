@@ -28,6 +28,7 @@ function setGiver (player) {
 	if (window.clueGiver) {
 		delete clueGiver.word;
 		delete clueGiver.clueCount;
+		$('#Ingredients p:last').remove();
 	}
 	player.clueCount = 0;
 	return clueGiver = player;
@@ -66,19 +67,23 @@ function chooseMasterWord () {
 	console.log("choosing master word");
 
 	if (localPlayer === wordMaster) {
-		getInput('You are the Word Master. Type in your secret word!')
+		getInput('You are the Word Master. Type in your word!')
 		.then(function(word) {
-			greyInput('Your secret word is ' + word);
+			greyInput('The Master Word is ' + word);
 			socket.emit('masterWordChosen', word);
 			wordMaster.word = word;
 			revealLetter();
+		 	$('header .game-status').text('Waiting for first clue...');
 		});
-	} else greyInput('Hang tight! Waiting for wordmaster');
+	} else {
+		greyInput('Waiting for master word');
+		$('header .game-status').text('Hang tight! Waiting for master word');
+	}
 }
 
 function chooseGiverWord () {
 	if (localPlayer === clueGiver) {
-		getInput("You're up! Type in your secret word that starts with the letter(s): " + wordMaster.word.slice(0, masterWordIndex +1) + "...", matchLetters)
+		getInput("Type in your own secret word that starts with the letter(s): " + wordMaster.word.slice(0, masterWordIndex +1) + "...", matchLetters)
 		.done(function(word) {
 			clueGiver.word = word;
 			socket.emit('giverWordChosen', word);
@@ -93,6 +98,9 @@ function chooseGiverWord () {
 				.prop('placeholder', 'Type in your secret word');
 			}, 4000);
 		})
+	}	else {
+			greyInput('Waiting for clue' );
+			$('header .game-status').text('Hang tight! Waiting for clue from '+ clueGiver.name);
 	}
 }
 
@@ -127,9 +135,8 @@ function guessWord () {
 	if (localPlayer === wordMaster) {
 		getInput("Guess " +clueGiver.name+ "'s word and break the contact!")
 		.then(function(guess){
-			localPlayer.guess = guess;
 			socket.emit('guess', guess);
-			localPlayer.el.find('.response').text(guess);
+			localPlayer.guess = guess;
 			if (wordMaster.guess !== clueGiver.secret) {
 				guessWord();
 			}
@@ -145,6 +152,7 @@ function guessWord () {
 	}
 }
 
+
 function revealLetter () {
 	$('.master-word-box').append(
 		wordMaster.word[++masterWordIndex] );
@@ -156,7 +164,7 @@ function revealLetter () {
 function renderPlayer (player) {
 	player.el.html(
 		'<td class="name">' + player.name + '</td>' +
-		'<td class="response">' + 'none' + '</td>');
+		'<td class="response">' + '' + '</td>');
 }
 
 function removePlayer (name) {
@@ -196,6 +204,21 @@ function getInput (placeholder, validate) {
 	 		? deferred.resolveWith(input, [input.val()])
 	 		: deferred.rejectWith(input, [input.val()]);
  	});
+
+function roundOverMessage ()
+	if (localPlayer === clueGiver) {
+		$('header .game-status').text('Success!' + player.name + 'helped you reveal the next letter...');
+		greyInput('Waiting for next clue.')
+	}
+	if (localPlayer === wordMaster) {
+		$('header .game-status').text('Fail! The word was [' + clueGiver.word +'] Revealing next letter..');
+		greyInput('Waiting for next clue.')
+	}
+	if (localPlayer === player) {
+		$('header .game-status').text("Success![" + clueGiver.word + "] was correct! Revealing next letter...");
+		greyInput('Waiting for next clue.')
+	}
+}
 
  	// clear/change status header
  	$('header .game-status').text('').text(placeholder);
@@ -250,15 +273,14 @@ window.onload = function() {
 		$('.clue-box').text('');
 		console.log(giver + ' is the new giver');
 
-		// reset player guesses
-		// is this necessary?
 		for (player in activePlayers)
 			activePlayers[player].guess = null;
 
 		setGiver(activePlayers[giver]);
 		if (localPlayer) chooseGiverWord();
-		if 
-		clueGiver.el.find('.name').append(' [Clue Giver]');
+		if (clueGiver) {
+			clueGiver.el.find('.name').append(' [Clue Giver]');
+		};
 	});
 
 	socket.on('giverWordChosen', function(word){
@@ -273,23 +295,22 @@ window.onload = function() {
 
 	socket.on('guess', function(player){
 		console.log(player.name +' has guessed '+ player.guess);
+		console.log()
 		activePlayers[player.name].guess = player.guess;
+		// update the DOM to show that the player has guessed
 		localPlayer.el.find('.response').text('Guess Submitted!');
-		wordMaster.el.find('.response').append("..." + wordMaster.guess);
-
-		// TODO: update the DOM to show that the player has guessed
+		//append wordMaster guess
+		if (wordMaster) {
+			wordMaster.el.find('.response').text('').append('...' + wordMaster.guess);
+		};
 	});
 
 	socket.on('roundOver', function(success){
 		console.log('round over, wordMaster '+ (success? 'lost':'won'));
-		// TODO: reveal the giver's word and all the guesses
-		// TODO: reset any variables as are necessary
-		if (success) {
+		setTimeout(function(
+			roundOverMessage();
 			revealLetter();
-			// if (player===clueGiver) {
-			// 	$('.input').
-			// }
-		}
+		)}, 5000); 
 	});
 
 	socket.on('gameOver', function(){
