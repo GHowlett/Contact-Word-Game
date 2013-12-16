@@ -213,7 +213,7 @@ function getInput (placeholder, validate) {
 
 function roundOverMessage () {
 	if (localPlayer === clueGiver) {
-		$('header .game-status').text('Success! ' + player.name + ' helped you reveal the next letter...');
+		$('header .game-status').text('Success! Revealing the next letter...');
 		greyInput('Waiting for next clue.')
 	}
 	else if (localPlayer === wordMaster) {
