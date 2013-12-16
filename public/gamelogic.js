@@ -326,7 +326,7 @@ window.onload = function() {
 
 		//append wordMaster guess
 		if (player.name === wordMaster.name) {
-			wordMaster.el.find('.guess').append('...' + player.guess);
+			wordMaster.el.find('.response').append('...' + player.guess);
 		};
 	});
 
