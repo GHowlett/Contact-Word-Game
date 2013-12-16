@@ -87,7 +87,11 @@ function chooseGiverWord () {
 		.fail(function(word) {
 			this.css('background', '#FFDDDD')
 			getInput('First letters must match master word');
-			setTimeout(chooseGiverWord, 4000);
+			setTimeout(function() {
+				chooseGiverWord();
+				$('#input').css('background', '#FFFFFF')
+				.prop('placeholder', 'Type in your secret word');
+			}, 4000);
 		})
 	}
 }
@@ -100,8 +104,8 @@ function matchLetters(word) {
 function chooseGiverClue () {
 	if (localPlayer === clueGiver) {
 		var msg = (clueGiver.clueCount < 1)
-			? "Give a clue to your word"
-			: "Optional: add another clue";
+			? "Your word is: " + clueGiver.word + ". Give other players a clue of your word." 
+			: "Optional: add another clue"
 
 		getInput(msg)
 		.then(function(clue){
@@ -123,9 +127,12 @@ function guessWord () {
 	if (localPlayer === wordMaster) {
 		getInput("Guess " +clueGiver.name+ "'s word and break the contact!")
 		.then(function(guess){
+			localPlayer.guess = guess;
 			socket.emit('guess', guess);
 			localPlayer.el.find('.response').text(guess);
-			// TODO: let wordMaster try again
+			if (wordMaster.guess !== clueGiver.secret) {
+				guessWord();
+			}
 		});
 	}
 	else if (localPlayer !== clueGiver) {
@@ -250,6 +257,7 @@ window.onload = function() {
 
 		setGiver(activePlayers[giver]);
 		if (localPlayer) chooseGiverWord();
+		if 
 		clueGiver.el.find('.name').append(' [Clue Giver]');
 	});
 
@@ -266,8 +274,10 @@ window.onload = function() {
 	socket.on('guess', function(player){
 		console.log(player.name +' has guessed '+ player.guess);
 		activePlayers[player.name].guess = player.guess;
+		localPlayer.el.find('.response').text('Guess Submitted!');
+		wordMaster.el.find('.response').append("..." + wordMaster.guess);
+
 		// TODO: update the DOM to show that the player has guessed
-		//       if it's the WordMaster, don't overwrite the old one
 	});
 
 	socket.on('roundOver', function(success){
