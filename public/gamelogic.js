@@ -112,7 +112,7 @@ function matchLetters(word) {
 function chooseGiverClue () {
 	if (localPlayer === clueGiver) {
 		var msg = (clueGiver.clueCount < 1)
-			? "Your word is: " + clueGiver.word + ". Give other players a clue of your word." 
+			? "Your word is: " + clueGiver.word + ". Give other players a clue of your word."
 			: "Optional: add another clue"
 
 		getInput(msg)
@@ -305,6 +305,7 @@ window.onload = function() {
 		if (clueGiver) {
 			clueGiver.el.find('.name').append(' [Clue Giver]');
 		};
+		chooseGiverWord();
 	});
 
 	socket.on('giverWordChosen', function(word){
@@ -333,7 +334,7 @@ window.onload = function() {
 		console.log('round over, wordMaster '+ (success? 'lost':'won'));
 		if (success) {
 			playersWin();
-			setTimeout(revealLetter(), 4000); 
+			setTimeout(revealLetter(), 4000);
 		}	else{
 				wordMasterWins();
 		}
