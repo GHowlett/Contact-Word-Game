@@ -52,8 +52,7 @@ function chooseName () {
 	getInput('Choose a Nickname', isDuplicateName)
 	.done(function(name) {
 		renderPlayer(localPlayer = new Player(name));
-		socket.emit('joined', localPlayer);
-		$("td:empty").parent().remove(); })
+		socket.emit('joined', localPlayer); })
 	.fail(function() {
 		this.css('background', '#FFDDDD') // TODO: change this back after timeout
 			.val('')
@@ -130,7 +129,7 @@ function guessWord () {
 		getInput("Guess " +clueGiver.name+ "'s word and break the contact!")
 		.then(function(guess){
 			socket.emit('guess', guess); 
-			$("td:contains(" + localPlayer.name + ")").next().text(guess);
+			localPlayer.el.find('.response').text(guess);
 			// TODO: let wordMaster try again
 		});
 	}
@@ -138,7 +137,7 @@ function guessWord () {
 		getInput('What is ' + clueGiver.name + "'s word?")
 		.then(function(guess){
 			socket.emit('guess', guess); 
-			$("td:contains(" + localPlayer.name + ")").next().text(guess);
+			localPlayer.el.find('.response').text(guess);
 			greyInput ("Waiting for other players' guesses");
 		});
 	}
@@ -275,7 +274,6 @@ window.onload = function() {
 	});
 
 	socket.on('roundOver', function(success){
-
 		console.log('round over, wordMaster '+ (success? 'lost':'won'));
 		// TODO: reveal the giver's word and all the guesses
 		// TODO: reset any variables as are necessary
