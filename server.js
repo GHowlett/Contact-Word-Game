@@ -21,8 +21,8 @@ var wonRounds = 0;
 
 function getFilteredPlayers() {
     return _.reject(playerDB, function(player){
-        return player.name === masterName || 
-               player.name === giverName; 
+        return player.name === masterName ||
+               player.name === giverName;
     });
 }
 
@@ -43,7 +43,7 @@ function onDisconnect() {
     if (!playerDB[this.id]) return;
 
     this.broadcast.emit('left', playerDB[this.id].name);
-    if (_.size(playerDB) === minPlayers) 
+    if (_.size(playerDB) === minPlayers)
         this.broadcast.emit('pause', 'Waiting for Players');
 
     delete playerDB[this.id];
@@ -81,7 +81,7 @@ function onGiverWordChosen(word) {
 
 function onClue(clue) {
     this.broadcast.emit('clue', clue);
-    // TODO: refactor gamelogic so the giver doesn't 
+    // TODO: refactor gamelogic so the giver doesn't
     //       have any special rendering logic, and instead
     //       listens to its own events like everyone else
 }
@@ -89,7 +89,7 @@ function onClue(clue) {
 function onGuess(guess) {
     var player = playerDB[this.id];
     player.guess = guess;
-    this.broadcast.emit('guess', player);
+    //this.broadcast.emit('guess', player);
 
     // round over if master guesses right
     if (player.name === masterName && guess === giverWord)

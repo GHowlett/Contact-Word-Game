@@ -12,7 +12,7 @@ function Player (name, guess) {
 		this.name = name || "";
 		this.guess = guess || ""; }
 
-	Object.defineProperty(this, 'el', 
+	Object.defineProperty(this, 'el',
 		{value: $('<tr/>').appendTo('tbody'), writable:true});
 
 	activePlayers[this.name] = this;
@@ -45,7 +45,7 @@ function chooseName () {
 		renderPlayer(localPlayer = new Player(name));
 		socket.emit('joined', localPlayer); })
 	.fail(function() {
-		this.css('background', '#FFDDDD') 
+		this.css('background', '#FFDDDD')
 			.val('')
 			.prop('placeholder', 'Name already taken, please choose another');
 		setTimeout(function() {
@@ -93,14 +93,14 @@ function chooseGiverWord () {
 }
 
 function matchLetters(word) {
-	return word.slice(0, masterWordIndex +1) === 
+	return word.slice(0, masterWordIndex +1) ===
 		wordMaster.word.slice(0, masterWordIndex +1);
 }
 
 function chooseGiverClue () {
 	if (localPlayer === clueGiver) {
 		var msg = (clueGiver.clueCount < 1)
-			? "Give a clue to your word" 
+			? "Give a clue to your word"
 			: "Optional: add another clue";
 
 		getInput(msg)
@@ -123,7 +123,7 @@ function guessWord () {
 	if (localPlayer === wordMaster) {
 		getInput("Guess " +clueGiver.name+ "'s word and break the contact!")
 		.then(function(guess){
-			socket.emit('guess', guess); 
+			socket.emit('guess', guess);
 			localPlayer.el.find('.response').text(guess);
 			// TODO: let wordMaster try again
 		});
@@ -131,7 +131,7 @@ function guessWord () {
 	else if (localPlayer !== clueGiver) {
 		getInput('What is ' + clueGiver.name + "'s word?")
 		.then(function(guess){
-			socket.emit('guess', guess); 
+			socket.emit('guess', guess);
 			localPlayer.el.find('.response').text(guess);
 			greyInput ("Waiting for other players' guesses");
 		});
@@ -240,8 +240,9 @@ window.onload = function() {
 	});
 
 	socket.on('newRound', function(giver){
+		$('.clue-box').text('');
 		console.log(giver + ' is the new giver');
-		
+
 		// reset player guesses
 		// is this necessary?
 		for (player in activePlayers)
@@ -274,7 +275,7 @@ window.onload = function() {
 		// TODO: reveal the giver's word and all the guesses
 		// TODO: reset any variables as are necessary
 		if (success) {
-			revealLetter();	
+			revealLetter();
 			// if (player===clueGiver) {
 			// 	$('.input').
 			// }
