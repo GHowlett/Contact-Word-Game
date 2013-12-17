@@ -4,14 +4,17 @@ var socket = io.connect('http://localhost');
 var activePlayers = {};
 var masterWordIndex = -1; //later incremented to 0 before render
 
-// TODO: find a more semantic convention for type overloading
+
 function Player (name, guess) {
 	if (typeof name === "object")
 		for (prop in name) this[prop] = name[prop];
 	else {
 		this.name = name || "";
-		this.guess = guess || ""; }
+		this.guess = guess || ""
+		//new: every player needs a clue property.
+		this.clue = clue || ""; }
 
+	//replacing this some D3 code?
 	Object.defineProperty(this, 'el',
 		{value: $('<tr/>').appendTo('tbody'), writable:true});
 
@@ -21,18 +24,20 @@ function Player (name, guess) {
 function setMaster (player) {
 	if (window.wordMaster) delete wordMaster.word;
 	return wordMaster = player;
-	localPlayer.el.find('.response').text(guess);
+	//replacing with D3 code
+	//localPlayer.el.find('.response').text(guess);
 }
 
 function setGiver (player) {
 	if (window.clueGiver) {
 		delete clueGiver.word;
 		delete clueGiver.clueCount;
-		string = localPlayer.el.find('.response') .replace('');
+		
 	}
 	player.clueCount = 0;
 	return clueGiver = player;
-	localPlayer.el.find('.response').text(guess);
+	//replacing with D3 code
+	// localPlayer.el.find('.response').text(guess);
 }
 
 ///////////////////   Stages    ///////////////////////////
@@ -73,11 +78,9 @@ function chooseMasterWord () {
 			socket.emit('masterWordChosen', word);
 			wordMaster.word = word;
 			revealLetter();
-		 	$('header .game-status').text('Waiting for first clue...');
 		});
 	} else {
 		greyInput('Waiting for master word');
-		$('header .game-status').text('Hang tight! Waiting for master word');
 	}
 }
 
@@ -98,10 +101,7 @@ function chooseGiverWord () {
 				.prop('placeholder', 'Type in your secret word');
 			}, 4000);
 		})
-	}	else {
-			greyInput('Waiting for clue' );
-			$('header .game-status').text('Hang tight! Waiting for clue from '+ clueGiver.name);
-	}
+	}	
 }
 
 function matchLetters(word) {
@@ -133,11 +133,12 @@ function addClue (clue) {
 
 function guessWord () {
 	if (localPlayer === wordMaster) {
-		getInput("Guess " +clueGiver.name+ "'s word and break the contact!")
+		getInput("")
 		.then(function(guess){
 			socket.emit('guess', guess);
 			localPlayer.guess = guess;
-			localPlayer.el.find('.response').append('...' + guess);
+			// replacing w/ D3 code
+			// localPlayer.el.find('.response').append('...' + guess);
 			if (wordMaster.guess !== clueGiver.secret) {
 				guessWord();
 			}
@@ -154,10 +155,36 @@ function guessWord () {
 	}
 }
 
-
 function revealLetter () {
 	$('.master-word-box').append(
 		wordMaster.word[++masterWordIndex] );
+}
+
+function successContact () {
+	if (// number of required players are met && ALL player.guess matches clueGiver.secret)	{
+		challenge ();
+	}	else	{
+		failContact();
+	}
+}
+
+function failContact () {
+	if (wordMaster.guess === clueGiver.secret) || (//ALL player.guess does not match clueGiver.secret) {
+ 
+	//todo: add big red X
+	//todo: remove player connections (D3)
+	//todo: reset if wordMaster.guess matches clueGiver.secret
+}
+
+function challenge () {
+	//event listener: 
+	//todo: toggle opacity (d3)
+	//todo: append 15 second countdown to DOM
+	//todo: reveal word to everyone except WM
+	if (wordMaster.guess !== clueGiver.secret) && (//15 seconds have passed) {
+		revealLetter();
+		//todo: append some congrats text  
+	}	else failContact();	 
 }
 
 //////////////////////  DOM Manipluation  ///////////////////////
@@ -213,48 +240,10 @@ function getInput (placeholder, validate) {
 	return deferred.promise()
 }
 
-function playersWin () {
-	if (localPlayer === clueGiver) {
-		$('header .game-status').text('Success! Revealing the next letter...');
-	}
-	else if (localPlayer === wordMaster) {
-		$('header .game-status').text('Fail! The word was [' + clueGiver.word +']. Revealing next letter..');
-	}
-	else if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
-		$('header .game-status').text("Success! [" + clueGiver.word + "] was correct! Revealing next letter...");
-	 }
-}
-
-function wordMasterWins () {
-	if (localPlayer === clueGiver) {
-		$('header .game-status').text('Failed contact!');
-	}
-	else if (localPlayer === wordMaster) {
-		$('header .game-status').text('Too Easy! You successfully denied a contact attempt!');
-	}
-	else if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
-		$('header .game-status').text('Fail! The word was [' + clueGiver.word +'].');
-	}
-}
-
-
-function gameOver () {
-	if (localPlayer === clueGiver) {
-		$('header .game-status').text('The master word ['+ wordMaster.word + '] was revealed! You are now the new Word Master.');
-	}
-	else if (localPlayer === wordMaster) {
-		$('header .game-status').text('Game over. Your master word was revealed!');
-	}
-	else if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
-		$('header .game-status').text('The master word ['+ wordMaster.word + '] was revealed!');
-	}
-}
 
 ////////////////////////  Event Listeners  ///////////////////////
 
 window.onload = function() {
-	// TODO: make sure all emitions are being captured
-	// 		 even though we don't listen until now
 	socket.on('joined', function(playerData){
 		renderPlayer(new Player(playerData));
 	});
@@ -279,12 +268,11 @@ window.onload = function() {
 	});
 
 	// Game Loop (runs if name has been chosen)
-	// TODO: make unnamed players be able to spectate. Low pri.
 	socket.on('newGame', function(master){
 		console.log(master + ' is the new master');
 		setMaster(activePlayers[master]);
 		if (localPlayer) chooseMasterWord();
-		wordMaster.el.find('.name').append(' [WordMaster]');
+		//wordMaster.el.find('.name').append(' [WordMaster]');
 	});
 
 	socket.on('masterWordChosen', function(word){
@@ -293,6 +281,7 @@ window.onload = function() {
 		revealLetter();
 	});
 
+	//Still need this?
 	socket.on('newRound', function(giver){
 		$('.clue-box').text('');
 		console.log(giver + ' is the new giver');
@@ -307,6 +296,7 @@ window.onload = function() {
 		};
 		chooseGiverWord();
 	});
+	
 
 	socket.on('giverWordChosen', function(word){
 		console.log('the giver word is ' + word);
@@ -318,20 +308,37 @@ window.onload = function() {
 		if (addClue(clue) === 1) guessWord();
 	});
 
-	socket.on('guess', function(player){
-		console.log(player.name +' has guessed '+ player.guess);
-		activePlayers[player.name].guess = player.guess;
-		// update the DOM to show that the player has guessed
-		activePlayers[player.name].el.find('.guess').text('Guess Submitted!');
 
-		//append wordMaster guess
+	socket.on('guess', function(player){
+		if (player.name !== wordMaster.name) {
+			//what do i want to do from server when guess event is emitted? 
+		}
 		if (player.name === wordMaster.name) {
+			//todo: replace this code to work with D3 
 			wordMaster.el.find('.response').append('...' + player.guess);
 		};
 	});
 
-	socket.on('roundOver', function(success){
-		console.log('round over, wordMaster '+ (success? 'lost':'won'));
+	socket.on('contact', function(){
+		console.log(player.name +' has guessed '+ player.guess);
+		activePlayers[player.name].guess = player.guess;
+		// update the DOM to show that the player has guessed
+		activePlayers[player.name].el.find('.guess').text('Guess Submitted!');
+	})
+
+	socket.on('challenge', function(){
+		
+	})
+
+	socket.on('contactBroken', function(){
+
+	})
+
+	socket.on('')
+
+	//originally 'roundOver'
+	socket.on('challengeOver', function(success){
+		console.log('Challenge <Ov></Ov>er, wordMaster '+ (success? 'lost':'won'));
 		if (success) {
 			playersWin();
 			setTimeout(revealLetter(), 4000);
@@ -343,9 +350,12 @@ window.onload = function() {
 	socket.on('gameOver', function(){
 		console.log('game over');
 		gameOver();
-		// TODO: reset any variables as are necessary
 	});
 
 	chooseName();
-};
+	};
+
+
+
+
 
