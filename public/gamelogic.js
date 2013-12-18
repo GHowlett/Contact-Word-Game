@@ -259,7 +259,7 @@ window.onload = function() {
 	var height = gameArea.height();
 
 	var colors = ['red', 'green', 'blue', 'yellow', 'brown', 
-				  'purple', 'pink', 'orange', 'marron', 'fuchsia', 
+				  'purple', 'pink', 'orange', 'maroon', 'fuchsia', 
 				  'lime', 'navy', 'agua', 'olive'];
 
 	var force = d3.layout.force()
