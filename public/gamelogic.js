@@ -73,11 +73,11 @@ function chooseMasterWord () {
 			socket.emit('masterWordChosen', word);
 			wordMaster.word = word;
 			revealLetter();
-		 	$('header .game-status').text('Waiting for first clue...');
+		 	$('header #game-status').text('Waiting for first clue...');
 		});
 	} else {
 		greyInput('Waiting for master word');
-		$('header .game-status').text('Hang tight! Waiting for master word');
+		$('header #game-status').text('Hang tight! Waiting for master word');
 	}
 }
 
@@ -100,7 +100,7 @@ function chooseGiverWord () {
 		})
 	}	else {
 			greyInput('Waiting for clue' );
-			$('header .game-status').text('Hang tight! Waiting for clue from '+ clueGiver.name);
+			$('header #game-status').text('Hang tight! Waiting for clue from '+ clueGiver.name);
 	}
 }
 
@@ -112,7 +112,7 @@ function matchLetters(word) {
 function chooseGiverClue () {
 	if (localPlayer === clueGiver) {
 		var msg = (clueGiver.clueCount < 1)
-			? "Your word is: " + clueGiver.word + ". Give other players a clue of your word." 
+			? "Your word is: " + clueGiver.word + ". Give other players a clue of your word."
 			: "Optional: add another clue"
 
 		getInput(msg)
@@ -126,7 +126,7 @@ function chooseGiverClue () {
 
 function addClue (clue) {
 	console.log('new clue: ' + clue);
-	$('.clue-box').append(
+	$('#clue-box').append(
 		'clue #' + ++clueGiver.clueCount + ': ' +clue+ '\n' );
 	return clueGiver.clueCount;
 }
@@ -156,7 +156,7 @@ function guessWord () {
 
 
 function revealLetter () {
-	$('.master-word-box').append(
+	$('#master-word-box').append(
 		wordMaster.word[++masterWordIndex] );
 }
 
@@ -199,8 +199,8 @@ function getInput (placeholder, validate) {
 		.attr('placeholder', placeholder);
 
 	// clear out old handlers
-	$('#gameForm').off('submit');
-	$('#gameForm').submit(function(e) {
+	$('#game-form').off('submit');
+	$('#game-form').submit(function(e) {
 	 	e.preventDefault();
 		(!validate || validate(input.val()))
 	 		? deferred.resolveWith(input, [input.val()])
@@ -209,44 +209,44 @@ function getInput (placeholder, validate) {
 
 
  	// clear/change status header
- 	$('header .game-status').text('').text(placeholder);
+ 	$('header #game-status').text('').text(placeholder);
 	return deferred.promise()
 }
 
 function playersWin () {
 	if (localPlayer === clueGiver) {
-		$('header .game-status').text('Success! Revealing the next letter...');
+		$('header #game-status').text('Success! Revealing the next letter...');
 	}
 	else if (localPlayer === wordMaster) {
-		$('header .game-status').text('Fail! The word was [' + clueGiver.word +']. Revealing next letter..');
+		$('header #game-status').text('Fail! The word was [' + clueGiver.word +']. Revealing next letter..');
 	}
 	else if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
-		$('header .game-status').text("Success! [" + clueGiver.word + "] was correct! Revealing next letter...");
+		$('header #game-status').text("Success! [" + clueGiver.word + "] was correct! Revealing next letter...");
 	 }
 }
 
 function wordMasterWins () {
 	if (localPlayer === clueGiver) {
-		$('header .game-status').text('Failed contact!');
+		$('header #game-status').text('Failed contact!');
 	}
 	else if (localPlayer === wordMaster) {
-		$('header .game-status').text('Too Easy! You successfully denied a contact attempt!');
+		$('header #game-status').text('Too Easy! You successfully denied a contact attempt!');
 	}
 	else if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
-		$('header .game-status').text('Fail! The word was [' + clueGiver.word +'].');
+		$('header #game-status').text('Fail! The word was [' + clueGiver.word +'].');
 	}
 }
 
 
 function gameOver () {
 	if (localPlayer === clueGiver) {
-		$('header .game-status').text('The master word ['+ wordMaster.word + '] was revealed! You are now the new Word Master.');
+		$('header #game-status').text('The master word ['+ wordMaster.word + '] was revealed! You are now the new Word Master.');
 	}
 	else if (localPlayer === wordMaster) {
-		$('header .game-status').text('Game over. Your master word was revealed!');
+		$('header #game-status').text('Game over. Your master word was revealed!');
 	}
 	else if (localPlayer !== clueGiver && localPlayer !== wordMaster) {
-		$('header .game-status').text('The master word ['+ wordMaster.word + '] was revealed!');
+		$('header #game-status').text('The master word ['+ wordMaster.word + '] was revealed!');
 	}
 }
 
@@ -294,7 +294,7 @@ window.onload = function() {
 	});
 
 	socket.on('newRound', function(giver){
-		$('.clue-box').text('');
+		$('#clue-box').text('');
 		console.log(giver + ' is the new giver');
 
 		for (player in activePlayers)
@@ -305,6 +305,7 @@ window.onload = function() {
 		if (clueGiver) {
 			clueGiver.el.find('.name').append(' [Clue Giver]');
 		};
+		chooseGiverWord();
 	});
 
 	socket.on('giverWordChosen', function(word){
@@ -325,7 +326,7 @@ window.onload = function() {
 
 		//append wordMaster guess
 		if (player.name === wordMaster.name) {
-			wordMaster.el.find('.guess').append('...' + player.guess);
+			wordMaster.el.find('.response').append('...' + player.guess);
 		};
 	});
 
@@ -333,7 +334,7 @@ window.onload = function() {
 		console.log('round over, wordMaster '+ (success? 'lost':'won'));
 		if (success) {
 			playersWin();
-			setTimeout(revealLetter(), 4000); 
+			setTimeout(revealLetter(), 4000);
 		}	else{
 				wordMasterWins();
 		}

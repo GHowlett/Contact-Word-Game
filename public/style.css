@@ -19,7 +19,7 @@ header {
 	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#70D7E9), to(#31C5DF));
 }
 
-.game-status {
+#game-status {
 	display: block;
 	text-align: center;
 	line-height: 2.45em;
@@ -28,7 +28,7 @@ header {
 	font-size: 1.25em;
 }
 
-.title {
+#title {
 	width: 80%;
 	display: block;
 	margin: 25px auto 0;
@@ -37,7 +37,7 @@ header {
 	color: #31C5DF;
 }
 
-.master-word-box {
+#master-word-box {
 	display: block;
 	background: #EBFAFC;
 	width: 80%;
@@ -47,7 +47,7 @@ header {
 	/*border-bottom: 1px solid #ccc;*/
 }
 
-.master-word-box:before {
+#master-word-box:before {
 	content: "Master Word";
 	font-size: 0.5em;
 	font-family: sans-serif;
@@ -55,15 +55,15 @@ header {
 	margin-top: -25px;
 }
 
-.gameArea {
-	padding: 0.5em 2.5em;
-	border: 1px solid #31C5DF;
+#game-area {
+	height: 400px;
 	width: 80%;
+	border: 1px solid #31C5DF;
 	margin: 25px auto;
-		border-radius: 10px;
+	border-radius: 10px;
 }
 
-.clue-box {
+#clue-box {
 	display: block;
 	background: #EBFAFC;
 	width: 100%;
@@ -72,7 +72,7 @@ header {
 	/*border-bottom: 1px solid #ccc;*/
 }
 
-.clue-box:before {
+#clue-box:before {
 	content: "Clue";
 	font-size: 1em;
 	font-family: sans-serif;
@@ -121,7 +121,7 @@ td, th {
 }
 
 form {
-	margin-top: 4em;
+	margin-top: 2em;
 }
 
 input {
