@@ -6,9 +6,8 @@ function Player (name, guess) {
 	else {
 		this.name = name || "";
 		this.guess = guess || ""
-		//new: every player needs a clue property.
 		this.word = word || ""; 
-		this.clue = clue || "";
+		this.clue = clue || ""
 	}
 
 	//replacing this some D3 code?

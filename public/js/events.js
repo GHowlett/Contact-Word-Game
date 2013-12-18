@@ -27,13 +27,17 @@ function bindNetworkEvents() {
 
 	socket.on('newGame', function(master){
 		console.log(master + ' is the new master');
+		//setting word master
 		setMaster(activePlayers[master]);
-		if (localPlayer) chooseMasterWord();
+		//if player is the word master, choose master word
+		if (localPlayer === wordMaster) chooseMasterWord();
 	});
 
 	socket.on('masterWordChosen', function(word){
 		console.log('the master word is ' + word);
+		//? not sure ?
 		wordMaster.word = word;
+		//when master word is chosen, reveal the first letter
 		revealLetter();
 	});
 
@@ -53,19 +57,21 @@ function bindNetworkEvents() {
 	// });
 	
 
-	socket.on('clue', function(giver) {	
-		console.log(giver.name + "'s clue is " + giver.clue);
+	socket.on('clue', function(player) {	
+		if (localPlayer) chooseClue();
+		console.log(player.name + "'s clue is " + player.clue);
 	});
 
 	socket.on('guess', function(player){
 		
-		//todo: replace this code to work with D3 
+		//on click of a player node
+		
 		};
 	});
 
 	socket.on('challenge', function(){
-		console.log('wordmaster challenged!')
 		challenge();
+		console.log('wordmaster challenged!')
 		//on failure
 		failContact();
 	})
@@ -81,10 +87,9 @@ function bindNetworkEvents() {
 	socket.on('contactBroken', function(){
 		//can happen in and out of challenge mode
 		//must check whether in challenge mode
-
-	if (wordMaster.guess === player.secret) || (//ALL player.guess does not match clueGiver.secret) {
-		failContact()
-	})
+		if (wordMaster.guess === player.secret) || (//ALL player.guess does not match clueGiver.secret) {
+			failContact();
+		})
 	});
 
 	socket.on('gameOver', function(){

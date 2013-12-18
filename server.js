@@ -113,7 +113,6 @@ function endRound(success) {
 
 function endGame() {
     io.sockets.emit('gameOver');
-    // TODO: set new master to current clueGiver
     setTimeout(startNewGame, 5000);
 }
 

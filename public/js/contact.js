@@ -1,12 +1,27 @@
 function guess (player) {
-	getInput("What is " + player.name + "'s word?") 
+	//redisplaying chosen player's clue in local player's input placeholder
+	getInput(player.name + "says: " + player.clue) 
 	.then(function(){
+		//emitting guess 
 		socket.emit('guess', guess);
+		//TODO: change submit button to say 'contact!'
+
+		//storing local player's guess
 		localPlayer.guess = guess;
-		// replacing w/ D3 code
-		//if wordMaster's guess doesn't equal to secret word, keep guessing
+		//if wordMaster's guess doesn't equal to secret word, let him guess again
 		if (wordMaster.guess !== player.word && localPlayer === wordMaster) guess();
-		greyInput();
+		//for all other players 
+		if (localPlayer !== wordMaster) {
+			//disable input and redisplay local player's guess
+			greyInput('You think ' + player.name "'s word is: " + guess) 
+			//clicking on 'nevermind' button 
+			$(".nevermind").click(function (){
+				//delete current guess
+				delete localPlayer.guess
+				//allow players to guess again
+				guess();
+			})
+		}
 	}	
 }
 

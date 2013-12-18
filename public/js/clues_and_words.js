@@ -8,42 +8,57 @@ function setGiver (player) {
 	//replacing with D3 code
 }
 
-function chooseGiverWord () {
-	if (localPlayer === clueGiver) {
-		getInput("Type in your own secret word that starts with the letter(s): " + wordMaster.word.slice(0, masterWordIndex +1) + "...", matchLetters)
+//removing all instances of clueGiver and replacing with player
+//questions:
+	//as a normal player, how do you refer to yourself using player.word, player.cluecount, etc?
+
+
+function chooseWord (player) {
+	if (localPlayer ==! wordMaster) {
+		//capturing player word and running matchLetters check on revealed masterword letters
+		getInput("Type in a secret word " + wordMaster.word.slice(0, masterWordIndex +1) + "...", matchLetters)
+		
 		.done(function(word) {
-			clueGiver.word = word;
-			socket.emit('giverWordChosen', word);
-			chooseGiverClue();
+			//? why not localplayer.word = word?
+			player.word = word;
+			//when word is chosen, emit event
+			socket.emit('chooseWord', word);
+			//move on to choosing clue 
+			chooseClue();
 		})
+		//if word doesn't match master word letters
 		.fail(function(word) {
+			//change input box color to pink
 			this.css('background', '#FFDDDD')
 			getInput('First letters must match master word');
 			setTimeout(function() {
-				chooseGiverWord();
+				//after 3 seconds, run choose word again
+				chooseWord();
+				//reset input box back to black
 				$('#input').css('background', '#FFFFFF')
+				//reset placeholder text
 				.prop('placeholder', 'Type in your secret word');
-			}, 4000);
+			}, 3000);
 		})
 	}	
 }
 
-//clueGiver's word must match revealed letters of master word.
+//player words must match master word letters
 function matchLetters(word) {
 	return word.slice(0, masterWordIndex +1) ===
 		wordMaster.word.slice(0, masterWordIndex +1);
 }
 
-function chooseGiverClue () {
-	if (localPlayer === clueGiver) {
-		var msg = (clueGiver.clueCount < 1)
-			? "Your word is: " + clueGiver.word + ". Give other players a clue of your word."
-			: "Optional: add another clue"
-
-		getInput(msg)
+function chooseClue () {
+	if (localPlayer ==! wordMaster) {
+		console.log(localPlayer.name + 'entered secret clue of: ' + player.clue)
+		//capturing player clue
+		getInput('Type in a clue that matches your word')
 		.then(function(clue){
 			socket.emit('clue', clue);
-			if (addClue(clue) < 3) chooseGiverClue();
+			//if players have not entered 3 clues, give them the option to add clues.
+			if (addClue(clue) < 3) chooseClue();
+			//prevent more than 3 clues
 			else greyInput('3 clues is all you get!');
 		})
 	}
@@ -52,6 +67,6 @@ function chooseGiverClue () {
 function addClue (clue) {
 	console.log('new clue: ' + clue);
 	$('.clue-box').append(
-		'clue #' + ++clueGiver.clueCount + ': ' +clue+ '\n' );
-	return clueGiver.clueCount;
+		"..." + clue + '\n');
+	return player.clueCount;
 }
