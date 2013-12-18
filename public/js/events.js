@@ -63,10 +63,12 @@ function bindNetworkEvents() {
 	});
 
 	socket.on('guess', function(player){
-		
-		//on click of a player node
-		
-		};
+		if (localPlayer)
+			//TODO: add player node reference
+			//on click of a player node, run guess function
+			$(insert D3 player node).click(function (){
+				guess();
+			});
 	});
 
 	socket.on('challenge', function(){
