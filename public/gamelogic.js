@@ -253,99 +253,166 @@ function gameOver () {
 ////////////////////////  Event Listeners  ///////////////////////
 
 window.onload = function() {
-	// TODO: make sure all emitions are being captured
-	// 		 even though we don't listen until now
-	socket.on('joined', function(playerData){
-		renderPlayer(new Player(playerData));
+
+	var gameArea = $('#game-area');
+	var width = gameArea.width();
+	var height = gameArea.height();
+
+	var players = [
+		// Wordmaster
+		{name: 'Bob', x: width/2, y: height/2, fixed:true},
+		{name: 'Eithan'},
+		{name: 'Jenny'},
+		{name: 'Ralph'},
+		{name: 'Ferb'},
+		{name: 'Mary'},
+		{name: 'Jake'},
+		{name: 'Tarzan'},
+		{name: 'Trayvon'}
+	];
+
+	var contacts = [
+		{source: players[3], target: players[6]},
+		{source: players[3], target: players[2]}
+	]
+
+	var force = d3.layout.force()
+		.size([width,height])
+		.nodes(players)
+		.links(contacts)
+		.linkStrength(0)
+		.theta(0.3)
+		.charge(function(d){ 
+			return d.fixed? -2000 : -1000 })
+		.gravity(0.15)
+
+	var svg = d3.select(gameArea[0]).append('svg')
+		.attr('width', width)
+		.attr('height', height)
+
+	var nodes = svg.selectAll('.player')
+		.data(force.nodes()).enter()
+		.append('circle')
+			.attr('class', 'player')
+			.attr('r', 15)
+			.style('fill', 'gray')
+
+	var links = svg.selectAll('.contact')
+		.data(force.links()).enter()
+		.insert('line', '.player')
+			.style('stroke', 'blue')
+			.style('stroke-width', '3')
+
+	console.log(contacts);
+
+	force.on('tick', function(){
+		links
+			.attr("x1", function(d) { return d.source.x; })
+	    	.attr("y1", function(d) { return d.source.y; })
+	    	.attr("x2", function(d) { return d.target.x; })
+	    	.attr("y2", function(d) { return d.target.y; })
+
+	  	nodes
+	  		.attr("cx", function(d) { return d.x; })
+	      	.attr("cy", function(d) { return d.y; })
 	});
 
-	socket.on('left', function(name){
-		console.log(name + ' left');
-		removePlayer(name);
-	});
+	force.start();
 
-	socket.on('pause', function(reason){
-		if (localPlayer) {
-			console.log('paused');
-			appendModal(reason);
-		}
-	});
 
-	socket.on('resume', function(){
-		if (localPlayer) {
-			console.log('resumed');
-			removeModal();
-		}
-	});
+	// // TODO: make sure all emitions are being captured
+	// // 		 even though we don't listen until now
+	// socket.on('joined', function(playerData){
+	// 	renderPlayer(new Player(playerData));
+	// });
 
-	// Game Loop (runs if name has been chosen)
-	// TODO: make unnamed players be able to spectate. Low pri.
-	socket.on('newGame', function(master){
-		console.log(master + ' is the new master');
-		setMaster(activePlayers[master]);
-		if (localPlayer) chooseMasterWord();
-		wordMaster.el.find('.name').append(' [WordMaster]');
-	});
+	// socket.on('left', function(name){
+	// 	console.log(name + ' left');
+	// 	removePlayer(name);
+	// });
 
-	socket.on('masterWordChosen', function(word){
-		console.log('the master word is ' + word);
-		wordMaster.word = word;
-		revealLetter();
-	});
+	// socket.on('pause', function(reason){
+	// 	if (localPlayer) {
+	// 		console.log('paused');
+	// 		appendModal(reason);
+	// 	}
+	// });
 
-	socket.on('newRound', function(giver){
-		$('#clue-box').text('');
-		console.log(giver + ' is the new giver');
+	// socket.on('resume', function(){
+	// 	if (localPlayer) {
+	// 		console.log('resumed');
+	// 		removeModal();
+	// 	}
+	// });
 
-		for (player in activePlayers)
-			activePlayers[player].guess = null;
+	// // Game Loop (runs if name has been chosen)
+	// // TODO: make unnamed players be able to spectate. Low pri.
+	// socket.on('newGame', function(master){
+	// 	console.log(master + ' is the new master');
+	// 	setMaster(activePlayers[master]);
+	// 	if (localPlayer) chooseMasterWord();
+	// 	wordMaster.el.find('.name').append(' [WordMaster]');
+	// });
 
-		setGiver(activePlayers[giver]);
-		if (localPlayer) chooseGiverWord();
-		if (clueGiver) {
-			clueGiver.el.find('.name').append(' [Clue Giver]');
-		};
-		chooseGiverWord();
-	});
+	// socket.on('masterWordChosen', function(word){
+	// 	console.log('the master word is ' + word);
+	// 	wordMaster.word = word;
+	// 	revealLetter();
+	// });
 
-	socket.on('giverWordChosen', function(word){
-		console.log('the giver word is ' + word);
-		clueGiver.word = word;
-		greyInput('Waiting for a clue');
-	});
+	// socket.on('newRound', function(giver){
+	// 	$('.clue-box').text('');
+	// 	console.log(giver + ' is the new giver');
 
-	socket.on('clue', function(clue){
-		if (addClue(clue) === 1) guessWord();
-	});
+	// 	for (player in activePlayers)
+	// 		activePlayers[player].guess = null;
 
-	socket.on('guess', function(player){
-		console.log(player.name +' has guessed '+ player.guess);
-		activePlayers[player.name].guess = player.guess;
-		// update the DOM to show that the player has guessed
-		activePlayers[player.name].el.find('.guess').text('Guess Submitted!');
+	// 	setGiver(activePlayers[giver]);
+	// 	if (localPlayer) chooseGiverWord();
+	// 	if (clueGiver) {
+	// 		clueGiver.el.find('.name').append(' [Clue Giver]');
+	// 	};
+	// 	chooseGiverWord();
+	// });
 
-		//append wordMaster guess
-		if (player.name === wordMaster.name) {
-			wordMaster.el.find('.response').append('...' + player.guess);
-		};
-	});
+	// socket.on('giverWordChosen', function(word){
+	// 	console.log('the giver word is ' + word);
+	// 	clueGiver.word = word;
+	// 	greyInput('Waiting for a clue');
+	// });
 
-	socket.on('roundOver', function(success){
-		console.log('round over, wordMaster '+ (success? 'lost':'won'));
-		if (success) {
-			playersWin();
-			setTimeout(revealLetter(), 4000);
-		}	else{
-				wordMasterWins();
-		}
-	});
+	// socket.on('clue', function(clue){
+	// 	if (addClue(clue) === 1) guessWord();
+	// });
 
-	socket.on('gameOver', function(){
-		console.log('game over');
-		gameOver();
-		// TODO: reset any variables as are necessary
-	});
+	// socket.on('guess', function(player){
+	// 	console.log(player.name +' has guessed '+ player.guess);
+	// 	activePlayers[player.name].guess = player.guess;
+	// 	// update the DOM to show that the player has guessed
+	// 	activePlayers[player.name].el.find('.guess').text('Guess Submitted!');
 
-	chooseName();
+	// 	//append wordMaster guess
+	// 	if (player.name === wordMaster.name) {
+	// 		wordMaster.el.find('.response').append('...' + player.guess);
+	// 	};
+	// });
+
+	// socket.on('roundOver', function(success){
+	// 	console.log('round over, wordMaster '+ (success? 'lost':'won'));
+	// 	if (success) {
+	// 		playersWin();
+	// 		setTimeout(revealLetter(), 4000);
+	// 	}	else{
+	// 			wordMasterWins();
+	// 	}
+	// });
+
+	// socket.on('gameOver', function(){
+	// 	console.log('game over');
+	// 	gameOver();
+	// 	// TODO: reset any variables as are necessary
+	// });
+
+	// chooseName();
 };
 
