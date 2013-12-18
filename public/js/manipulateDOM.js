@@ -50,26 +50,3 @@ function getInput (placeholder, validate) {
  	$('header .game-status').text('').text(placeholder);
 	return deferred.promise()
 }
-
-
-// returns a promise that binds function contexts to #input
-function getInput (placeholder, validate) {
-	var deferred = new $.Deferred();
-	var input = $("#input")
-		.val('')
-		.prop('disabled', false)
-		.attr('placeholder', placeholder);
-
-	// clear out old handlers
-	$('#gameForm').off('submit');
-	$('#gameForm').submit(function(e) {
-	 	e.preventDefault();
-		(!validate || validate(input.val()))
-	 		? deferred.resolveWith(input, [input.val()])
-	 		: deferred.rejectWith(input, [input.val()]);
- 	});
-
- 	// clear/change status header
- 	$('header .game-status').text('').text(placeholder);
-	return deferred.promise()
-}

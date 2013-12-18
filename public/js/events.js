@@ -67,8 +67,7 @@ function bindNetworkEvents() {
 			//TODO: add player node reference
 			//on click of a player node, run guess function
 			$(insert D3 player node).click(function (){
-				guess();
-			});
+				guess(); });
 	});
 
 	socket.on('challenge', function(){
