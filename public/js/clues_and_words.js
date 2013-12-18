@@ -6,7 +6,6 @@ function setGiver (player) {
 	player.clueCount = 0;
 	return clueGiver = player;
 	//replacing with D3 code
-	// localPlayer.el.find('.response').text(guess);
 }
 
 function chooseGiverWord () {

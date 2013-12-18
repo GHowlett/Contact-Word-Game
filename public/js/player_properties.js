@@ -7,7 +7,9 @@ function Player (name, guess) {
 		this.name = name || "";
 		this.guess = guess || ""
 		//new: every player needs a clue property.
-		this.word = secret || ""; }
+		this.word = word || ""; 
+		this.clue = clue || "";
+	}
 
 	//replacing this some D3 code?
 	Object.defineProperty(this, 'el',
