@@ -258,18 +258,23 @@ window.onload = function() {
 	var width = gameArea.width();
 	var height = gameArea.height();
 
-	var players = [
+	var colors = ['red', 'green', 'blue', 'yellow', 'brown', 
+				  'purple', 'pink', 'orange', 'marron', 'fuchsia', 
+				  'lime', 'navy', 'agua', 'olive'];
+
+	window.players = [
 		// Wordmaster
 		{name: 'Bob', x: width/2, y: height/2, fixed:true},
 		{name: 'Eithan'},
 		{name: 'Jenny'},
 		{name: 'Ralph'},
 		{name: 'Ferb'},
-		{name: 'Mary'},
 		{name: 'Jake'},
 		{name: 'Tarzan'},
 		{name: 'Trayvon'}
 	];
+
+	var localplayer = players[3];
 
 	var contacts = [
 		{source: players[3], target: players[6]},
@@ -281,10 +286,10 @@ window.onload = function() {
 		.nodes(players)
 		.links(contacts)
 		.linkStrength(0)
-		.theta(0.3)
+		.gravity(0.15)
 		.charge(function(d){ 
 			return d.fixed? -2000 : -1000 })
-		.gravity(0.15)
+		.start();
 
 	var svg = d3.select(gameArea[0]).append('svg')
 		.attr('width', width)
@@ -294,16 +299,17 @@ window.onload = function() {
 		.data(force.nodes()).enter()
 		.append('circle')
 			.attr('class', 'player')
-			.attr('r', 15)
-			.style('fill', 'gray')
+			.attr('r', function(d){ 
+				return d.fixed? 30 : 20 })
+			.style('fill', function(d,i){ 
+				return colors[i]; })
 
 	var links = svg.selectAll('.contact')
 		.data(force.links()).enter()
 		.insert('line', '.player')
-			.style('stroke', 'blue')
+			.style('stroke', function(d){ 
+				return colors[d.target.index]; })
 			.style('stroke-width', '3')
-
-	console.log(contacts);
 
 	force.on('tick', function(){
 		links
@@ -316,8 +322,6 @@ window.onload = function() {
 	  		.attr("cx", function(d) { return d.x; })
 	      	.attr("cy", function(d) { return d.y; })
 	});
-
-	force.start();
 
 
 	// // TODO: make sure all emitions are being captured
