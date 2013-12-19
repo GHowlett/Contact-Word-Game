@@ -1,17 +1,15 @@
 var activePlayers = {};
 
-function Player (name, guess) {
+// TODO: find a more semantic way of overloading this
+// TODO: maybe allow multiple clues at once
+function Player (name) {
 	if (typeof name === "object")
 		for (prop in name) this[prop] = name[prop];
-	else {
-		this.name = name || "";
-		this.guess = guess || "";
-		this.word = word || ""; 
-		this.clue = clue || "";
-		this.clueCount = 0;
-		this.contactCount = 0;
+	else this.name = name || "";
 
-	}
+	if (!this.word) this.word = ""; 
+	if (!this.clue) this.clue = "";
+	if (!this.guesses) this.guesses = [];
 	
 	Object.defineProperty(this, 'el',
 		{value: $('<tr/>').appendTo('tbody'), writable:true});
