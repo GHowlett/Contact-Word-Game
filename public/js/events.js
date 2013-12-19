@@ -61,15 +61,14 @@ function bindNetworkEvents() {
 			player.contactCount ++
 			//diables input 
 			greyInput("Nice! " + localPlayer.guess)
-			$('#'+localPlayer.name).addClass('contactGroup')
+			$('#'+localPlayer.name).addClass('challengeGroup')
 		}
 	}); 
 
 	socket.on('challenge', function(player){
 		console.log('wordmaster challenged!')
-		//todo: toggle opacity of players for those that are involved in contact
-		$(".contactGroup").click(function() {
-		  	$( "p:first" ).fadeToggle( "slow", "linear" );
+		//toggle opacity of players for those that are involved in contact
+		$(".challengeGroup").find('.name').fadeToggle( "slow", "linear" );
 		});
 
 		//todo: remove player clues from DOM
