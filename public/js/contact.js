@@ -14,6 +14,8 @@ function guess (player) {
 		if (localPlayer !== wordMaster) {
 			//disable input and redisplay local player's guess
 			greyInput('You think ' + player.name "'s word is: " + guess) 
+			//TODO: create "nevermind button 
+
 			//clicking on 'nevermind' button 
 			$(".nevermind").click(function (){
 				//delete current guess
@@ -25,27 +27,29 @@ function guess (player) {
 	}	
 }
 
-function successContact () {
-	if (// number of required players are met && ALL player.guess matches clueGiver.secret)	{
-		challenge ();
-	}	else	{
-		failContact();
-	}
+function contactBroken (player) {
+	//TODO: fix
+	if ('all contacts !== player.word') {
+		delete player.word
+		delete player.clue
+		//todo: add big red X
+		//todo: remove player connections (D3)
 }
 
-function failContact () {
-	//todo: add big red X
-	//todo: remove player connections (D3)
-	//todo: reset if wordMaster.guess matches clueGiver.secret
-}
-
-function challenge () {
+function challenge (player) {
+	//emit challenge event
 	socket.emit('challenge', challenge);
-	//todo: toggle opacity (d3)
-	//todo: append 15 second countdown to DOM
-	//todo: reveal word to everyone except WM
-	if (wordMaster.guess !== player.word) && (//15 seconds have passed) {
-		revealLetter();
-		//todo: append some congrats text  
-	}	else failContact();	 
+	if (localPlayer !== wordmaster) greyInput('Word Master challenge!');
+	//if wordmaster can't guess word after 15 seconds, emit contact success event
+	if (wordMaster.guess !== player.word) && ('15 seconds have passed') {
+		socket.emit('contact', contact)
+	}	else loseChallenge();	 
 }
+
+function loseChallenge () {
+	socket.emit('loseChallenge', loseChallenge);
+	contactBroken();
+	//TODO: reset D3 zoom and opacity
+	//TODO: enable input for everyone else
+}
+

@@ -41,61 +41,39 @@ function bindNetworkEvents() {
 		revealLetter();
 	});
 
-	// socket.on('newRound', function(giver){
-	// 	$('.clue-box').text('');
-	// 	console.log(giver + ' is the new giver');
-
-	// 	for (player in activePlayers)
-	// 		activePlayers[player].guess = null;
-
-	// 	setGiver(activePlayers[giver]);
-	// 	if (localPlayer) chooseGiverWord();
-	// 	if (clueGiver) {
-	// 		clueGiver.el.find('.name').append(' [Clue Giver]');
-	// 	};
-	// 	chooseGiverWord();
-	// });
-	
-
+	//listening for clue
 	socket.on('clue', function(player) {	
-		if (localPlayer) chooseClue();
 		console.log(player.name + "'s clue is " + player.clue);
+		//TODO: display clue to everyone
 	});
 
 	socket.on('guess', function(player){
-		if (localPlayer)
-			//TODO: add player node reference
-			//on click of a player node, run guess function
-			$(insert D3 player node).click(function (){
-				guess(); });
-	});
+		//TODO: create D3 node connection from local player to target player 
+	}); 
 
 	socket.on('challenge', function(){
-		challenge();
 		console.log('wordmaster challenged!')
-		//on failure
-		failContact();
+		//todo: toggle opacity (d3)
+		//todo: append 15 second countdown to DOM
+		//todo: reveal word to everyone except WM
 	})
 
 	socket.on('contact', function(success){
 		console.log('Challenge over, wordMaster '+ (success? 'lost':'won'));
-		//success
-		playersWin();
+		//on a successful contact from challenge mode, reveal next letter
 		setTimeout(revealLetter(), 4000);
-		//only in challenge mode
+		//todo: append some notification that contact was successful 
 	})
 
-	socket.on('contactBroken', function(){
-		//can happen in and out of challenge mode
-		//must check whether in challenge mode
-		if (wordMaster.guess === player.secret) || (//ALL player.guess does not match clueGiver.secret) {
-			failContact();
+	socket.on('loseChallenge', function(){
+		console.log 
+
+		//todo: append some notification that contact was successful 
 		})
 	});
 
 	socket.on('gameOver', function(){
 		console.log('game over');
-		gameOver();
 	});
 
 };

@@ -5,9 +5,10 @@ function Player (name, guess) {
 		for (prop in name) this[prop] = name[prop];
 	else {
 		this.name = name || "";
-		this.guess = guess || ""
+		this.guess = guess || "";
 		this.word = word || ""; 
-		this.clue = clue || ""
+		this.clue = clue || "";
+		this.clueCount = 0;
 	}
 
 	//replacing this some D3 code?
