@@ -23,9 +23,3 @@ function chooseMasterWord () {
 	}
 }
 
-// creates, renders, and emits the local player upon name decision
-function revealLetter () {
-	$('.master-word-box').append(
-		wordMaster.word[++masterWordIndex] );
-}
-

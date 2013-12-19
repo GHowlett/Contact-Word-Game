@@ -26,6 +26,12 @@ function removePlayer (name) {
 	delete activePlayers[name];
 }
 
+function revealLetter () {
+	$('.master-word-box').append(
+		// TODO: move this out of the rendering logic
+		wordMaster.word[++masterWordIndex] );
+}
+
 function appendModal(text) {
 	$('body').append("<div class='modal'><div class='modal-inner'><p>" + text + "</p><div class='spinner'></div></div></div>");
 }
