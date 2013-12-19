@@ -288,8 +288,8 @@ window.onload = function() {
 	      	.attr("cy", function(d) { return d.y; })
 	});
 
-	function addPlayer(player){
-		if (player) force.nodes().push(player);
+	function addPlayer(name){
+		force.nodes().push({name:name});
 		nodes = nodes.data(force.nodes());
 
 		nodes.enter().append('circle')
@@ -306,43 +306,39 @@ window.onload = function() {
 		force.start();
 	}
 
-	function addContact(contact){
+	function addContact(src,dest){
 		// TOOD: check wether a link already exists
 		// TODO: prevent linking to self
-		if (contact) force.links().push(contact);
+		force.links().push({source:src, target:dest});
 		links = links.data(force.links())
 
 		links.enter().insert('line', '.player')
 			.style('stroke', function(d){ 
 				return colors[d.target.index]; })
 			.style('stroke-width', '3')
-
-		force.start();
 	}
 
 	//////////////////////////////////////////////////////////
 
-	var players = [
-		{name: 'Bob', x: width/2, y: height/2, fixed:true},
-		{name: 'Eithan'},
-		{name: 'Jenny'},
-		{name: 'Ralph'},
-		{name: 'Ferb'},
-		{name: 'Jake'},
-		{name: 'Tarzan'},
-		{name: 'Trayvon'}
-	];
-
-	var wordMaster = players[0];
-	var localplayer = players[3];
+	var players = ['Bob','Eithan','Jenny','Ralph',
+				   'Ferb','Jake','Tarzan','Trayvon'];
 
 	var contacts = [
-		{source: players[3], target: players[6]},
-		{source: players[3], target: players[2]}
+		{src: players[3], dest: players[6]},
+		{src: players[3], dest: players[2]}
 	]
 
 	players.forEach(addPlayer);
-	contacts.forEach(addContact);
+	contacts.forEach(function(contact){
+		addContact(contact.src, contact.dest);
+	});
+
+	var localplayer = force.nodes()[3];
+	// TODO: get wordmaster to the center, then set fixed to true
+	var wordMaster = force.nodes()[0];
+		wordMaster.x = wordMaster.px = width/2;
+		wordMaster.y = wordMaster.px = height/2;
+		wordMaster.fixed = true;
 
 
 	// // TODO: make sure all emitions are being captured
