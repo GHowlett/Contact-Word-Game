@@ -61,15 +61,23 @@ function bindNetworkEvents() {
 			player.contactCount ++
 			//diables input 
 			greyInput("Nice! " + localPlayer.guess)
+			$('#'+localPlayer.name).addClass('contactGroup')
 		}
 	}); 
 
 	socket.on('challenge', function(player){
 		console.log('wordmaster challenged!')
-		
-		//todo: toggle opacity of text
+		//todo: toggle opacity of players for those that are involved in contact
+		$(".contactGroup").click(function() {
+		  	$( "p:first" ).fadeToggle( "slow", "linear" );
+		});
+
+		//todo: remove player clues from DOM
+
 		//todo: append 15 second countdown to DOM
-		//todo: reveal word to everyone except WM
+
+		//reveal word to everyone except WM
+		$('#'+player.name).children[2].html(player.word);
 	})
 
 	socket.on('contact', function(success){

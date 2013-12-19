@@ -61,8 +61,17 @@ header {
 	/*border-bottom: 1px solid #ccc;*/
 }
 
+.word-master-guess-box:before {
+	content: "Word Master: " ;
+	font-size: 0.75em;
+	font-family: 'Roboto', sans-serif;
+	font-weight: 300;
+	position: absolute;
+	margin-top: -40px;
+}
+
 .master-word-box:before {
-	content: "Master Word";
+	content: "Master Word:";
 	font-size: 0.75em;
 	font-family: 'Roboto', sans-serif;
 	font-weight: 300;
@@ -140,7 +149,6 @@ th {
   color: #000;
   font-weight: 300;
   color: #31C5DF;
-
 }
 
 td, th {
@@ -151,6 +159,7 @@ td, th {
 
 td:first-child, th:first-child {
      border-left: none;
+     width: 30%;
 }
 
 th:first-child {

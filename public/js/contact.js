@@ -21,10 +21,11 @@ function challenge (player) {
 	//emit challenge event
 	socket.emit('challenge', challenge);
 	if (localPlayer !== wordmaster) greyInput('Word Master challenge!');
+	//todo: griffin
 	//if wordmaster can't guess word after 15 seconds, emit contact success event
-	if (wordMaster.guess !== player.word) && (wordMaster.time === 10) {
-		socket.emit('contact', contact);
-	}	else loseChallenge();	 
+	// if (wordMaster.guess !== player.word) && () {
+	// 	socket.emit('contact', contact);
+	// }	else loseChallenge();	 
 }
 
 function loseChallenge () {
