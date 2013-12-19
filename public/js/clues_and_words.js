@@ -33,6 +33,7 @@ function chooseClue (player) {
 		.then(function(clue){
 			//emit clue event
 			socket.emit('clue', clue);
+			player.clue = clue
 			//if players have not entered 3 clues, give them the option to add clues.
 			if (addClue(clue) < 3) chooseClue();
 			//prevent more than 3 clues
@@ -41,9 +42,10 @@ function chooseClue (player) {
 	}
 }
 
-function addClue (clue) {
-	console.log('new clue: ' + clue);
-	$('.clue-box').append(
-		"..." + clue + '\n');
-	return player.clueCount;
-}
+//don't need this anymore.
+// function addClue (clue) {
+// 	console.log('new clue: ' + clue);
+// 	$('.clue-box').append(
+// 		"..." + clue + '\n');
+// 	return player.clueCount;
+// }

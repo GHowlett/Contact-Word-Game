@@ -35,7 +35,6 @@ function bindNetworkEvents() {
 
 	socket.on('masterWordChosen', function(word){
 		console.log('the master word is ' + word);
-		//storing masterword
 		wordMaster.word = word;
 		//when master word is chosen, reveal the first letter
 		revealLetter();
@@ -44,23 +43,36 @@ function bindNetworkEvents() {
 	//listening for clue
 	socket.on('clue', function(player) {	
 		console.log(player.name + "'s clue is " + player.clue);
-		//TODO: display clue to everyone
+		// append player clue to clue box
+		$('#'+player.name).children[1].html(player.clue)
+			if (localPlayer !== wordMaster) { 
+				//.action refers to 'action space' in DOM. where the contact button will live
+				$('.action').append('#contactButton');
+				//todo: create contact button in DOM
+				$contactButton = $('<button></button>')
+					.html('Contact!')
+					.click(guess(player));
+		}
 	});
 
 	socket.on('guess', function(player){
-		//TODO: create D3 node connection from local player to target player 
+		if (localplayer.guess === player.word) {
+			//TODO: increment contact counter and add 1 to contact button
+			player.contactCount ++
+			//diables input 
+			greyInput("Nice! " + localPlayer.guess)
+		}
 	}); 
 
 	socket.on('challenge', function(){
 		console.log('wordmaster challenged!')
-		//todo: toggle opacity of player names
+		//todo: toggle opacity of text
 		//todo: append 15 second countdown to DOM
 		//todo: reveal word to everyone except WM
 	})
 
 	socket.on('contact', function(success){
 		console.log('Challenge over, wordMaster '+ (success? 'lost':'won'));
-		//on a successful contact from challenge mode, reveal next letter
 		setTimeout(revealLetter(), 4000);
 		//todo: append some notification that contact was successful 
 	})

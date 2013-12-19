@@ -4,37 +4,28 @@
 
   <script src="../jquery/jquery.js"></script>
   <script src="socket.io/socket.io.js"></script>
-  <script src="server.js"></script>
+  <script src="js/events.js"></script>
   <script src="js/clues_and_words.js"></script>
   <script src="js/contact.js"></script>
-  <script src="js/events.js"></script>
   <script src="js/gameflow.js"></script>
   <script src="js/manipulateDOM.js"></script>
-  <script src="js/player_identification.js"></script>
-  <script src="js/player_properties.js"></script>
-  <script src="js/wordmaster_masterword.js"></script>
-  <script src="js/clues_and_words.js"></script>
   <link rel="stylesheet" href="style.css">
   <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
 
+
 </head>
 <body>
-
-<!-- 	<h2 class="title">Contact</h2> -->
-
-	<header>
-	</header>
-
 	<span class="master-word-box"></span>
 	<span class="word-master-guess-box"></span>
-
+	
 	<div class="gameArea">
 		<table>
 			<thead class="header">
 				<tr>
 					<th class="users">Active Players</th>
 					<!-- <th class="status">Status</th> -->
-					<th class="clue">Clue</th>
+					<th class="clues">Clue</th>
+					<th class="action"></th>
 				</tr>
 			</thead>
 			<tbody></tbody>

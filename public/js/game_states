@@ -1,5 +1,0 @@
-function endGame() {
-	if (player.word = word) {
-		delete player.
-	}
-}

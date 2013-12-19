@@ -113,6 +113,7 @@ function endRound(success) {
 
 function endGame() {
     io.sockets.emit('gameOver');
+    // TODO: set new master to current clueGiver
     setTimeout(startNewGame, 5000);
 }
 
@@ -131,3 +132,7 @@ io.sockets.on("connection", function(client) {
 var port = process.env.PORT || 3000;
 ioServer.listen(port);
 console.log("Started server on port " + port);
+
+
+
+
