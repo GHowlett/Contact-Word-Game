@@ -197,6 +197,10 @@ input[type=submit] {
 	font-family: 'Roboto', sans-serif;
 }
 
+input[type=submit].error {
+	background: #FFDDDD;
+}
+
 input[type=submit]:hover {
 	background: #1FAAC2;
 	cursor: pointer;

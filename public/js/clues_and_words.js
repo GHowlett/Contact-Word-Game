@@ -1,19 +1,18 @@
 // allows local player to emit a word
-function chooseWord () {
+function chooseWord (context) {
 	if (localPlayer !== wordMaster) {
-		getInput("Type in a secret word that starts with" + 
-			wordMaster.word.slice(0, masterWordIndex +1) + "...", 
-			matchLetters)
-		
+		if (!context) 
+			context = "Type in a secret word that starts with" + 
+				wordMaster.word.slice(0, masterWordIndex +1) + "..."
+
+		getInput(context, matchLetters)
 		.done(function(word) {
 			localPlayer.word = word;
 			chooseClue();
 		})
 		//if word letters don't match, retry
-		.fail(function(word) {
-			this.css('background', '#FFDDDD')
-			greyInput('First letters must match master word');
-			setTimeout(chooseWord, 3000);
+		.fail(function(word){
+			chooseWord('First letters must match master word');
 		})
 	}
 }

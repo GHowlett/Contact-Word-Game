@@ -13,23 +13,19 @@ function Player (name) {
 }
 
 // creates, renders, and emits the local player upon name decision
-function chooseName () {
+function chooseName (context) {
 	console.log('choosing name');
 
-	getInput('Choose a Nickname', isDuplicateName)
+	if (!context) context = 'Choose a Nickname';
+
+	getInput(context, isDuplicateName)
 	.done(function(name) {
-		renderPlayer(localPlayer = addPlayer(new Player(name)));
-		socket.emit('joined', localPlayer); })
-	.fail(function() {
-		this.css('background', '#FFDDDD')
-			.val('')
-			.prop('placeholder', 'Name already taken, please choose another');
-		setTimeout(function() {
-			chooseName();
-			$('#input').css('background', '#FFFFFF')
-				.prop('placeholder', 'Choose a Nickname');
-			}, 2000); // show error message for 2 seconds
+		localPlayer = addPlayer(new Player(name));
+		renderPlayer(localPlayer);
+		socket.emit('joined', localPlayer); 
 	})
+	// if name taken, ask for different one
+	.fail(function() { chooseName('Name already taken'); })
 }
 
 function isDuplicateName(playerName) {
