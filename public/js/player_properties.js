@@ -10,6 +10,7 @@ function Player (name, guess) {
 		this.clue = clue || "";
 		this.clueCount = 0;
 		this.contactCount = 0;
+		
 	}
 
 	//replacing this some D3 code?

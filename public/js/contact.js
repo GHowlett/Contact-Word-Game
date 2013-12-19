@@ -22,7 +22,7 @@ function challenge (player) {
 	socket.emit('challenge', challenge);
 	if (localPlayer !== wordmaster) greyInput('Word Master challenge!');
 	//if wordmaster can't guess word after 15 seconds, emit contact success event
-	if (wordMaster.guess !== player.word) && ('15 seconds have passed') {
+	if (wordMaster.guess !== player.word) && (wordMaster.time === 10) {
 		socket.emit('contact', contact);
 	}	else loseChallenge();	 
 }
@@ -30,6 +30,4 @@ function challenge (player) {
 function loseChallenge () {
 	socket.emit('loseChallenge', loseChallenge);
 	contactBroken();
-	//TODO: reset D3 zoom and opacity
-	//TODO: enable input for everyone else
 }

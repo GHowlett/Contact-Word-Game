@@ -1,51 +1,41 @@
-function chooseWord (player) {
-	if (localPlayer ==! wordMaster) {
-		//capturing player word and running matchLetters check on revealed masterword letters
-		getInput("Type in a secret word " + wordMaster.word.slice(0, masterWordIndex +1) + "...", matchLetters)
+// allows local player to emit a word
+function chooseWord () {
+	if (localPlayer !== wordMaster) {
+		getInput("Type in a secret word that starts with" + 
+			wordMaster.word.slice(0, masterWordIndex +1) + "...", 
+			matchLetters)
 		
 		.done(function(word) {
-			player.word = word;
-			//once complete, choose clue 
+			localPlayer.word = word;
 			chooseClue();
 		})
-		//if word doesn't match master word letters
+		//if word letters don't match, retry
 		.fail(function(word) {
-			//change input box color to pink
 			this.css('background', '#FFDDDD')
-			getInput('First letters must match master word');
-			//after 3 seconds, allow player to choose word again
+			greyInput('First letters must match master word');
 			setTimeout(chooseWord, 3000);
 		})
 	}
 }
 
-//player words must match master word letters
-function matchLetters(word) {
+// player words must match master word letters
+function matchLetters (word) {
 	return word.slice(0, masterWordIndex +1) ===
 		wordMaster.word.slice(0, masterWordIndex +1);
 }
 
-function chooseClue (player) {
-	if (localPlayer ==! wordMaster) {
-		console.log(localPlayer.name + 'entered secret clue of: ' + player.clue)
-		//capturing player clue
-		getInput('Type in a clue that matches your word')
-		.then(function(clue){
-			//emit clue event
-			socket.emit('clue', clue);
-			player.clue = clue
-			//if players have not entered 3 clues, give them the option to add clues.
-			if (addClue(clue) < 3) chooseClue();
-			//prevent more than 3 clues
-			else greyInput('3 clues is all you get!');
-		})
-	}
-}
 
-//don't need this anymore.
-// function addClue (clue) {
-// 	console.log('new clue: ' + clue);
-// 	$('.clue-box').append(
-// 		"..." + clue + '\n');
-// 	return player.clueCount;
-// }
+// allows local player to emit a clue
+function chooseClue () {
+	if (localPlayer === wordMaster) return;
+
+	var context = localPlayer.clue
+		? 'Give a clue for your word'
+		: 'Replace your clue if necessary';
+
+	getInput(context).then(function(clue){
+		localPlayer.clue = clue;
+		socket.emit('clue', localPlayer);
+		chooseClue();
+	})
+}

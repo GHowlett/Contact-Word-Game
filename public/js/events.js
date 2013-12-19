@@ -64,8 +64,9 @@ function bindNetworkEvents() {
 		}
 	}); 
 
-	socket.on('challenge', function(){
+	socket.on('challenge', function(player){
 		console.log('wordmaster challenged!')
+		
 		//todo: toggle opacity of text
 		//todo: append 15 second countdown to DOM
 		//todo: reveal word to everyone except WM
