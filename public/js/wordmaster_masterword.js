@@ -1,10 +1,9 @@
+// TODO: maybe move this into a wordMaster property
 var masterWordIndex = -1; //later incremented to 0 before render
 
 function setMaster (player) {
 	if (window.wordMaster) delete wordMaster.word;
 	return wordMaster = player;
-	//todo: append player name and guess to wordmaster guess box
-	localPlayer.el.find('.response').text(guess);
 }
 
 function chooseMasterWord () {
