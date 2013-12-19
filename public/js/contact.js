@@ -1,14 +1,15 @@
 function guess (player) {
-	//redisplaying chosen player's clue in local player's input placeholder
-	getInput("Guess clue: " + player.clue) 
+	getInput("What is " + player.name "'s word?") 
 	.then(function(guess){
-		socket.emit('guess', guess);
-		localPlayer.guess = guess
-		if (wordMaster.guess !== player.word && localPlayer === wordMaster) guess();
-		if (localPlayer !== wordMaster) {
-			greyInput('You think ' + player.name + "'s word is: " + guess); 
-		}
-	})	
+		guessObj = {name:player.name, guess:guess};
+		localPlayer.guesses.push(guessObj);
+		socket.emit('guess', guessObj);
+		
+		if (localPlayer === wordMaster) 
+			if (guess === player.word) greInput('You Got It!')
+			else guess(); // keep guessing
+		else greyInput('You think ' + player.name + "'s word is: " + guess);
+	})
 }
 
 function contactBroken (player) {
