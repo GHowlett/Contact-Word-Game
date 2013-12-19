@@ -20,30 +20,22 @@ function chooseWord (player) {
 }
 
 //player words must match master word letters
-function matchLetters(word) {
+function matchLetters (word) {
 	return word.slice(0, masterWordIndex +1) ===
 		wordMaster.word.slice(0, masterWordIndex +1);
 }
 
-function chooseClue (player) {
-	if (localPlayer ==! wordMaster) {
-		console.log(localPlayer.name + 'entered secret clue of: ' + player.clue)
-		//capturing player clue
-		getInput('Type in a clue that matches your word')
-		.then(function(clue){
-			//emit clue event
-			socket.emit('clue', clue);
-			//if players have not entered 3 clues, give them the option to add clues.
-			if (addClue(clue) < 3) chooseClue();
-			//prevent more than 3 clues
-			else greyInput('3 clues is all you get!');
-		})
-	}
-}
+// allows local player to emit a clue
+function chooseClue () {
+	if (localPlayer === wordMaster) return;
 
-function addClue (clue) {
-	console.log('new clue: ' + clue);
-	$('.clue-box').append(
-		"..." + clue + '\n');
-	return player.clueCount;
+	var context = localPlayer.clue
+		? 'Give a clue for your word'
+		: 'Replace your clue if necessary';
+
+	getInput(context).then(function(clue){
+		localPlayer.clue = clue;
+		socket.emit('clue', localPlayer);
+		chooseClue();
+	})
 }
