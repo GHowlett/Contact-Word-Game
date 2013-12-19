@@ -1,7 +1,3 @@
-//questions:
-	//as a normal player, how do you refer to yourself using player.word, player.cluecount, etc?
-
-
 function chooseWord (player) {
 	if (localPlayer ==! wordMaster) {
 		//capturing player word and running matchLetters check on revealed masterword letters

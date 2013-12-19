@@ -35,7 +35,7 @@ function bindNetworkEvents() {
 
 	socket.on('masterWordChosen', function(word){
 		console.log('the master word is ' + word);
-		//? not sure ?
+		//storing masterword
 		wordMaster.word = word;
 		//when master word is chosen, reveal the first letter
 		revealLetter();
@@ -53,7 +53,7 @@ function bindNetworkEvents() {
 
 	socket.on('challenge', function(){
 		console.log('wordmaster challenged!')
-		//todo: toggle opacity (d3)
+		//todo: toggle opacity of player names
 		//todo: append 15 second countdown to DOM
 		//todo: reveal word to everyone except WM
 	})
@@ -67,9 +67,7 @@ function bindNetworkEvents() {
 
 	socket.on('loseChallenge', function(){
 		console.log 
-
 		//todo: append some notification that contact was successful 
-		})
 	});
 
 	socket.on('gameOver', function(){

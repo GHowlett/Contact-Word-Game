@@ -50,6 +50,17 @@ header {
 	/*border-bottom: 1px solid #ccc;*/
 }
 
+.word-master-guess-box {
+	display: block;
+	background: #EBFAFC;
+	width: 80%;
+	margin: 80px auto 60px;
+	height: 55px;
+	font-size: 2em;
+	border-radius: 10px;
+	/*border-bottom: 1px solid #ccc;*/
+}
+
 .master-word-box:before {
 	content: "Master Word";
 	font-size: 0.75em;

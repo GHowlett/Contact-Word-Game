@@ -7,14 +7,13 @@ window.onload = function() {
 
 	chooseWord();
 	
-	//TODO: add player node reference
-	//on click of a player node, run guess function
-	$(insert D3 player node).click(function (){
+	//on click of contact, run guess function
+	//TODO: add button to DOM w/ class '.contact'
+	$('.contact').click(function (){
 		guess(); });
 
-	if (// number of required players are met && ALL player.guess matches clueGiver.secret)	{
-		challenge ();
-	}	else  failContact();
-
+	// if (// number of required players are met && ALL player.guess matches clueGiver.secret)	{
+	// 	challenge ();
+	// }	else  failContact();
 
 }

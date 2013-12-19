@@ -13,7 +13,7 @@ function guess (player) {
 		//for all other players 
 		if (localPlayer !== wordMaster) {
 			//disable input and redisplay local player's guess
-			greyInput('You think ' + player.name "'s word is: " + guess) 
+			greyInput('You think ' + player.name + "'s word is: " + guess) 
 			//TODO: create "nevermind button 
 
 			//clicking on 'nevermind' button 
@@ -24,7 +24,7 @@ function guess (player) {
 				guess();
 			})
 		}
-	}	
+	})	
 }
 
 function contactBroken (player) {
@@ -34,6 +34,7 @@ function contactBroken (player) {
 		delete player.clue
 		//todo: add big red X
 		//todo: remove player connections (D3)
+	}
 }
 
 function challenge (player) {
@@ -41,9 +42,9 @@ function challenge (player) {
 	socket.emit('challenge', challenge);
 	if (localPlayer !== wordmaster) greyInput('Word Master challenge!');
 	//if wordmaster can't guess word after 15 seconds, emit contact success event
-	if (wordMaster.guess !== player.word) && ('15 seconds have passed') {
-		socket.emit('contact', contact)
-	}	else loseChallenge();	 
+	// if (wordMaster.guess !== player.word) && ('15 seconds have passed') {
+	// 	socket.emit('contact', contact);
+	// }	else loseChallenge();	 
 }
 
 function loseChallenge () {

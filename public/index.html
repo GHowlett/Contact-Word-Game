@@ -4,15 +4,14 @@
 
   <script src="../jquery/jquery.js"></script>
   <script src="socket.io/socket.io.js"></script>
+  <script src="server.js"></script>
   <script src="js/clues_and_words.js"></script>
   <script src="js/contact.js"></script>
   <script src="js/events.js"></script>
-  <script src="js/game_states.js"></script>
   <script src="js/gameflow.js"></script>
   <script src="js/manipulateDOM.js"></script>
   <script src="js/player_identification.js"></script>
   <script src="js/player_properties.js"></script>
-  <script src="js/server.js"></script>
   <script src="js/wordmaster_masterword.js"></script>
   <script src="js/clues_and_words.js"></script>
   <link rel="stylesheet" href="style.css">
@@ -27,7 +26,6 @@
 	</header>
 
 	<span class="master-word-box"></span>
-	<h1>'Wordmaster:' + wordmaster.name </h1>
 	<span class="word-master-guess-box"></span>
 
 	<div class="gameArea">
@@ -36,7 +34,7 @@
 				<tr>
 					<th class="users">Active Players</th>
 					<!-- <th class="status">Status</th> -->
-					<th class="response">Clue</th>
+					<th class="clue">Clue</th>
 				</tr>
 			</thead>
 			<tbody></tbody>
