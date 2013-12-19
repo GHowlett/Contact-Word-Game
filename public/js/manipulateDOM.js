@@ -1,15 +1,16 @@
 
 //////////////////////  DOM Manipluation  ///////////////////////
 
-// creates, renders, and adds player to active players array.
-function renderPlayer (player) {
+function renderPlayer (name) {
+	var player = activePlayers[name];
 	player.el.html(
 		'<td class="name">' + player.name + '</td>' +
-		'<td class="response">' + '' + '</td>');
+		'<td class="clue">' + player.clue + '</td>' );
 }
 
 function removePlayer (name) {
 	activePlayers[name].el.remove();
+	// TODO: move this out of the rendering logic
 	delete activePlayers[name];
 }
 
