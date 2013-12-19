@@ -51,3 +51,19 @@ function getInput (placeholder, validate) {
  	$('header .game-status').text('').text(placeholder);
 	return deferred.promise()
 }
+
+
+function addContactButton (){
+	//.action refers to 'action space' in DOM. where the contact button will live
+	$('#'+player.name).children[2].append('<tr>#contactButton<tr>');
+	$contactButton = $('<button></button>')
+		.text('Contact! [' + player.contactCount + ']')
+		.click(guess(player));
+}
+
+function addBreakButton(){
+	$('#'+player.name).children[2].append('<tr>#contactButton<tr>');
+	$breakButton = $('<button></button>')
+		.text('Break! [' + player.contactCount + ']')
+		.click(guess(player));
+}

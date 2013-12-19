@@ -45,14 +45,8 @@ function bindNetworkEvents() {
 		console.log(player.name + "'s clue is " + player.clue);
 		// append player clue to clue box
 		$('#'+player.name).children[1].html(player.clue)
-			if (localPlayer !== wordMaster) { 
-				//.action refers to 'action space' in DOM. where the contact button will live
-				$('.action').append('#contactButton');
-				//todo: create contact button in DOM
-				$contactButton = $('<button></button>')
-					.html('Contact!')
-					.click(guess(player));
-		}
+		if (localPlayer !== wordMaster) addContactButton;
+		if (localPlayer === wordMaster)	addBreakButton;
 	});
 
 	socket.on('guess', function(player){
@@ -68,10 +62,9 @@ function bindNetworkEvents() {
 	socket.on('challenge', function(player){
 		console.log('wordmaster challenged!')
 		//toggle opacity of players for those that are involved in contact
-		$(".challengeGroup").find('.name').fadeToggle( "slow", "linear" );
-		});
-
-		//todo: remove player clues from DOM
+		$(".challengeGroup").find('.name').fadeOut( "slow", "linear" );
+		//todo: remove player clues from DOM except cluegiver
+		
 
 		//todo: append 15 second countdown to DOM
 
@@ -88,6 +81,10 @@ function bindNetworkEvents() {
 	socket.on('loseChallenge', function(){
 		console.log 
 		//todo: append some notification that contact was successful 
+		
+		//reset DOM
+		$(".users").find('.name').fadeIn( "slow", "linear" );
+
 	});
 
 	socket.on('gameOver', function(){
