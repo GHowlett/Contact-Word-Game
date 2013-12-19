@@ -12,11 +12,10 @@ function guess (player) {
 	})
 }
 
-function contactBroken (player) {
-		delete player.word
-		delete player.clue
-		player.contactCount = 0
-	}
+function onContactBroken (player) {
+	delete player.word;
+	delete player.clue;
+}
 
 function challenge (player) {
 	//emit challenge event
