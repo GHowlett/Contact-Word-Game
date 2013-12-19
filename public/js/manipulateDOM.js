@@ -8,6 +8,18 @@ function renderPlayer (name) {
 		'<td class="clue">' + player.clue + '</td>' );
 }
 
+function addPlayer (player) {
+	// non-enumeriability prevents serialization
+	Object.defineProperty(player, 'el', {
+		value: $('<tr/>').appendTo('tbody'), 
+		writable: true,
+		enumerable: false
+	});
+
+	// TODO: move this out of the rendering logic
+	return activePlayers[player.name] = player;
+}
+
 function removePlayer (name) {
 	activePlayers[name].el.remove();
 	// TODO: move this out of the rendering logic

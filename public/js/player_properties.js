@@ -10,11 +10,6 @@ function Player (name) {
 	if (!this.word) this.word = ""; 
 	if (!this.clue) this.clue = "";
 	if (!this.guesses) this.guesses = [];
-	
-	Object.defineProperty(this, 'el',
-		{value: $('<tr/>').appendTo('tbody'), writable:true});
-
-	activePlayers[this.name] = this;
 }
 
 // creates, renders, and emits the local player upon name decision
@@ -23,7 +18,7 @@ function chooseName () {
 
 	getInput('Choose a Nickname', isDuplicateName)
 	.done(function(name) {
-		renderPlayer(localPlayer = new Player(name));
+		renderPlayer(localPlayer = addPlayer(new Player(name)));
 		socket.emit('joined', localPlayer); })
 	.fail(function() {
 		this.css('background', '#FFDDDD')
