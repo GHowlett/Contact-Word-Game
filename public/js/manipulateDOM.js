@@ -75,6 +75,10 @@ function getInput (placeholder, validate) {
 	return deferred.promise()
 }
 
+// shows a player's button given a guessCount, action, or both
+// eg. usages:  - showButton('bobby', 'Break')	
+//				- showButton('bobby', 5)
+//				- showButton('bobby', 'Contact', 7)
 function showButton(name, p1, p2) {
 	var action = (typeof p1 === 'string')? p1:p2;
 	var guessCount = (typeof p1 === 'number')? p1:p2;
