@@ -11,7 +11,7 @@ function guess (player) {
 			$('.word-master-guess-box').html(guessedWord);
 			if (guessedWord === player.word)
 				return greyInput('You Got It!!')
-			else guess(); // keep guessing
+			else guess(player); // keep guessing
 		}
 
 		greyInput('You guessed: ' + guessedWord);

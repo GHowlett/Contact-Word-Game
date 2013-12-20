@@ -57,6 +57,7 @@ function bindNetworkEvents() {
 		if (guess.word === activePlayers[guess.to].word && guess.from === wordMaster.name) {
 			$('.word-master-guess-box').html(guess.word);
 			// TODO: update the guessCount in the button
+		}
 	}); 
 
 	socket.on('contact', function(contact){
