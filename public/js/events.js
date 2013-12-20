@@ -70,6 +70,8 @@ function bindNetworkEvents() {
 			// TOOD: render failure
 		}	
 
+		cleanup();
+		//todo; bring back the button visiblity
 		//todo: append some notification that contact was successful 
 	})
 
@@ -83,6 +85,7 @@ function bindNetworkEvents() {
 		var player = activePlayers[name];
 
 		player.el.find('.clue').text('');
+		player.el.find('button').addClass('hidden');
 		hideButton(name);
 
 		player.guesses = [];
