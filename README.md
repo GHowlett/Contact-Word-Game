@@ -21,3 +21,5 @@
 - rename 'activePlayers' to 'players' and other unecsesary adjectives in general
 
 - omit data that can be appended from the server side form client emitions
+
+- ability to cancel a word
