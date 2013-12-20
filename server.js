@@ -16,7 +16,7 @@ var masterName = "";
 var masterWord = null;
 var minPlayers = 3;
 var hasStarted = false;
-var wonRounds = 0;
+var contactCount = 0;
 
 function getFilteredPlayers() {
     return _.reject(playerDB, function(player){
@@ -52,7 +52,7 @@ function startNewGame() {
 
     masterName = _.sample(filteredPlayers, 1)[0].name;
     hasStarted = true;
-    wonRounds = 0;
+    contactCount = 0;
 
     io.sockets.emit('newGame', masterName);
 }
@@ -65,39 +65,37 @@ function onMasterWordChosen(word) {
     startNewRound();
 }
 
-// TODO: change this to challengeOver
-function startNewRound() {
-    io.sockets.emit('newRound');
-}
-
 function onClue(player) {
     this.broadcast.emit('clue', player);
     _.extend(playerDB[this.id], player);
 }
 
 function onGuess(guess) {
-    var player = playerDB[this.id];
-    player.guess = guess;
-    this.broadcast.emit('guess', player);
+    this.broadcast.emit('guess', guess);
 
-    // round over if master guesses right
-    if (player.name === masterName)
-        endRound(false);
+    var player = _.findWhere(playerDB, {name:guess.to});
 
-    // round over if all players have guessed
-    var guesses = _.unique(_.pluck(getFilteredPlayers(),'guess'));
-    if (_.all(guesses, _.identity)) {
-        if (guesses.length === 1)
-             endRound(true);
-        else endRound(false);
-    }
+    // TODO: accomplish this with bitwise ops & switching 
+    if (guess.word === player.word) {
+        if (guess.from !== masterName) {
+            player.guesses.push(_.pick(guess, 'guess','from'));
+            if (players.length >== _.size(playerDB) /2) 
+                startChallenge(player.name);
+        }
+        else endContact(player.name, false);
+    } else if (guess.from !== masterName) 
+        endContact(player.name, false);    
 }
 
-function endRound(success) {
-    io.sockets.emit('roundOver', success);
-    if (success) wonRounds++;
-    if (wonRounds >= masterWord.length) setTimeout(endGame, 15000);
-    else setTimeout(startNewRound, 15000);
+function startChallenge(name) {
+    io.sockets.emit('challenge', name);
+    // TODO: start countdown
+}
+
+function endContact(name, success) {
+    io.sockets.emit('contact', {name:name, success:success});
+    if (success && masterWord.length <= ++contactCount) 
+        setTimeout(endGame, 5000);
 }
 
 function endGame() {
