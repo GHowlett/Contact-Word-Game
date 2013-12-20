@@ -24,6 +24,11 @@ function addPlayer (player) {
 	return player;
 }
 
+function toggleHighlights() {
+	activePlayers[name].el.find('.clue').addClass("highlighted");
+	$('.word-master-guess-box').addClass('highlighted');
+}
+
 function removePlayer (name) {
 	activePlayers[name].el.remove();
 	// TODO: move this out of the rendering logic

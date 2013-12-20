@@ -64,20 +64,29 @@ function bindNetworkEvents() {
 		console.log(contact.name + "'s contact was " +
 			(contact.success? 'successful':'broken'));
 
+		cleanup(contact.name);
+
 		// TODO: end challenge if in challenge mode
 		if (contact.success) revealLetter();
 		else {
 			// TOOD: render failure
 		}	
 
-		cleanup();
+		for (player in activePlayers) {
+			if (activePlayers[player].clue)
+				activePlayers[player].el.find('button')
+					.removeClass('hidden');
+		}
+
+		if (contact.name === localPlayer.name) chooseWord();
+
 		//todo; bring back the button visiblity
 		//todo: append some notification that contact was successful 
 	})
 
-	function endChallenge(success) {
-		$(".users").find('.name').fadeIn( "slow", "linear" );
-	}
+	// function endChallenge(success) {
+	// 	$(".users").find('.name').fadeIn( "slow", "linear" );
+	// }
 
 	// TODO: move this to an appropriate place
 	// resets properties / DOM elements after contact 
@@ -97,8 +106,7 @@ function bindNetworkEvents() {
 		console.log('challenge mode');
 
 		$('tr button').addClass('hidden');
-		activePlayers[name].el.addClass("challengeGroup");
-		$('.word-master-guess-box').attr('style', 'background-color:yellow;');
+		toggleHighlights();
 
 		if (localPlayer !== wordMaster) {
 			var secretWord = activePlayers[name].word;

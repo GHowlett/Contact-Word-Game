@@ -7,7 +7,6 @@ function chooseWord (context) {
 
 		getInput(context, matchLetters)
 		.done(function(word) {
-			console.log(word)
 			localPlayer.word = word;
 			chooseClue();
 		})

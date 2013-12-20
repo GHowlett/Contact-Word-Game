@@ -10,6 +10,10 @@
 	display: none;
 }
 
+.highlighted {
+	background: rgb(250, 190, 250);
+}
+
 body {
 	font-family: 'Roboto', sans-serif;
 	font-size: 120%;
@@ -92,10 +96,6 @@ header {
 	margin: 25px auto;
 	border-radius: 10px;
 	background: #31C5DF;
-}
-
-.challengeGroup td.clue{
-	background-color: yellow !important;	
 }
 
 .clue-box {

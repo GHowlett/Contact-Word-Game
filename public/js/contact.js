@@ -11,13 +11,11 @@ function guess (player) {
 			$('.word-master-guess-box').html(guessedWord);
 			if (guessedWord === player.word)
 				return greyInput('You Got It!!');
-			else guess(player); // keep guessing
+			else return guess(player); // keep guessing
 		}
 
 		greyInput('You guessed: ' + guessedWord);
-		setTimeout(function(){
-			localPlayer.word? choosClue() : chooseWord();
-		}, 1500);
+		localPlayer.word? chooseClue() : chooseWord();
 	})
 }
 
