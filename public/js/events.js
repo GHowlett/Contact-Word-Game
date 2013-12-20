@@ -41,7 +41,6 @@ function bindNetworkEvents() {
 
 	socket.on('clue', function(player) {	
 		console.log(player.name + "'s clue is " + player.clue);
-		
 		activePlayers[player.name].el.find('.clue').html(player.clue);
 
 		var button = (localPlayer !== wordMaster)
@@ -54,7 +53,7 @@ function bindNetworkEvents() {
 
 	socket.on('guess', function(guess){
 		if (guess.word === activePlayers[guess.to].word) {
-
+			$('.word-master-guess-box').html(guess.word);
 		}
 	}); 
 

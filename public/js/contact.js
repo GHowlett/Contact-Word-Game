@@ -8,6 +8,7 @@ function guess (player) {
 		});
 
 		if (localPlayer === wordMaster) {
+			$('.word-master-guess-box').html(guessedWord);
 			if (guesssword === player.word)
 				return greyInput('You Got It!!')
 			else guess(); // keep guessing
