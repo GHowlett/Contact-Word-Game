@@ -4,7 +4,11 @@
 function renderPlayer (player) {
 	player.el.html(
 		'<td class="name">' + player.name + '</td>' +
-		'<td class="clue">' + player.clue + '</td>' );
+		'<td class="clue">' + player.clue + '</td>' +
+		'<td><button class="hidden">' +
+			'<span class="action">Contact</span> ' +
+			'(<span class="count">0</span>)' +
+		'</button></td>' );
 }
 
 function addPlayer (player) {

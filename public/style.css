@@ -6,6 +6,10 @@
   box-sizing: border-box;
 }
 
+.hidden {
+	display: none;
+}
+
 body {
 	font-family: 'Roboto', sans-serif;
 	font-size: 120%;
