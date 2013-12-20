@@ -43,18 +43,16 @@ function bindNetworkEvents() {
 	});
 
 	//listening for clue
-	socket.on('clue', function(player) {	
-		console.log(player.name + "'s clue is " + player.clue);
-		activePlayers[player.name].el.find('.clue')
-			.html(player.clue)
-			.add(player.guesses.length)
-		if (localPlayer !== wordMaster) {
-			showButton(player.name, 'contact');
-			localPlayer.el.find('button').click(function(){console.log('testing buttons')});
-		}
-
-		if (localPlayer === wordMaster) showButton(player.name, 'break');
-		localPlayer.el.find('button').click(function(){console.log('testing WM buttons')});
+	socket.on('clue', function(clueGiverPlayer) {	
+		console.log(clueGiverPlayer.name + "'s clue is " + clueGiverPlayer.clue);
+		activePlayers[clueGiverPlayer.name].el.find('.clue')
+			.html(clueGiverPlayer.clue)
+			//todo: .add(player.guesses.length)
+		if (localPlayer !== wordMaster) showButton(clueGiverPlayer.name, 'contact');
+		if (localPlayer === wordMaster) showButton(clueGiverPlayer.name, 'break');
+		$('button').click(function(){
+			guess(clueGiverPlayer);
+		});
 	});
 
 	socket.on('guess', function(player){

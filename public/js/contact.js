@@ -1,31 +1,32 @@
-function guess (player) {
-	getInput("What is " + player.name + "'s word?") 
-	.then(function(guess){
+function guess (clueGiverPlayer) {
+	getInput("What is " + clueGiverPlayer.name + "'s word?") 
+	.then(function(playerGuess){
 		socket.emit('guess', {
-			to: player.name,
+			to: clueGiverPlayer.name,
 			from: localPlayer.name, 
-			guess: guess
+			guess: playerGuess
 		});
-		
+		console.log(clueGiverPlayer.name)
+		console.log(localclueGiverPlayer.name)
 		if (localPlayer === wordMaster) 
-			if (guess === player.word) greyInput('You Got It!')
+			if (playerGuess === clueGiverPlayer.word) greyInput('You Got It!')
 			else guess(); // keep guessing
-		else greyInput('You think ' + player.name + "'s word is: " + guess);
+		else greyInput('You guessed: ' + playerGuess);
 	})
 }
 
-function onContactBroken (player) {
-	delete player.word;
-	delete player.clue;
+function onContactBroken (clueGiverPlayer) {
+	delete clueGiverPlayer.word;
+	delete clueGiverPlayer.clue;
 }
 
-function challenge (player) {
+function challenge (clueGiverPlayer) {
 	//emit challenge event
 	socket.emit('challenge', challenge);
 	if (localPlayer !== wordmaster) greyInput('Word Master challenge!');
 	//todo: griffin
 	//if wordmaster can't guess word after 15 seconds, emit contact success event
-	// if (wordMaster.guess !== player.word) && () {
+	// if (wordMaster.guess !== clueGiverPlayer.word) && () {
 	// 	socket.emit('contact', contact);
 	// }	else loseChallenge();	 
 }
