@@ -48,8 +48,13 @@ function bindNetworkEvents() {
 		activePlayers[player.name].el.find('.clue')
 			.html(player.clue)
 			.add(player.guesses.length)
-		if (localPlayer !== wordMaster) showButton(player.name, 'contact');
-		if (localPlayer === wordMaster) showButton(wordMaster.name, 'break');
+		if (localPlayer !== wordMaster) {
+			showButton(player.name, 'contact');
+			localPlayer.el.find('button').click(function(){console.log('testing buttons')});
+		}
+
+		if (localPlayer === wordMaster) showButton(player.name, 'break');
+		localPlayer.el.find('button').click(function(){console.log('testing WM buttons')});
 	});
 
 	socket.on('guess', function(player){
