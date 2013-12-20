@@ -91,13 +91,17 @@ function bindNetworkEvents() {
 	}
 
 	socket.on('challenge', function(name){
-		
+		console.log('challenge mode');
+
+		$('tr button').addClass('hidden');
 		activePlayers[name].el.addClass("challengeGroup");
 		$('.word-master-guess-box').attr('style', 'background-color:yellow;');
+
 		if (localPlayer !== wordMaster) {
-			secretWord = activePlayers[name].word 
-			console.log(secretWord + 'secret word', name)
+			var secretWord = activePlayers[name].word;
 			activePlayers[name].el.find('.clue').append(' ['+ secretWord + ']');
+		} else {
+			guess(activePlayers[name]);
 		}
 		//$(".challengeGroup").find('.name').fadeOut( "slow", "linear" );
 		//player.name.el.find('.clue').html(player.clue)
