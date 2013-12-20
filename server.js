@@ -72,7 +72,7 @@ function startNewRound() {
 
 function onClue(player) {
     this.broadcast.emit('clue', player);
-    _.extend(playerDB[player.name], player);
+    _.extend(playerDB[this.id], player);
 }
 
 function onGuess(guess) {
