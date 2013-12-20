@@ -1,5 +1,6 @@
 
 ////////////////////////  Event Listeners  ///////////////////////
+var socket = io.connect('http://localhost');
 
 function bindNetworkEvents() {
 	socket.on('joined', function(playerData){
@@ -43,7 +44,6 @@ function bindNetworkEvents() {
 	//listening for clue
 	socket.on('clue', function(player) {	
 		console.log(player.name + "'s clue is " + player.clue);
-		// append player clue to clue box
 		$('#'+player.name).children[1].html(player.clue)
 		if (localPlayer !== wordMaster) addContactButton;
 		if (localPlayer === wordMaster)	addBreakButton;
@@ -51,9 +51,6 @@ function bindNetworkEvents() {
 
 	socket.on('guess', function(player){
 		if (localplayer.guess === player.word) {
-			//TODO: increment contact counter and add 1 to contact button
-			player.contactCount ++
-			//diables input 
 			greyInput("Nice! " + localPlayer.guess)
 			$('#'+localPlayer.name).addClass('challengeGroup')
 		}
@@ -64,7 +61,6 @@ function bindNetworkEvents() {
 		//toggle opacity of players for those that are involved in contact
 		$(".challengeGroup").find('.name').fadeOut( "slow", "linear" );
 		//todo: remove player clues from DOM except cluegiver
-		
 
 		//todo: append 15 second countdown to DOM
 
@@ -81,8 +77,6 @@ function bindNetworkEvents() {
 	socket.on('loseChallenge', function(){
 		console.log 
 		//todo: append some notification that contact was successful 
-		
-		//reset DOM
 		$(".users").find('.name').fadeIn( "slow", "linear" );
 
 	});

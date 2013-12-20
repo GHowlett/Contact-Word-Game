@@ -42,19 +42,21 @@ header {
 .master-word-box {
 	display: block;
 	background: #EBFAFC;
-	width: 80%;
-	margin: 80px auto 60px;
+	width: 40%;
+	margin: 80px auto 40px;
 	height: 55px;
 	font-size: 2em;
 	border-radius: 10px;
+	margin-right: 10%;
 	/*border-bottom: 1px solid #ccc;*/
 }
 
 .word-master-guess-box {
 	display: block;
 	background: #EBFAFC;
-	width: 80%;
-	margin: 80px auto 60px;
+	width: 60%;
+	margin: 60px auto 40px;
+	margin-left: 10%;
 	height: 55px;
 	font-size: 2em;
 	border-radius: 10px;
@@ -63,7 +65,7 @@ header {
 
 .word-master-guess-box:before {
 	content: "Word Master: " ;
-	font-size: 0.75em;
+	font-size: .75em;
 	font-family: 'Roboto', sans-serif;
 	font-weight: 300;
 	position: absolute;
@@ -72,10 +74,10 @@ header {
 
 .master-word-box:before {
 	content: "Master Word:";
-	font-size: 0.75em;
+	font-size: 0.5em;
 	font-family: 'Roboto', sans-serif;
 	font-weight: 300;
-	position: absolute;
+	position: left;
 	margin-top: -40px;
 }
 

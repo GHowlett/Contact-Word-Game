@@ -8,6 +8,12 @@ function renderPlayer (name) {
 		'<td class="clue">' + player.clue + '</td>' );
 }
 
+	$('#'+player.name).children[2].append('<tr>#contactButton<tr>');
+	$contactButton = $('<button></button>')
+		.text('Contact! [' + player.guess.length + ']')
+		.click(guess(player));
+}
+
 function addPlayer (player) {
 	// non-enumeriability prevents serialization
 	Object.defineProperty(player, 'el', {
@@ -76,13 +82,13 @@ function addContactButton (){
 	//.action refers to 'action space' in DOM. where the contact button will live
 	$('#'+player.name).children[2].append('<tr>#contactButton<tr>');
 	$contactButton = $('<button></button>')
-		.text('Contact! [' + player.contactCount + ']')
+		.text('Contact! [' + player.guess.length + ']')
 		.click(guess(player));
 }
 
 function addBreakButton(){
 	$('#'+player.name).children[2].append('<tr>#contactButton<tr>');
 	$breakButton = $('<button></button>')
-		.text('Break! [' + player.contactCount + ']')
+		.text('Break! [' + player.guess.length + ']')
 		.click(guess(player));
 }
