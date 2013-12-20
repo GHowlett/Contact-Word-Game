@@ -1,19 +1,19 @@
 function guess (player) {
-	console.log('')
 	getInput("What is " + player.name + "'s word?") 
-	.then(function(playerGuess){
+	.then(function(guessedWord){
 		socket.emit('guess', {
 			to: player.name,
 			from: localPlayer.name, 
-			word: playerGuess,
-			masterGuess: wordMaster.guess
+			word: guessedWord
 		});
-		if (localPlayer === wordMaster) 
-			if (playerGuess === player.word){
-				breakContact();
-			} 
+
+		if (localPlayer === wordMaster) {
+			if (guesssword === player.word)
+				return greyInput('You Got It!!')
 			else guess(); // keep guessing
-		greyInput('You guessed: ' + playerGuess);
+		}
+
+		greyInput('You guessed: ' + guessedWord);
 	})
 }
 

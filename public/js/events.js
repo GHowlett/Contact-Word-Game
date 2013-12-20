@@ -47,11 +47,14 @@ function bindNetworkEvents() {
 		var button = (localPlayer !== wordMaster)
 			? showButton(player.name, 'Contact')
 			: showButton(player.name, 'Break');
-		button.click(function(){ guess(player); });
+		button.click(function(){ 
+			guess(activePlayers[player.name]); 
+		});
 	});
 
 	socket.on('guess', function(guess){
 		if (guess.word === activePlayers[guess.to].word) {
+
 		}
 	}); 
 
