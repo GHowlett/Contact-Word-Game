@@ -13,10 +13,11 @@ var io = socketIO.listen(ioServer);
 
 var playerDB = {};
 var masterName = "";
-var masterWord = null;
+var masterWord = "";
 var minPlayers = 3;
 var hasStarted = false;
 var contactCount = 0;
+var history = [];
 
 function getFilteredPlayers() {
     return _.reject(playerDB, function(player){
@@ -40,6 +41,8 @@ function onDisconnect() {
     // you can only leave if you've joined / have a name
     if (!playerDB[this.id]) return;
 
+    // TODO: start new game if master leaves
+
     this.broadcast.emit('left', playerDB[this.id].name);
     if (_.size(playerDB) === minPlayers)
         this.broadcast.emit('pause', 'Waiting for Players');
@@ -53,24 +56,30 @@ function startNewGame() {
     masterName = _.sample(filteredPlayers, 1)[0].name;
     hasStarted = true;
     contactCount = 0;
+    masterWord = "";
+    history = [];
 
     io.sockets.emit('newGame', masterName);
+    history.push(['newGame', masterName]);
 }
 
 // TODO: maybe don't give words or guesses to the client
 //       since it could result in cheating
 function onMasterWordChosen(word) {
-    masterWord = word;
     this.broadcast.emit('masterWordChosen', word);
+    history.push(['masterWordChosen', word]);
+    masterWord = word;
 }
 
 function onClue(player) {
     this.broadcast.emit('clue', player);
+    history.push(['clue', player]);
     _.extend(playerDB[this.id], player);
 }
 
 function onGuess(guess) {
     this.broadcast.emit('guess', guess);
+    history.push(['guess', guess]);
 
     var player = _.findWhere(playerDB, {name:guess.to});
 
@@ -88,23 +97,33 @@ function onGuess(guess) {
 
 function startChallenge(name) {
     io.sockets.emit('challenge', name);
+    history.push(['challenge', name]);
     // TODO: start countdown
 }
 
 function endContact(name, success) {
-    io.sockets.emit('contact', {name:name, success:success});
+    var contact = {name:name, success:success}
+    io.sockets.emit('contact', contact);
+    history.push(['contact', contact]);
+
     if (success && masterWord.length <= ++contactCount) 
         setTimeout(endGame, 5000);
 }
 
 function endGame() {
     io.sockets.emit('gameOver');
+    // TODO: do something about players who join in these 5 secs
     setTimeout(startNewGame, 5000);
 }
 
 io.sockets.on("connection", function(client) {
+    // TODO: only emit essential properties of ea. player
     for (player in playerDB)
         client.emit('joined', playerDB[player]);
+
+    //history.forEach(client.emit.apply.bind(client));
+    history.forEach(function(event){
+        client.emit(event[0], event[1]); });
 
     client.on("joined", onJoined);
     client.on("disconnect", onDisconnect);

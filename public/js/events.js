@@ -9,6 +9,7 @@ function bindNetworkEvents() {
 
 	socket.on('left', function(name){
 		console.log(name + ' left');
+		// TODO: do something special if its the wordmaster
 		removePlayer(name);
 	});
 
@@ -29,6 +30,7 @@ function bindNetworkEvents() {
 	socket.on('newGame', function(master){
 		console.log(master + ' is the new master');
 		setMaster(activePlayers[master]);
+		// TODO: reset everyone's properties
 		if (localPlayer === wordMaster) chooseMasterWord();
 	});
 
@@ -36,7 +38,7 @@ function bindNetworkEvents() {
 		console.log('the master word is ' + word);
 		wordMaster.word = word;
 		revealLetter();
-		chooseWord();
+		if (localPlayer) chooseWord();
 	});
 
 	socket.on('clue', function(player) {	
@@ -54,6 +56,7 @@ function bindNetworkEvents() {
 	socket.on('guess', function(guess){
 		if (guess.word === activePlayers[guess.to].word) {
 			$('.word-master-guess-box').html(guess.word);
+			// TODO: update the guessCount in the button
 		}
 	}); 
 

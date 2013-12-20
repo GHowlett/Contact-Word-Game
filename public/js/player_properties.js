@@ -1,4 +1,5 @@
 var activePlayers = {};
+var localPlayer = null;
 
 // TODO: find a more semantic way of overloading this
 // TODO: maybe allow multiple clues at once
@@ -24,7 +25,10 @@ function chooseName (context) {
 		
 		renderPlayer(localPlayer);
 		socket.emit('joined', localPlayer); 
-		greyInput("Waiting for Word Master")
+
+		if (typeof wordMaster !== "undefined" && wordMaster.word)
+			chooseWord();
+		else greyInput("Waiting for Word Master");
 	})
 	// if name taken, ask for different one
 	.fail(function() { chooseName('Name already taken'); })
