@@ -50,31 +50,48 @@ function bindNetworkEvents() {
 		});
 	});
 
-	socket.on('guess', function(player){
+	socket.on('guess', function(guess){
 		if (guess.word === activePlayers[guess.to].word) {
-			greyInput("Nice! " + localPlayer.guess)
-			$('#'+localPlayer.name).addClass('challengeGroup')
-		}
-		if (wordMaster.guess === player.word){
-			player.name.el.find('.clue').html('');
-			if (localPlayer === wordMaster)
-				hideButton(player.name, 'break');
-				greyInput('You broke up the contact!');
-			if (localPlayer !== wordMaster) {
-				delete player.word;
-				delete player.clue;
-				chooseWord();
-			}
+			
+
+			
 		}
 	}); 
 
-	socket.on('contact', function(success){
-		console.log('Challenge over, wordMaster '+ (success? 'lost':'won'));
-		setTimeout(revealLetter(), 4000);
+	socket.on('contact', function(contact){
+		console.log(contact.name + "'s contact was " +
+			(contact.success? 'successful':'broken'));
+
+		// TODO: end challenge if in challenge mode
+
+		if (contact.success) revealLetter();
+		else {
+			// TOOD: render failure
+			cleanup(contact.name);
+		}
+
 		//todo: append some notification that contact was successful 
 	})
 
-	socket.on('challenge', function(player){
+	function endChallenge(success) {
+		$(".users").find('.name').fadeIn( "slow", "linear" );
+	}
+
+	// TODO: move this to an appropriate place
+	// resets properties / DOM elements after contact 
+	function cleanup(name) {
+		var player = activePlayers[name];
+
+		player.el.find('.clue').text('');
+		hideButton(name);
+
+		player.guesses = [];
+		player.clue = "";
+		player.word = "";
+	}
+
+	socket.on('challenge', function(name){
+		//todo: add .challengeGroup class to related players
 		console.log('wordmaster challenged!')
 		//toggle opacity of players for those that are involved in contact
 		$(".challengeGroup").find('.name').fadeOut( "slow", "linear" );
@@ -86,19 +103,6 @@ function bindNetworkEvents() {
 		activePlayers[player.name].el.find('.clue').html('player.clue')
 		hideButton(player.name, 'break');
 	})
-
-
-	socket.on('contact', function(fail){
-		breakContact();
-	})
-
-
-	socket.on('loseChallenge', function(){
-		console.log 
-		//todo: append some notification that contact was successful 
-		$(".users").find('.name').fadeIn( "slow", "linear" );
-
-	});
 
 	socket.on('gameOver', function(){
 		console.log('game over');
