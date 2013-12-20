@@ -13,16 +13,14 @@ var io = socketIO.listen(ioServer);
 
 var playerDB = {};
 var masterName = "";
-var giverName = "";
+var masterWord = null;
 var minPlayers = 3;
 var hasStarted = false;
-var masterWord = null;
 var wonRounds = 0;
 
 function getFilteredPlayers() {
     return _.reject(playerDB, function(player){
-        return player.name === masterName ||
-               player.name === giverName;
+        return player.name === masterName;
     });
 }
 
@@ -67,16 +65,9 @@ function onMasterWordChosen(word) {
     startNewRound();
 }
 
+// TODO: change this to challengeOver
 function startNewRound() {
-    var filteredPlayers = getFilteredPlayers();
-    giverName = _.sample(filteredPlayers, 1)[0].name;
-    io.sockets.emit('newRound', giverName);
-}
-
-function onGiverWordChosen(word) {
-    giverWord = word;
-    this.broadcast.emit('giverWordChosen', word);
-    if (giverWord === masterWord) endGame();
+    io.sockets.emit('newRound');
 }
 
 function onClue(clue) {
@@ -92,13 +83,13 @@ function onGuess(guess) {
     this.broadcast.emit('guess', player);
 
     // round over if master guesses right
-    if (player.name === masterName && guess === giverWord)
+    if (player.name === masterName)
         endRound(false);
 
     // round over if all players have guessed
     var guesses = _.unique(_.pluck(getFilteredPlayers(),'guess'));
     if (_.all(guesses, _.identity)) {
-        if (guesses.length === 1 && guesses[0] === giverWord)
+        if (guesses.length === 1)
              endRound(true);
         else endRound(false);
     }
@@ -113,7 +104,6 @@ function endRound(success) {
 
 function endGame() {
     io.sockets.emit('gameOver');
-    // TODO: set new master to current clueGiver
     setTimeout(startNewGame, 5000);
 }
 
@@ -124,7 +114,6 @@ io.sockets.on("connection", function(client) {
     client.on("joined", onJoined);
     client.on("disconnect", onDisconnect);
     client.on("masterWordChosen", onMasterWordChosen);
-    client.on("giverWordChosen", onGiverWordChosen);
     client.on("clue", onClue);
     client.on("guess", onGuess);
 });
