@@ -62,7 +62,6 @@ function startNewGame() {
 function onMasterWordChosen(word) {
     masterWord = word;
     this.broadcast.emit('masterWordChosen', word);
-    startNewRound();
 }
 
 function onClue(player) {
