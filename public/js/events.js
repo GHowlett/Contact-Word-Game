@@ -43,8 +43,8 @@ function bindNetworkEvents() {
 		console.log(player.name + "'s clue is " + player.clue);
 		activePlayers[player.name].el.find('.clue')
 			.html(player.clue);
-		if (localPlayer !== wordMaster) showButton(player.name, 'contact');
-		if (localPlayer === wordMaster) showButton(player.name, 'break');
+		if (localPlayer !== wordMaster) showButton(player.name, 'contact', player.guesses.length);
+		if (localPlayer === wordMaster) showButton(player.name, 'break', player.guesses.length);
 		$('button').click(function(){
 			guess(player);
 		});
@@ -52,9 +52,6 @@ function bindNetworkEvents() {
 
 	socket.on('guess', function(guess){
 		if (guess.word === activePlayers[guess.to].word) {
-			
-
-			
 		}
 	}); 
 
