@@ -8,7 +8,7 @@ function guess (player) {
 		});
 		
 		if (localPlayer === wordMaster) 
-			if (guess === player.word) greInput('You Got It!')
+			if (guess === player.word) greyInput('You Got It!')
 			else guess(); // keep guessing
 		else greyInput('You think ' + player.name + "'s word is: " + guess);
 	})

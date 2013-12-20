@@ -29,8 +29,8 @@ function chooseClue () {
 	if (localPlayer === wordMaster) return;
 
 	var context = localPlayer.clue
-		? 'Give a clue for your word'
-		: 'Replace your clue if necessary';
+		? 'Replace your clue if necessary'
+		: 'Give a clue for your word';
 
 	getInput(context).then(function(clue){
 		localPlayer.clue = clue;

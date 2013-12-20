@@ -39,14 +39,17 @@ function bindNetworkEvents() {
 		wordMaster.word = word;
 		//when master word is chosen, reveal the first letter
 		revealLetter();
+		chooseWord();
 	});
 
 	//listening for clue
 	socket.on('clue', function(player) {	
 		console.log(player.name + "'s clue is " + player.clue);
-		$('#'+player.name).children[1].html(player.clue)
-		if (localPlayer !== wordMaster) addContactButton;
-		if (localPlayer === wordMaster)	addBreakButton;
+		activePlayers[player.name].el.find('.clue')
+			.html(player.clue)
+			.add(player.guesses.length)
+		if (localPlayer !== wordMaster) showButton('contact', player.name);
+		if (localPlayer === wordMaster) showButton('break', wordMaster.name);
 	});
 
 	socket.on('guess', function(player){
@@ -65,12 +68,14 @@ function bindNetworkEvents() {
 		//todo: append 15 second countdown to DOM
 
 		//reveal word to everyone except WM
-		$('#'+player.name).children[2].html(player.word);
+		activePlayers[player.name].el.find('.clue').html('player.clue')
+		hideButton('break', wordMaster.name);
 	})
 
 	socket.on('contact', function(success){
 		console.log('Challenge over, wordMaster '+ (success? 'lost':'won'));
 		setTimeout(revealLetter(), 4000);
+		//todo: show button for everyone 
 		//todo: append some notification that contact was successful 
 	})
 
