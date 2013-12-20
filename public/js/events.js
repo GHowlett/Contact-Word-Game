@@ -4,7 +4,7 @@ var socket = io.connect('http://localhost');
 
 function bindNetworkEvents() {
 	socket.on('joined', function(playerData){
-		renderPlayer(addplayer(new Player(playerData)));
+		renderPlayer(addPlayer(new Player(playerData)));
 	});
 
 	socket.on('left', function(name){
