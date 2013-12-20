@@ -41,13 +41,13 @@ function bindNetworkEvents() {
 
 	socket.on('clue', function(player) {	
 		console.log(player.name + "'s clue is " + player.clue);
-		activePlayers[player.name].el.find('.clue')
-			.html(player.clue);
-		if (localPlayer !== wordMaster) showButton(player.name, 'contact', player.guesses.length);
-		if (localPlayer === wordMaster) showButton(player.name, 'break', player.guesses.length);
-		$('button').click(function(){
-			guess(player);
-		});
+		
+		activePlayers[player.name].el.find('.clue').html(player.clue);
+
+		var button = (localPlayer !== wordMaster)
+			? showButton(player.name, 'Contact')
+			: showButton(player.name, 'Break');
+		button.click(function(){ guess(player); });
 	});
 
 	socket.on('guess', function(guess){
