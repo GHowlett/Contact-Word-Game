@@ -70,11 +70,9 @@ function startNewRound() {
     io.sockets.emit('newRound');
 }
 
-function onClue(clue) {
-    this.broadcast.emit('clue', clue);
-    // TODO: refactor gamelogic so the giver doesn't
-    //       have any special rendering logic, and instead
-    //       listens to its own events like everyone else
+function onClue(player) {
+    this.broadcast.emit('clue', player);
+    _.extend(playerDB[player.name], player);
 }
 
 function onGuess(guess) {

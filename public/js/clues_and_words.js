@@ -34,6 +34,7 @@ function chooseClue () {
 
 	getInput(context).then(function(clue){
 		localPlayer.clue = clue;
+		// TODO: only emit the name, clue, & word
 		socket.emit('clue', localPlayer);
 		chooseClue();
 	})
