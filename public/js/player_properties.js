@@ -21,8 +21,6 @@ function chooseName (context) {
 	getInput(context, isDuplicateName)
 	.done(function(name) {
 		localPlayer = addPlayer(new Player(name));
-
-		console.log(localPlayer);
 		
 		renderPlayer(localPlayer);
 		socket.emit('joined', localPlayer); 

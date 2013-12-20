@@ -94,7 +94,3 @@ function showButton(name, p1, p2) {
 function hideButton(name){
 	return activePlayers[name].el.find('button').addClass('hidden');
 }
-
-function deleteClueAndWord()
-	
-	return activePlayers[name].el.find('button').html('hidden');
