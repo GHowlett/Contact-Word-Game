@@ -75,18 +75,18 @@ function getInput (placeholder, validate) {
 	return deferred.promise()
 }
 
+function showButton(name, p1, p2) {
+	var action = (typeof p1 === 'string')? p1:p2;
+	var guessCount = (typeof p1 === 'number')? p1:p2;
+	var button = activePlayers[name].el.find('button')
+		.removeClass('hidden')
 
-function addContactButton (){
-	//.action refers to 'action space' in DOM. where the contact button will live
-	$('#'+player.name).children[2].append('<tr>#contactButton<tr>');
-	$contactButton = $('<button></button>')
-		.text('Contact! [' + player.guess.length + ']')
-		.click(guess(player));
+	if (action) button.find('.action').text(action);
+	if (guessCount) button.find('.count').text(guessCount);
+	
+	return button;
 }
 
-function addBreakButton(){
-	$('#'+player.name).children[2].append('<tr>#contactButton<tr>');
-	$breakButton = $('<button></button>')
-		.text('Break! [' + player.guess.length + ']')
-		.click(guess(player));
+function hideButton(name){
+	return activePlayers[name].el.find('button').addClass('hidden');
 }
