@@ -93,7 +93,7 @@ function bindNetworkEvents() {
 	}
 
 	socket.on('challenge', function(name){
-		//todo: add .challengeGroup class to related players
+		activePlayers[player.name].addClass(".challengeGroup");
 		console.log('wordmaster challenged!')
 		//toggle opacity of players for those that are involved in contact
 		$(".challengeGroup").find('.name').fadeOut( "slow", "linear" );
