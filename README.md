@@ -17,3 +17,5 @@
 # TODO
 
 - have players respond to their own emitions where applicable
+
+- rename 'activePlayers' to 'players' and other unecsesary adjectives in general
