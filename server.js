@@ -18,6 +18,7 @@ var minPlayers = 3;
 var hasStarted = false;
 var contactCount = 0;
 var history = [];
+var isChallenge = false;
 
 function getFilteredPlayers() {
     return _.reject(playerDB, function(player){
@@ -91,13 +92,17 @@ function onGuess(guess) {
                 startChallenge(player.name);
         }
         else endContact(player.name, false);
-    } else if (guess.from !== masterName) 
-        endContact(player.name, false);    
+    } else {
+        if (guess.from === masterName)
+            endContact(player.name, true);
+        else endContact(player.name, false);
+    }
 }
 
 function startChallenge(name) {
     io.sockets.emit('challenge', name);
     history.push(['challenge', name]);
+    isChallenge = true;
     // TODO: start countdown
 }
 

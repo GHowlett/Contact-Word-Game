@@ -106,7 +106,7 @@ function bindNetworkEvents() {
 		console.log('challenge mode');
 
 		$('tr button').addClass('hidden');
-		toggleHighlights();
+		toggleHighlights(name);
 
 		if (localPlayer !== wordMaster) {
 			var secretWord = activePlayers[name].word;

@@ -24,7 +24,7 @@ function addPlayer (player) {
 	return player;
 }
 
-function toggleHighlights() {
+function toggleHighlights(name) {
 	activePlayers[name].el.find('.clue').addClass("highlighted");
 	$('.word-master-guess-box').addClass('highlighted');
 }
