@@ -51,7 +51,7 @@ function bindNetworkEvents() {
 	});
 
 	socket.on('guess', function(player){
-		if (localPlayer.guess === player.word) {
+		if (guess.word === activePlayers[guess.to].word) {
 			greyInput("Nice! " + localPlayer.guess)
 			$('#'+localPlayer.name).addClass('challengeGroup')
 		}
@@ -71,7 +71,6 @@ function bindNetworkEvents() {
 	socket.on('contact', function(success){
 		console.log('Challenge over, wordMaster '+ (success? 'lost':'won'));
 		setTimeout(revealLetter(), 4000);
-		showButton(activePlayers.name)
 		//todo: append some notification that contact was successful 
 	})
 

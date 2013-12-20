@@ -23,7 +23,6 @@ function matchLetters (word) {
 		wordMaster.word.slice(0, masterWordIndex +1);
 }
 
-
 // allows local player to emit a clue
 function chooseClue () {
 	if (localPlayer === wordMaster) return;
@@ -38,4 +37,6 @@ function chooseClue () {
 		socket.emit('clue', localPlayer);
 		chooseClue();
 	})
+	//append local player 
+	localPlayer.el.find('.clue').html(localPlayer.clue);
 }
