@@ -48,8 +48,8 @@ function bindNetworkEvents() {
 		activePlayers[player.name].el.find('.clue')
 			.html(player.clue)
 			.add(player.guesses.length)
-		if (localPlayer !== wordMaster) showButton('contact', player.name);
-		if (localPlayer === wordMaster) showButton('break', wordMaster.name);
+		if (localPlayer !== wordMaster) showButton(player.name, 'contact');
+		if (localPlayer === wordMaster) showButton(wordMaster.name, 'break');
 	});
 
 	socket.on('guess', function(player){
@@ -69,7 +69,7 @@ function bindNetworkEvents() {
 
 		//reveal word to everyone except WM
 		activePlayers[player.name].el.find('.clue').html('player.clue')
-		hideButton('break', wordMaster.name);
+		hideButton(wordMaster.name, 'break');
 	})
 
 	socket.on('contact', function(success){
