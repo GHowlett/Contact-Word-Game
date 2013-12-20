@@ -28,39 +28,52 @@ function bindNetworkEvents() {
 
 	socket.on('newGame', function(master){
 		console.log(master + ' is the new master');
-		//setting word master
 		setMaster(activePlayers[master]);
-		//if player is the word master, choose master word
 		if (localPlayer === wordMaster) chooseMasterWord();
 	});
 
 	socket.on('masterWordChosen', function(word){
 		console.log('the master word is ' + word);
 		wordMaster.word = word;
-		//when master word is chosen, reveal the first letter
 		revealLetter();
 		chooseWord();
 	});
 
-	//listening for clue
-	socket.on('clue', function(clueGiverPlayer) {	
-		console.log(clueGiverPlayer.name + "'s clue is " + clueGiverPlayer.clue);
-		activePlayers[clueGiverPlayer.name].el.find('.clue')
-			.html(clueGiverPlayer.clue)
-			//todo: .add(player.guesses.length)
-		if (localPlayer !== wordMaster) showButton(clueGiverPlayer.name, 'contact');
-		if (localPlayer === wordMaster) showButton(clueGiverPlayer.name, 'break');
+	socket.on('clue', function(player) {	
+		console.log(player.name + "'s clue is " + player.clue);
+		activePlayers[player.name].el.find('.clue')
+			.html(player.clue);
+		if (localPlayer !== wordMaster) showButton(player.name, 'contact');
+		if (localPlayer === wordMaster) showButton(player.name, 'break');
 		$('button').click(function(){
-			guess(clueGiverPlayer);
+			guess(player);
 		});
 	});
 
 	socket.on('guess', function(player){
-		if (localplayer.guess === player.word) {
+		if (localPlayer.guess === player.word) {
 			greyInput("Nice! " + localPlayer.guess)
 			$('#'+localPlayer.name).addClass('challengeGroup')
 		}
+		if (wordMaster.guess === player.word){
+			player.name.el.find('.clue').html('');
+			if (localPlayer === wordMaster)
+				hideButton(player.name, 'break');
+				greyInput('You broke up the contact!');
+			if (localPlayer !== wordMaster) {
+				delete player.word;
+				delete player.clue;
+				chooseWord();
+			}
+		}
 	}); 
+
+	socket.on('contact', function(success){
+		console.log('Challenge over, wordMaster '+ (success? 'lost':'won'));
+		setTimeout(revealLetter(), 4000);
+		showButton(activePlayers.name)
+		//todo: append some notification that contact was successful 
+	})
 
 	socket.on('challenge', function(player){
 		console.log('wordmaster challenged!')
@@ -72,15 +85,14 @@ function bindNetworkEvents() {
 
 		//reveal word to everyone except WM
 		activePlayers[player.name].el.find('.clue').html('player.clue')
-		hideButton(wordMaster.name, 'break');
+		hideButton(player.name, 'break');
 	})
 
-	socket.on('contact', function(success){
-		console.log('Challenge over, wordMaster '+ (success? 'lost':'won'));
-		setTimeout(revealLetter(), 4000);
-		//todo: show button for everyone 
-		//todo: append some notification that contact was successful 
+
+	socket.on('contact', function(fail){
+		breakContact();
 	})
+
 
 	socket.on('loseChallenge', function(){
 		console.log 

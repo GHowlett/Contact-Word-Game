@@ -26,6 +26,7 @@ function chooseName (context) {
 		
 		renderPlayer(localPlayer);
 		socket.emit('joined', localPlayer); 
+		greyInput("Waiting for Word Master")
 	})
 	// if name taken, ask for different one
 	.fail(function() { chooseName('Name already taken'); })
