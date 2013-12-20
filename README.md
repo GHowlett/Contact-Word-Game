@@ -19,3 +19,5 @@
 - have players respond to their own emitions where applicable
 
 - rename 'activePlayers' to 'players' and other unecsesary adjectives in general
+
+- omit data that can be appended from the server side form client emitions
