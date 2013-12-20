@@ -1,9 +1,11 @@
 function guess (player) {
-	getInput("What is " + player.name "'s word?") 
+	getInput("What is " + player.name + "'s word?") 
 	.then(function(guess){
-		guessObj = {name:player.name, guess:guess};
-		localPlayer.guesses.push(guessObj);
-		socket.emit('guess', guessObj);
+		socket.emit('guess', {
+			to: player.name,
+			from: localPlayer.name, 
+			guess: guess
+		});
 		
 		if (localPlayer === wordMaster) 
 			if (guess === player.word) greInput('You Got It!')
