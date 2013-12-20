@@ -1,17 +1,10 @@
 
 //////////////////////  DOM Manipluation  ///////////////////////
 
-function renderPlayer (name) {
-	var player = activePlayers[name];
+function renderPlayer (player) {
 	player.el.html(
 		'<td class="name">' + player.name + '</td>' +
 		'<td class="clue">' + player.clue + '</td>' );
-}
-
-	$('#'+player.name).children[2].append('<tr>#contactButton<tr>');
-	$contactButton = $('<button></button>')
-		.text('Contact! [' + player.guess.length + ']')
-		.click(guess(player));
 }
 
 function addPlayer (player) {
@@ -23,7 +16,8 @@ function addPlayer (player) {
 	});
 
 	// TODO: move this out of the rendering logic
-	return activePlayers[player.name] = player;
+	activePlayers[player.name] = player;
+	return player;
 }
 
 function removePlayer (name) {
