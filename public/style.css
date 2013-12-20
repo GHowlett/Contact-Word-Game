@@ -47,18 +47,18 @@ header {
 	display: block;
 	background: #EBFAFC;
 	width: 40%;
-	margin: 80px auto 40px;
+	margin: 60px auto 40px;
 	height: 55px;
 	font-size: 2em;
 	border-radius: 10px;
-	margin-right: 10%;
+	margin-left: 10%;
 	/*border-bottom: 1px solid #ccc;*/
 }
 
 .word-master-guess-box {
 	display: block;
 	background: #EBFAFC;
-	width: 60%;
+	width: 40%;
 	margin: 60px auto 40px;
 	margin-left: 10%;
 	height: 55px;
@@ -69,7 +69,7 @@ header {
 
 .word-master-guess-box:before {
 	content: "Word Master: " ;
-	font-size: .75em;
+	font-size: .5em;
 	font-family: 'Roboto', sans-serif;
 	font-weight: 300;
 	position: absolute;
@@ -81,7 +81,7 @@ header {
 	font-size: 0.5em;
 	font-family: 'Roboto', sans-serif;
 	font-weight: 300;
-	position: left;
+	position: absolute;
 	margin-top: -40px;
 }
 
@@ -92,6 +92,10 @@ header {
 	margin: 25px auto;
 	border-radius: 10px;
 	background: #31C5DF;
+}
+
+.challengeGroup td.clue{
+	background-color: yellow !important;	
 }
 
 .clue-box {

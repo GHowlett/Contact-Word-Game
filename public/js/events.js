@@ -54,10 +54,9 @@ function bindNetworkEvents() {
 	});
 
 	socket.on('guess', function(guess){
-		if (guess.word === activePlayers[guess.to].word) {
+		if (guess.word === activePlayers[guess.to].word && guess.from === wordMaster.name) {
 			$('.word-master-guess-box').html(guess.word);
 			// TODO: update the guessCount in the button
-		}
 	}); 
 
 	socket.on('contact', function(contact){
@@ -65,12 +64,10 @@ function bindNetworkEvents() {
 			(contact.success? 'successful':'broken'));
 
 		// TODO: end challenge if in challenge mode
-
 		if (contact.success) revealLetter();
 		else {
 			// TOOD: render failure
-			cleanup(contact.name);
-		}
+		}	
 
 		//todo: append some notification that contact was successful 
 	})
@@ -93,17 +90,23 @@ function bindNetworkEvents() {
 	}
 
 	socket.on('challenge', function(name){
-		activePlayers[player.name].addClass(".challengeGroup");
-		console.log('wordmaster challenged!')
-		//toggle opacity of players for those that are involved in contact
-		$(".challengeGroup").find('.name').fadeOut( "slow", "linear" );
-		//todo: remove player clues from DOM except cluegiver
+		
+		activePlayers[name].el.addClass("challengeGroup");
+		$('.word-master-guess-box').attr('style', 'background-color:yellow;');
+		if (localPlayer !== wordMaster) {
+			secretWord = activePlayers[name].word 
+			console.log(secretWord + 'secret word', name)
+			activePlayers[name].el.find('.clue').append(' ['+ secretWord + ']');
+		}
+		//$(".challengeGroup").find('.name').fadeOut( "slow", "linear" );
+		//player.name.el.find('.clue').html(player.clue)
+		//if player clue does not equal to player clue  
 
 		//todo: append 15 second countdown to DOM
 
 		//reveal word to everyone except WM
-		activePlayers[player.name].el.find('.clue').html('player.clue')
-		hideButton(player.name, 'break');
+		// activePlayers[player.name].el.find('.clue').html('player.clue')
+		//hideButton(player.name, 'break');	
 	})
 
 	socket.on('gameOver', function(){

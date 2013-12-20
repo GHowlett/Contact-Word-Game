@@ -9,7 +9,7 @@ function guess (player) {
 
 		if (localPlayer === wordMaster) {
 			$('.word-master-guess-box').html(guessedWord);
-			if (guesssword === player.word)
+			if (guessedWord === player.word)
 				return greyInput('You Got It!!')
 			else guess(); // keep guessing
 		}
@@ -18,18 +18,19 @@ function guess (player) {
 	})
 }
 
-function challenge (player) {
-	//emit challenge event
-	socket.emit('challenge', challenge);
-	if (localPlayer !== wordmaster) greyInput('Word Master challenge!');
-	//todo: griffin
-	//if wordmaster can't guess word after 15 seconds, emit contact success event
-	// if (wordMaster.guess !== player.word) && () {
-	// 	socket.emit('contact', contact);
-	// }	else loseChallenge();	 
-}
+// function challenge () {
+// 	//emit challenge event
+// 	challenge = 'challenge word'
+// 	socket.emit('challenge', challenge);
+// 	//if (localPlayer !== wordmaster) greyInput('Word Master challenge!');
+// 	//todo: griffin
+// 	//if wordmaster can't guess word after 15 seconds, emit contact success event
+// 	// if (wordMaster.guess !== player.word) && () {
+// 	// 	socket.emit('contact', contact);
+// 	// }	else loseChallenge();	 
+// }
 
 function loseChallenge () {
 	socket.emit('loseChallenge', loseChallenge);
-	contactBroken();
+	//cleanup(player.name);
 }
