@@ -79,7 +79,7 @@ function onGuess(guess) {
     if (guess.word === player.word) {
         if (guess.from !== masterName) {
             player.guesses.push(_.pick(guess, 'guess','from'));
-            if (players.length >== _.size(playerDB) /2) 
+            if (players.length >= _.size(playerDB) /2) 
                 startChallenge(player.name);
         }
         else endContact(player.name, false);
