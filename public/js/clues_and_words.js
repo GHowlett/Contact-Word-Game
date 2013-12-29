@@ -2,8 +2,8 @@
 function chooseWord (context) {
 	if (localPlayer !== wordMaster) {
 		if (!context) 
-			context = "Type in a secret word that starts with" + 
-				wordMaster.word.slice(0, masterWordIndex +1) + "..."
+			context = "Type in a secret word that starts with '" + 
+				wordMaster.word.slice(0, masterWordIndex +1) + "' ..."
 
 		getInput(context, matchLetters)
 		.done(function(word) {
