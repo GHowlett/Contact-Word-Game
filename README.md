@@ -1,5 +1,8 @@
 # Contact Word Game
 
+![screen shot 2015-05-04 at 1 07 58 am](https://cloud.githubusercontent.com/assets/1733920/7450457/0f5cba66-f1fa-11e4-8308-88041e435a1f.png)
+
+
 1. Users enter the game. The game starts once there is 4 people in the game.
 
 2. Game randomly selects a player to be the "Word Master".
